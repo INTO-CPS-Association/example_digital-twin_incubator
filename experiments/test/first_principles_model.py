@@ -1,12 +1,14 @@
 import unittest
 
+import numpy
+import scipy
 from oomodelling.ModelSolver import ModelSolver
 from scipy.optimize import minimize
 
 from src.functions import error, get_experiments, run_experiment
 import matplotlib.pyplot as plt
 
-from src.first_principles_model import IncubatorPlant
+from src.first_principles_model import IncubatorPlant, ComplexIncubatorPlant
 
 
 class MyTestCase(unittest.TestCase):
@@ -40,9 +42,18 @@ class MyTestCase(unittest.TestCase):
             plt.title(f"Experiment {i}")
             plt.plot(m.signals['time'], [exp['T0'] for t in m.signals['time']], label="T0")
             plt.plot(m.signals['time'], [exp['TF'] for t in m.signals['time']], label="TF")
-            plt.plot(m.signals['time'], m.air.signals['T'], label="T")
-            plt.plot(m.signals['time'], m.room.signals['T'], label="room T")
+            plt.plot(m.signals['time'], m.box_air.signals['T'], label="T")
+            plt.plot(m.signals['time'], m.room_air.signals['T'], label="room_air T")
             plt.legend()
+        plt.show()
+
+    def test_example_simulation(self):
+        def F(t, x):
+            return [-x[0]]
+        res = scipy.integrate.solve_ivp(F, (0, 10.0), [10.0])
+        plt.figure()
+        plt.plot(res.t, res.y[0, :], label="x")
+        plt.legend()
         plt.show()
 
     def test_do_prediction(self):
@@ -54,13 +65,22 @@ class MyTestCase(unittest.TestCase):
         airC = params[3]
         boxG = params[4]
         roomC = params[5]
-        m = IncubatorPlant(tOFF, heatingG, airC, boxG, roomC)
-        m.air.T = 28.8
+        m = ComplexIncubatorPlant(tOFF, heatingG, airC, boxG, roomC)
+        m.box_air.T = 28.8
         ModelSolver().simulate(m, 0.0, 4.0, 0.1)
         plt.figure()
         plt.plot(m.signals['time'], [28 for t in m.signals['time']], label="minT")
         plt.plot(m.signals['time'], [33 for t in m.signals['time']], label="maxT")
-        plt.plot(m.signals['time'], m.air.signals['T'], label="T")
+        plt.plot(m.signals['time'], m.box_air.signals['T'], label="T")
+        plt.legend()
+        plt.show()
+
+    def test_do_prediction(self):
+        m = IncubatorPlant(heatPow=100, roomT=0, airC=1, boxG=1.0)
+        m.box_air.T = 28.8
+        ModelSolver().simulate(m, 0.0, 10.0, 0.1)
+        plt.figure()
+        plt.plot(m.signals['time'], m.box_air.signals['T'], label="T")
         plt.legend()
         plt.show()
 

@@ -40,7 +40,7 @@ class ThermalCapacitor(Model):
         self.save()
 
 
-class IncubatorPlant(Model):
+class ComplexIncubatorPlant(Model):
     def __init__(self, Tin, heatingG, airC, boxG, roomC):
         super().__init__()
 
@@ -49,24 +49,49 @@ class IncubatorPlant(Model):
         self.convection = ThermalConductor()
         self.convection.G = heatingG
 
-        self.air = ThermalCapacitor()
-        self.air.C = airC
+        self.box_air = ThermalCapacitor()
+        self.box_air.C = airC
 
         self.box = ThermalConductor()
         self.box.G = boxG
 
-        self.room = ThermalCapacitor()
-        self.room.C = roomC
-        self.room.T = 24.0
+        self.room_air = ThermalCapacitor()
+        self.room_air.C = roomC
+        self.room_air.T = 24.0
 
         self.convection.Ta = self.in_T
-        self.convection.Tb = self.air.T
+        self.convection.Tb = self.box_air.T
 
-        self.air.QFlow = lambda: (self.convection.QFlow() - self.box.QFlow())
+        self.box_air.QFlow = lambda: (self.convection.QFlow() - self.box.QFlow())
 
-        self.box.Ta = self.air.T
-        self.box.Ta = self.room.T
+        self.box.Ta = self.box_air.T
+        self.box.Tb = self.room_air.T
 
-        self.room.QFlow = self.box.QFlow
+        self.room_air.QFlow = self.box.QFlow
+
+        self.save()
+
+
+class IncubatorPlant(Model):
+    def __init__(self, heatPow, roomT, airC, boxG):
+        super().__init__()
+
+        self.in_heater_power = self.input(lambda: heatPow)
+
+        self.in_qflow = self.state(0.0)
+        self.der('in_qflow', lambda: self.in_heater_power())
+
+        self.box_air = ThermalCapacitor()
+        self.box_air.C = airC
+
+        self.box = ThermalConductor()
+        self.box.G = boxG
+
+        self.room_T = self.input(lambda: roomT)
+
+        self.box_air.QFlow = lambda: (self.in_qflow() - self.box.QFlow())
+
+        self.box.Ta = self.box_air.T
+        self.box.Tb = self.room_T
 
         self.save()
