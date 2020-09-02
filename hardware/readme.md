@@ -1,0 +1,12 @@
+# Hardware Setup
+
+![Hardware Setup](hw_setup.png)
+
+The temperature sensors are marked physically with 1 to 3.
+This maps to the serial numbers in this order:
+
+```
+10-0008039ad4ee 1
+10-0008039b25c1 2
+10-0008039a977a 3
+```
