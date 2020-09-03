@@ -1,3 +1,5 @@
+Much information is currently captured in issues. PLease consult the issues for information.
+
 # The Incubator Digital Twin
 
 This is a case study of an Incubator with the purpose of understanding the steps and processes involved in developing a digital twin system.
