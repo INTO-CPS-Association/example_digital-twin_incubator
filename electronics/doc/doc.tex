@@ -2,6 +2,7 @@
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{gensymb}
+\usepackage{hyperref}
 \title{Incubator eletronics}
 \author{Kenneth Lausdahl  \\
 	Your Company / University  \\
@@ -114,6 +115,7 @@ So we see that both of these gives a voltage less than $V_{gs}$ i.e. $12v < 16v$
 \subsection{A first version of the schematics}
 
 \begin{figure}[!hpt]
+\centering
 \includegraphics[scale=0.2]{schematics.png}
 
 \caption{Schematics}
@@ -124,5 +126,19 @@ So we see that both of these gives a voltage less than $V_{gs}$ i.e. $12v < 16v$
 \section{Assumptions and Limits}
 
 Claudio: Hao, Kenneth, please add the calculations and assumptions here.
+
+\subsection{Reading Frequency of the sensors}
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.6]{sensor_manual.png}
+\end{center}
+\caption{Reading time slot}
+\label{fig:readingtimeslot}
+\end{figure}
+From the sensor manual, The calculation of the frequency can be calculated as follows: Assume recovery time between read slots is 3 us, and the minimum time of reading a bit is 62us, we need to read 8 bits, so the approximate reading time is 62*8=496 about 500us.
+or maybe we need to read 16 bits, then the time is approximate 1ms. If nothing is wrong I guess the frequency is larger than 10Hz.
+
+Example code of reading and writing the sensors can be found at: \href{https://www.maximintegrated.com/en/design/technical-documents/app-notes/1/162.html}{Example code}
+
 
 \end{document}
