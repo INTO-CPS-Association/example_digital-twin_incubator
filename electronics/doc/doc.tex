@@ -140,5 +140,30 @@ or maybe we need to read 16 bits, then the time is approximate 1ms. If nothing i
 
 Example code of reading and writing the sensors can be found at: \href{https://www.maximintegrated.com/en/design/technical-documents/app-notes/1/162.html}{Example code}
 
+The python file for reading sensor data is in HOME folder in the Raspberry named read-test.py (Using python3 read-test.py to run the code, the default will only read one sensor, it could be snesor 1, I haven't confirmed). 
+The frequence for reading is approximate 1 Hz which is shown in figure \ref{fig:readingtime}
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.6]{sensorReadingTime.png}
+\end{center}
+\caption{Reading time sequence}
+\label{fig:readingtime}
+\end{figure}
+
+A problem about this is that when reading three sensors' data, the frequency is much slower, I guess it is approximate 0.3Hz. This code read many raw data, the raw data can be seen by figure \ref{fig:sensordata}.
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.8]{sensorRawData.png}
+\end{center}
+\caption{Sensor Data}
+\label{fig:sensordata}
+\end{figure}
+
+I don't know if we reduce the length of the raw data we read then would it be fater?  
+
+The sencond way is try to use C code. However we don't know if it worth doing so.
+
+Third way is heating slower i.e. heat for a while and read some data and then heat for a while agian and repeat. 
 
 \end{document}
