@@ -166,4 +166,12 @@ The sencond way is try to use C code. However we don't know if it worth doing so
 
 Third way is heating slower i.e. heat for a while and read some data and then heat for a while agian and repeat. 
 
+\section{Heating Flows}
+
+The heat comes from the electrical  power which is $U*I$, most of the energy goes into the air to increasing the temprature of the Air. In the mean while the air loses energy in two ways:
+\begin{enumerate}
+\item \textbf{Thermal Convection} the major way losing energy which can be calculated by $\Phi=A*h*(T_2-T_1)$ where $A$ is the inner area of the box, and $h$ is a parameter which can be queried. 
+\item \textbf{Thermal Radiation} this way is less important. This losed energy can be calculated by $Q=\varepsilon*\sigma *T^4$
+\end{enumerate}
+
 \end{document}
