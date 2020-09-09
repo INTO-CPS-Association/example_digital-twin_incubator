@@ -1,4 +1,4 @@
-Much information is currently captured in issues. PLease consult the issues for information.
+Much information is currently captured in issues. Please consult the issues for information.
 
 # The Incubator Digital Twin
 
