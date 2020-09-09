@@ -1,0 +1,13 @@
+version: '3.0'
+
+services:
+
+
+  rabbitmq:
+    build : ./
+#    image: rabbitmq:3.8.2-management
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 1883:1883
