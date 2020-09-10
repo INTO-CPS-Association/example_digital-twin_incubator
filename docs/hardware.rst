@@ -20,6 +20,7 @@ Hardware Elements
     | USB Micro SD Kortlæser
 -   | Thermo box - Climapor thermokasse m/låg t/Eurokasse 54,5x35x18 cm
 -   | Custom Electronics 
+
 .. warning:: 
     Add custom electronics information
 
@@ -36,6 +37,10 @@ So to read a value from a sensor, one can do: :code:`cat /sys/bus/w1/devices/10-
 
 Each ID in the devices folder correspond to a particular sensor. Follow the wires of the temperature sensors and you will find a paper label with a number on it.
 The ID to number mapping is:
-10-0008039ad4ee 1
-10-0008039b25c1 2
-10-0008039a977a 3
+
+.. csv-table:: ID to Sensor Number Mapping
+   :header: "ID", "Sensor Number"
+
+       "10-0008039ad4ee", "1"
+       "10-0008039b25c1", "2"
+       "10-0008039a977a", "3"
