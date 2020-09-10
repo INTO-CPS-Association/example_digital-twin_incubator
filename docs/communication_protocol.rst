@@ -14,11 +14,11 @@ Temperature Reading
 
 Issue a start/stop of the Fan
     | Message that starts/stops the fan:
-    | :code:`fanon/fanoff` 
+    | :code:`fan2on/fan2off` 
 
 Issue a start/stop of the Heater
     | Message that starts/stops the heater:
-    | :code:`heateron/heateroff`
+    | :code:`heater2on/heater2off`
 
 Change the value of a parameter
     | Message that changes the value of a parameter
