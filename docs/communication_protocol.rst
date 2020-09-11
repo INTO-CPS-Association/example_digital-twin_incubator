@@ -1,5 +1,7 @@
 Communication Protocol
 ======================
+The protocol has to match with https://into-cps-rabbitmq-fmu.readthedocs.io/en/latest/user-manual.html
+
 
 RabbitMQ Topics
 ---------------
