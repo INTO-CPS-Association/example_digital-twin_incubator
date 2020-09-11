@@ -1,12 +1,26 @@
 Communication Protocol
 ======================
 
+RabbitMQ Topics
+---------------
+| Messages going to IO: incubator.toio
+| Messages going to controller: incubator.tocontroller
+
 RabbitMQ Messages
 -----------------
 
 Issue a temperature reading
     | Message that initiates a temperature reading:
-    | :code:`tempreadK` #K represents the order of the sensors
+
+    .. code-block:: json
+
+       {
+            "time": timestamp
+            "readTemperature1": true or false
+            "readTemperature2": true or false
+            "readTemperature3": true or false
+       }
+
 
 Temperature Reading
     | Message containing a temperature reading:
