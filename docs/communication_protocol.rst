@@ -22,7 +22,7 @@ Issue a temperature reading
             "readTemperature2": true or false
             "readTemperature3": true or false
        }
-
+    routing key: incubator.hardware.gpio.tempReading
 
 Temperature Reading
     | Message containing a temperature reading:
