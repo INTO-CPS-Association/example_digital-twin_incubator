@@ -58,13 +58,9 @@ Issue a start/stop of the Heater
 
 Change the value of a parameter
     | Message that changes the value of a parameter
-        .. code-block:: json
 
-       {
-            "time": timestamp
-            "startHeater": true or false
-       }
-    routing key: incubator.hardware.gpio.heaterManipulate
+    
+    
      .. code-block:: json
 
        {
