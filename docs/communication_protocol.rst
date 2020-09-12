@@ -38,12 +38,33 @@ Temperature Reading
 
 Issue a start/stop of the Fan
     | Message that starts/stops the fan:
-    | :code:`fan2on/fan2off` 
+    .. code-block:: json
+
+       {
+            "time": timestamp
+            "startFan": true or false
+       }
+    routing key: incubator.hardware.gpio.fanManipulate
 
 Issue a start/stop of the Heater
     | Message that starts/stops the heater:
-    | :code:`heater2on/heater2off`
+    .. code-block:: json
+
+       {
+            "time": timestamp
+            "startHeater": true or false
+       }
+    routing key: incubator.hardware.gpio.heaterManipulate
 
 Change the value of a parameter
     | Message that changes the value of a parameter
-    | :code:`parachKXXXXX` #K represents the order of the parameters defined in the file of claudio's. XXXXX means the replaced parameter value. iF it is temperture then the real temperture * 1000. 
+     .. code-block:: json
+
+       {
+            "time": timestamp
+            "Upper temperature": Value or False
+            "Lower temperature": Value or False
+            "Dissipation delay": Value or False
+            "Heater on for X": Value or False
+       }
+    routing key: incubator.hardware.gpio.paraChange
