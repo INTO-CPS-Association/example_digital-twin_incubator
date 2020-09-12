@@ -26,7 +26,15 @@ Issue a temperature reading
 
 Temperature Reading
     | Message containing a temperature reading:
-    | :code:`tempKXXXXX`  #K represents the order of the sensors and XXXXX means the real tempture*1000
+    .. code-block:: json
+
+       {
+            "time": timestamp
+            "sensorReading1": value or false
+            "sensorReading2": value or false
+            "sensorReading3": value or false
+       }
+    routing key: incubator.hardware.gpio.tempState
 
 Issue a start/stop of the Fan
     | Message that starts/stops the fan:
