@@ -22,7 +22,7 @@ Issue a temperature reading
             "readTemperature2": true or false
             "readTemperature3": true or false
        }
-    routing key: incubator.hardware.gpio.tempReading
+    routing key: incubator.hardware.w1.tempReading
 
 Temperature Reading
     | Message containing a temperature reading:
@@ -34,7 +34,7 @@ Temperature Reading
             "sensorReading2": value or false
             "sensorReading3": value or false
        }
-    routing key: incubator.hardware.gpio.tempState
+    routing key: incubator.hardware.w1.tempState
 
 Issue a start/stop of the Fan
     | Message that starts/stops the fan:
