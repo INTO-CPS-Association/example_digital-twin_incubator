@@ -67,13 +67,7 @@ class IncubatorControl:
         )
 
     def startListening(self):
-        print(self.IP_raspberry,
-        self.port,
-        self.username,
-        self.password,
-        self.vhost,
-        self.exchangename,
-        self.exchange_type)
+        print("Startinh listening")
         self.channel.start_consuming()
 
     def read_temperatures(self,ch, method, properties, body):
@@ -85,7 +79,7 @@ class IncubatorControl:
             # print("idx is",idx,"key is",key)
             if self.idx >= 1:
                 if self.body[self.key] == True:
-                    # self.temp = wire1.read_sensor(self.temperatureSensers[self.idx - 1])
+                    self.temp = wire1.read_sensor(self.temperatureSensers[self.idx - 1])
                     self.tempState["sensorReading" + str(self.idx)] = self.temp
                 else:
                     self.tempState["sensorReading" + str(self.idx)] = False
