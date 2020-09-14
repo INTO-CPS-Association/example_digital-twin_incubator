@@ -67,6 +67,13 @@ class IncubatorControl:
         )
 
     def startListening(self):
+        print(self.IP_raspberry,
+        self.port,
+        self.username,
+        self.password,
+        self.vhost,
+        self.exchangename,
+        self.exchange_type)
         self.channel.start_consuming()
 
     def read_temperatures(self,ch, method, properties, body):
