@@ -145,6 +145,8 @@ class IncubatorControl:
 
 if __name__ == '__main__':
     incubator = IncubatorControl()
+    incubator.led_fan.off()
+    incubator.led_heater.off()
     incubator.connectionToserver()
     incubator.queueDeclare(incubator.read_temperatures, queuename="0",routingkey="incubator.hardware.w1.tempRead")
     incubator.queueDeclare(incubator.ctrlFan, queuename="1",routingkey="incubator.hardware.gpio.fanManipulate")
