@@ -65,14 +65,14 @@ class IncubatorControl:
             on_message_callback=callbackFunc,
             auto_ack=True
         )
-        print("Bind ",routingkey," with ",queuename)
+        print("Bind ",routingkey," with queue name ",queuename)
 
     def startListening(self):
         print("Start listening")
         self.channel.start_consuming()
 
     def read_temperatures(self,ch, method, properties, body):
-        print(" [x] %r:%r" % (method.routing_key, body))
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
         # print(type(body))
@@ -98,7 +98,7 @@ class IncubatorControl:
         print("Keep listening")
 
     def ctrlFan(self,ch, method, properties, body):
-        print(" [x] %r:%r" % (method.routing_key, body))
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
         for self.idx, self.key in enumerate(self.body):
@@ -121,7 +121,7 @@ class IncubatorControl:
         print("Keep listening")
 
     def ctrlheater(self,ch, method, properties, body):
-        print(" [x] %r:%r" % (method.routing_key, body))
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
         for self.idx, self.key in enumerate(self.body):
