@@ -99,4 +99,5 @@ if __name__ == '__main__':
     incubator = IncubatorControl()
     incubator.connectionToserver()
     incubator.queueDeclare(incubator.read_temperatures)
+    incubator.startListening()
 
