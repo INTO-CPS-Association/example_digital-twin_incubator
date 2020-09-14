@@ -92,9 +92,9 @@ class IncubatorControl:
                                                                         tzinfo=datetime.timezone.utc).isoformat()
                 else:
                     self.tempState["Time"] = False
-        print(self.tempState)
         self.channel.basic_publish(
             exchange=self.exchangename, routing_key="incubator.hardware.w1.tempState", body=json.dumps(self.tempState))
+        print("Published Messages: ", self.tempState)
         print("Keep listening")
 
     def ctrlFan(self,ch, method, properties, body):
