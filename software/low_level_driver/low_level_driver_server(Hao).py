@@ -10,6 +10,10 @@ from gpiozero import LED
 #id=12=heater, id=13=fan, and 1,2,3 for temperature sensors
 heater = 12
 fan =13
+led_fan = LED(fan)
+led_heater = LED(heater)
+
+
 
 temperatureSensers = (
   "/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
@@ -45,6 +49,26 @@ def read_temperatures(ch, method, properties, body):
         exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
     print("Keep listening")
 
+def ctrlFan(ch, method, properties, body):
+    print(" [x] %r:%r" % (method.routing_key, body))
+    #print(type(body))
+    body = json.loads(body)
+    for idx,key in enumerate(body):
+        #print("idx is",idx,"key is",key)
+        if idx >=1:
+            if body[key]  == True:
+                led_fan.on()
+            if body[key]  == False:
+                led_fan.off()
+        else:
+            if body[key]  == True:
+                tempState["Time"]= "2019-01-04T16:41:24+02:00"
+            else:
+                tempState["Time"] = False
+    # channel.basic_publish(
+    #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
+    print("Keep listening")
+
 
     #topic  ="incubator/hardware/w1/"+str(idx)
     #print("Publishing %s %s"%(topic,temp))
@@ -64,14 +88,19 @@ connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
 channel.exchange_declare(exchange='Incubator_AMQP', exchange_type='topic')
-
+################################
 result = channel.queue_declare('', exclusive=True)
 queue_name = result.method.queue
-
 channel.queue_bind(
         exchange='Incubator_AMQP', queue=queue_name, routing_key="incubator.hardware.w1.tempReading")
-
 channel.basic_consume(
     queue=queue_name, on_message_callback=read_temperatures, auto_ack=True)
+
+channel.queue_bind(
+        exchange='Incubator_AMQP', queue=queue_name, routing_key="incubator.hardware.gpio.fanManipulate")
+channel.basic_consume(
+    queue=queue_name, on_message_callback=ctrlFan, auto_ack=True)
+
+
 print("listening")
 channel.start_consuming()
