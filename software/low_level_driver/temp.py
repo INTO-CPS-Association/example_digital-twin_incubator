@@ -97,13 +97,7 @@ class IncubatorControl:
             exchange=self.exchangename, routing_key="incubator.hardware.w1.tempState", body=json.dumps(self.tempState))
         print("Keep listening")
 
-
-
-        # topic  ="incubator/hardware/w1/"+str(idx)
-        # print("Publishing %s %s"%(topic,temp))
-        # client.publish(topic, temp);
-
-    def ctrlFan(ch, method, properties, body):
+    def ctrlFan(self,ch, method, properties, body):
         print(" [x] %r:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
@@ -126,7 +120,7 @@ class IncubatorControl:
         #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
         print("Keep listening")
 
-    def ctrlheater(ch, method, properties, body):
+    def ctrlheater(self,ch, method, properties, body):
         print(" [x] %r:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
@@ -152,7 +146,7 @@ class IncubatorControl:
 if __name__ == '__main__':
     incubator = IncubatorControl()
     incubator.connectionToserver()
-    incubator.queueDeclare(incubator.read_temperatures)
+    incubator.queueDeclare(incubator.read_temperatures, queuename="0",routingkey="incubator.hardware.w1.tempReading")
     incubator.queueDeclare(incubator.ctrlFan, queuename="1",routingkey="incubator.hardware.gpio.fanManipulate")
     incubator.queueDeclare(incubator.ctrlheater, queuename="2",routingkey="incubator.hardware.gpio.heaterManipulate")
     incubator.startListening()
