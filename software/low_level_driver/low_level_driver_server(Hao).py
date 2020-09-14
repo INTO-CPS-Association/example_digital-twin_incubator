@@ -3,6 +3,7 @@ import pika
 import sys
 import json
 import ast
+import time
 
 import wire1temperature as wire1
 from gpiozero import LED
@@ -41,7 +42,9 @@ def read_temperatures(ch, method, properties, body):
                 tempState["sensorReading" + str(idx)] = False
         else:
             if body[key]  == True:
-                tempState["Time"]= "2019-01-04T16:41:24+02:00"
+                seconds = time.time()
+                local_time = time.ctime(seconds)
+                tempState["Time"]= local_time
             else:
                 tempState["Time"] = False
     print(tempState)
@@ -62,7 +65,9 @@ def ctrlFan(ch, method, properties, body):
                 led_fan.off()
         else:
             if body[key]  == True:
-                tempState["Time"]= "2019-01-04T16:41:24+02:00"
+                seconds = time.time()
+                local_time = time.ctime(seconds)
+                tempState["Time"]= local_time
             else:
                 tempState["Time"] = False
     # channel.basic_publish(
@@ -82,7 +87,9 @@ def ctrlheater(ch, method, properties, body):
                 led_heater.off()
         else:
             if body[key] == True:
-                tempState["Time"] = "2019-01-04T16:41:24+02:00"
+                seconds = time.time()
+                local_time = time.ctime(seconds)
+                tempState["Time"] = local_time
             else:
                 tempState["Time"] = False
         # channel.basic_publish(
