@@ -4,6 +4,7 @@ import sys
 import json
 import ast
 import time
+from datetime import datetime, timezone
 
 import wire1temperature as wire1
 from gpiozero import LED
@@ -43,8 +44,8 @@ def read_temperatures(ch, method, properties, body):
         else:
             if body[key]  == True:
                 seconds = time.time()
-                local_time = time.ctime(seconds)
-                tempState["Time"]= local_time
+               # local_time = time.ctime(seconds)
+                tempState["Time"]= datetime.fromtimestamp(seconds, tz=timezone.utc).isoformat()
             else:
                 tempState["Time"] = False
     print(tempState)
@@ -66,8 +67,8 @@ def ctrlFan(ch, method, properties, body):
         else:
             if body[key]  == True:
                 seconds = time.time()
-                local_time = time.ctime(seconds)
-                tempState["Time"]= local_time
+                # local_time = time.ctime(seconds)
+                tempState["Time"]= datetime.fromtimestamp(seconds, tz=timezone.utc).isoformat()
             else:
                 tempState["Time"] = False
     # channel.basic_publish(
@@ -88,8 +89,8 @@ def ctrlheater(ch, method, properties, body):
         else:
             if body[key] == True:
                 seconds = time.time()
-                local_time = time.ctime(seconds)
-                tempState["Time"] = local_time
+                # local_time = time.ctime(seconds)
+                tempState["Time"] = datetime.fromtimestamp(seconds, tz=timezone.utc).isoformat()
             else:
                 tempState["Time"] = False
         # channel.basic_publish(
