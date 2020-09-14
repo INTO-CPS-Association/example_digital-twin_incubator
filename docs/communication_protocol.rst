@@ -22,7 +22,7 @@ Issue a temperature reading
             "readTemperature2": true or false
             "readTemperature3": true or false
        }
-    routing key: incubator.hardware.w1.tempReading
+    routing key: incubator.hardware.w1.tempRead
 
 Temperature Reading
     | Message containing a temperature reading:
