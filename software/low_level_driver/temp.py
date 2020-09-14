@@ -52,7 +52,7 @@ class IncubatorControl:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchangename, exchange_type=self.exchange_type)
 
-    def queueDeclare(self, callbackFunc, queuename="1", routingkey="incubator.hardware.w1.tempReading"):
+    def queueDeclare(self, callbackFunc, queuename="0", routingkey="incubator.hardware.w1.tempReading"):
         self.result = self.channel.queue_declare(queuename, exclusive=True)
         self.queue_name = self.result.method.queue
         self.channel.queue_bind(
@@ -94,6 +94,58 @@ class IncubatorControl:
         print(self.tempState)
         self.channel.basic_publish(
             exchange=self.exchangename, routing_key="incubator.hardware.w1.tempState", body=json.dumps(self.tempState))
+        print("Keep listening")
+
+
+
+        # topic  ="incubator/hardware/w1/"+str(idx)
+        # print("Publishing %s %s"%(topic,temp))
+        # client.publish(topic, temp);
+
+    def ctrlFan(ch, method, properties, body):
+        print(" [x] %r:%r" % (method.routing_key, body))
+        # print(type(body))
+        self.body = json.loads(body)
+        for self.idx, self.key in enumerate(self.body):
+            # print("idx is",idx,"key is",key)
+            if self.idx >= 1:
+                if self.body[self.key] == True:
+                    self.led_fan.on()
+                if self.body[self.key] == False:
+                    self.led_fan.off()
+            else:
+                if self.body[self.key] == True:
+                    # seconds = time.time()
+                    # local_time = time.ctime(seconds)
+                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
+                                                                             tzinfo=datetime.timezone.utc).isoformat()
+                else:
+                    self.tempState["Time"] = False
+        # channel.basic_publish(
+        #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
+        print("Keep listening")
+
+    def ctrlheater(ch, method, properties, body):
+        print(" [x] %r:%r" % (method.routing_key, body))
+        # print(type(body))
+        self.body = json.loads(body)
+        for self.idx, self.key in enumerate(self.body):
+            # print("idx is",idx,"key is",key)
+            if self.idx >= 1:
+                if self.body[self.key] == True:
+                    self.led_heater.on()
+                if self.body[self.key] == False:
+                    self.led_heater.off()
+            else:
+                if self.body[self.key] == True:
+                    # seconds = time.time()
+                    # local_time = time.ctime(seconds)
+                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
+                                                                             tzinfo=datetime.timezone.utc).isoformat()
+                else:
+                    self.tempState["Time"] = False
+            # channel.basic_publish(
+            #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
         print("Keep listening")
 
 if __name__ == '__main__':
