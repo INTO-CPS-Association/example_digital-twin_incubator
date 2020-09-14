@@ -65,6 +65,7 @@ class IncubatorControl:
             on_message_callback=callbackFunc,
             auto_ack=True
         )
+        print("Bind ",routingkey," with ",queuename)
 
     def startListening(self):
         print("Startinh listening")
