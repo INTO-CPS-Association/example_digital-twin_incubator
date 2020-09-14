@@ -5,146 +5,149 @@ import json
 import ast
 import time
 import datetime
-
 import wire1temperature as wire1
 from gpiozero import LED
 
 #id=12=heater, id=13=fan, and 1,2,3 for temperature sensors
-heater = 12
-fan =13
-led_fan = LED(fan)
-led_heater = LED(heater)
+# def connectionParas()
 
+class IncubatorControl:
+    def __init__(self,IP_raspberry='10.17.98.141',
+                 port=5672,
+                 username='incubator',
+                 password='incubator',
+                 vhost='/',
+                 exchangename='Incubator_AMQP',
+                 exchange_type='topic',
+                 ):
+        self.IP_raspberry = IP_raspberry
+        self.port = port
+        self.username=username
+        self.password = password
+        self.vhost = vhost
+        self.exchangename = exchangename
+        self.exchange_type = exchange_type
+        self.temperatureSensers = ("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
+                                   "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
+                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
+                                   )
+        self.tempState = {"Time":False,
+                          "sensorReading1":False,
+                          "sensorReading2":False,
+                          "sensorReading3":False
+                          }
+        self.heater = 12
+        self.fan = 13
+        self.led_fan = LED(self.fan)
+        self.led_heater = LED(self.heater)
+        # self.numberofqueues = numberofqueues
 
+    def connectionToserver(self):
+        self.credentials = pika.PlainCredentials(self.username, self.password)
+        self.parameters = pika.ConnectionParameters(self.IP_raspberry,
+                                                    5672,
+                                                    '/',
+                                                    self.credentials)
+        self.connection = pika.BlockingConnection(self.parameters)
+        self.channel = self.connection.channel()
+        self.channel.exchange_declare(exchange=self.exchangename, exchange_type=self.exchange_type)
 
-temperatureSensers = (
-  "/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
- "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
-  "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
-)
+    def queueDeclare(self, callbackFunc, queuename="0", routingkey="incubator.hardware.w1.tempReading"):
+        self.result = self.channel.queue_declare(queuename, exclusive=True)
+        self.queue_name = self.result.method.queue
+        self.channel.queue_bind(
+            exchange=self.exchangename,
+            queue=self.queue_name,
+            routing_key=routingkey
+        )
+        self.channel.basic_consume(
+            queue=self.queue_name,
+            on_message_callback=callbackFunc,
+            auto_ack=True
+        )
+        print("Bind ",routingkey," with queue name ",queuename)
 
-tempState = {"Time":False,
-             "sensorReading1":False,
-             "sensorReading2":False,
-             "sensorReading3":False
-             }
-def read_temperatures(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
-    #print(type(body))
-    body = json.loads(body)
-    #print(type(body))
-    for idx,key in enumerate(body):
-        #print("idx is",idx,"key is",key)
-        if idx >=1:
-            if body[key]  == True:
-                temp = wire1.read_sensor(temperatureSensers[idx-1])
-                tempState["sensorReading" + str(idx)]=temp
+    def startListening(self):
+        print("Start listening")
+        self.channel.start_consuming()
+
+    def read_temperatures(self,ch, method, properties, body):
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        # print(type(body))
+        self.body = json.loads(body)
+        # print(type(body))
+        for self.idx, self.key in enumerate(self.body):
+            # print("idx is",idx,"key is",key)
+            if self.idx >= 1:
+                if self.body[self.key] == True:
+                    self.temp = wire1.read_sensor(self.temperatureSensers[self.idx - 1])
+                    self.tempState["sensorReading" + str(self.idx)] = self.temp
+                else:
+                    self.tempState["sensorReading" + str(self.idx)] = False
             else:
-                tempState["sensorReading" + str(idx)] = False
-        else:
-            if body[key]  == True:
-                # seconds = time.time()
-               # local_time = time.ctime(seconds)
-                tempState["Time"]= datetime.datetime.now().replace(microsecond=0,tzinfo=datetime.timezone.utc).isoformat()
-            else:
-                tempState["Time"] = False
-    print(tempState)
-    channel.basic_publish(
-        exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
-    print("Keep listening")
+                if self.body[self.key] == True:
+                    # seconds = time.time()
+                    # local_time = time.ctime(seconds)
+                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
+                                                                        tzinfo=datetime.timezone.utc).isoformat()
+                else:
+                    self.tempState["Time"] = False
+        self.channel.basic_publish(
+            exchange=self.exchangename, routing_key="incubator.hardware.w1.tempState", body=json.dumps(self.tempState))
+        print("Published Messages: ", self.tempState)
+        print("Keep listening")
 
-def ctrlFan(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
-    #print(type(body))
-    body = json.loads(body)
-    for idx,key in enumerate(body):
-        #print("idx is",idx,"key is",key)
-        if idx >=1:
-            if body[key]  == True:
-                led_fan.on()
-            if body[key]  == False:
-                led_fan.off()
-        else:
-            if body[key]  == True:
-                # seconds = time.time()
-                # local_time = time.ctime(seconds)
-                tempState["Time"]= datetime.datetime.now().replace(microsecond=0,tzinfo=datetime.timezone.utc).isoformat()
+    def ctrlFan(self,ch, method, properties, body):
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        # print(type(body))
+        self.body = json.loads(body)
+        for self.idx, self.key in enumerate(self.body):
+            # print("idx is",idx,"key is",key)
+            if self.idx >= 1:
+                if self.body[self.key] == True:
+                    self.led_fan.on()
+                if self.body[self.key] == False:
+                    self.led_fan.off()
             else:
-                tempState["Time"] = False
-    # channel.basic_publish(
-    #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
-    print("Keep listening")
-
-def ctrlheater(ch, method, properties, body):
-    print(" [x] %r:%r" % (method.routing_key, body))
-    # print(type(body))
-    body = json.loads(body)
-    for idx, key in enumerate(body):
-        # print("idx is",idx,"key is",key)
-        if idx >= 1:
-            if body[key] == True:
-                led_heater.on()
-            if body[key] == False:
-                led_heater.off()
-        else:
-            if body[key] == True:
-                # seconds = time.time()
-                # local_time = time.ctime(seconds)
-                tempState["Time"] = datetime.datetime.now().replace(microsecond=0,tzinfo=datetime.timezone.utc).isoformat()
-            else:
-                tempState["Time"] = False
+                if self.body[self.key] == True:
+                    # seconds = time.time()
+                    # local_time = time.ctime(seconds)
+                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
+                                                                             tzinfo=datetime.timezone.utc).isoformat()
+                else:
+                    self.tempState["Time"] = False
         # channel.basic_publish(
         #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
-    print("Keep listening")
+        print("Keep listening")
 
+    def ctrlheater(self,ch, method, properties, body):
+        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        # print(type(body))
+        self.body = json.loads(body)
+        for self.idx, self.key in enumerate(self.body):
+            # print("idx is",idx,"key is",key)
+            if self.idx >= 1:
+                if self.body[self.key] == True:
+                    self.led_heater.on()
+                if self.body[self.key] == False:
+                    self.led_heater.off()
+            else:
+                if self.body[self.key] == True:
+                    # seconds = time.time()
+                    # local_time = time.ctime(seconds)
+                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
+                                                                             tzinfo=datetime.timezone.utc).isoformat()
+                else:
+                    self.tempState["Time"] = False
+            # channel.basic_publish(
+            #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
+        print("Keep listening")
 
-    #topic  ="incubator/hardware/w1/"+str(idx)
-    #print("Publishing %s %s"%(topic,temp))
-    #client.publish(topic, temp);
+if __name__ == '__main__':
+    incubator = IncubatorControl()
+    incubator.connectionToserver()
+    incubator.queueDeclare(incubator.read_temperatures, queuename="0",routingkey="incubator.hardware.w1.tempReading")
+    incubator.queueDeclare(incubator.ctrlFan, queuename="1",routingkey="incubator.hardware.gpio.fanManipulate")
+    incubator.queueDeclare(incubator.ctrlheater, queuename="2",routingkey="incubator.hardware.gpio.heaterManipulate")
+    incubator.startListening()
 
-#####################################rabbitmq connection
-IP_raspberry = '10.17.98.141'
-IP_myLaptop =  '10.17.98.164'
-credentials = pika.PlainCredentials('incubator', 'incubator')
-parameters = pika.ConnectionParameters(IP_raspberry,
-                                   5672,
-                                   '/',
-                                   credentials)
-connection = pika.BlockingConnection(parameters)
-#connection = pika.BlockingConnection(
-#    pika.ConnectionParameters(host='10.192.17.148',port=1883))
-channel = connection.channel()
-
-channel.exchange_declare(exchange='Incubator_AMQP', exchange_type='topic')
-################################
-result = channel.queue_declare('', exclusive=True)
-queue_name = result.method.queue
-channel.queue_bind(
-        exchange='Incubator_AMQP', queue=queue_name, routing_key="incubator.hardware.w1.tempReading")
-channel.basic_consume(
-    queue=queue_name, on_message_callback=read_temperatures, auto_ack=True)
-
-# resultsss = channel.queue_declare('', exclusive=True)
-# queue_names = resultsss.method.queue
-# channel.queue_bind(
-#         exchange='Incubator_AMQP', queue=queue_names, routing_key="incubator.hardware.gpio.fanManipulate")
-# channel.basic_consume(
-#     queue=queue_names, on_message_callback=ctrlFan, auto_ack=True)
-#
-# resultss = channel.queue_declare('', exclusive=True)
-# queue_namess = resultss.method.queue
-# channel.queue_bind(
-#         exchange='Incubator_AMQP', queue=queue_namess, routing_key="incubator.hardware.gpio.heaterManipulate")
-# channel.basic_consume(
-#     queue=queue_namess, on_message_callback=ctrlheater, auto_ack=True)
-
-result = channel.queue_declare('2', exclusive=True)
-queue_name = result.method.queue
-channel.queue_bind(
-        exchange='Incubator_AMQP', queue=queue_name, routing_key="incubator.hardware.gpio.fanManipulate")
-channel.basic_consume(
-    queue=queue_name, on_message_callback=ctrlFan, auto_ack=True)
-
-
-print("listening")
-channel.start_consuming()
