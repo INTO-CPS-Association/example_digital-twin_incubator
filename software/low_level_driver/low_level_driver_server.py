@@ -138,6 +138,13 @@ channel.queue_bind(
 channel.basic_consume(
     queue=queue_namess, on_message_callback=ctrlheater, auto_ack=True)
 
+result = channel.queue_declare('2', exclusive=True)
+queue_name = result.method.queue
+channel.queue_bind(
+        exchange='Incubator_AMQP', queue=queue_name, routing_key="incubator.hardware.w1.tempReading")
+channel.basic_consume(
+    queue=queue_name, on_message_callback=read_temperatures, auto_ack=True)
+
 
 print("listening")
 channel.start_consuming()
