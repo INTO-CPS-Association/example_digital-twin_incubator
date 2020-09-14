@@ -96,10 +96,12 @@ channel.queue_bind(
 channel.basic_consume(
     queue=queue_name, on_message_callback=read_temperatures, auto_ack=True)
 
+resultsss = channel.queue_declare('', exclusive=True)
+queue_names = resultsss.method.queue
 channel.queue_bind(
-        exchange='Incubator_AMQP', queue="af", routing_key="incubator.hardware.gpio.fanManipulate")
+        exchange='Incubator_AMQP', queue=queue_names, routing_key="incubator.hardware.gpio.fanManipulate")
 channel.basic_consume(
-    queue=queue_name, on_message_callback=ctrlFan, auto_ack=True)
+    queue=queue_names, on_message_callback=ctrlFan, auto_ack=True)
 
 
 print("listening")
