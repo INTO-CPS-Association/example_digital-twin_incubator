@@ -20,10 +20,10 @@ channel = connection.channel()
 #print("passing connection phase")
 channel.exchange_declare(exchange='Incubator_AMQP', exchange_type='topic')
 
-routing_key = "incubator.hardware.gpio.fanManipulate"#sys.argv[1] if len(sys.argv) > 2 else 'anonymous.info'
+routing_key = "incubator.hardware.gpio.heaterManipulate"#sys.argv[1] if len(sys.argv) > 2 else 'anonymous.info'
 message = {
      "Time": True,
-     "startFan": False
+     "startFan": True
 }#' '.join(sys.argv[2:]) or 'Hello World!'
 channel.basic_publish(
     exchange='Incubator_AMQP', routing_key=routing_key, body=json.dumps(message))

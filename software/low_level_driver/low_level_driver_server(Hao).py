@@ -128,7 +128,7 @@ queue_namess = resultss.method.queue
 channel.queue_bind(
         exchange='Incubator_AMQP', queue=queue_namess, routing_key="incubator.hardware.gpio.heaterManipulate")
 channel.basic_consume(
-    queue=queue_namess, on_message_callback=ctrlFan, auto_ack=True)
+    queue=queue_namess, on_message_callback=ctrlheater, auto_ack=True)
 
 
 print("listening")
