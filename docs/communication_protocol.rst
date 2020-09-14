@@ -18,9 +18,9 @@ Issue a temperature reading
 
        {
             "time": timestamp
-            "readTemperature1": true or false
-            "readTemperature2": true or false
-            "readTemperature3": true or false
+            "readTemperature1": True or False
+            "readTemperature2": True or False
+            "readTemperature3": True or False
        }
     routing key: incubator.hardware.w1.tempRead
 
@@ -30,9 +30,9 @@ Temperature Reading
 
        {
             "time": timestamp
-            "sensorReading1": value or false
-            "sensorReading2": value or false
-            "sensorReading3": value or false
+            "sensorReading1": value or False
+            "sensorReading2": value or False
+            "sensorReading3": value or False
        }
     routing key: incubator.hardware.w1.tempState
 
@@ -42,7 +42,7 @@ Issue a start/stop of the Fan
 
        {
             "time": timestamp
-            "startFan": true or false
+            "startFan": True or False
        }
     routing key: incubator.hardware.gpio.fanManipulate
 
@@ -52,7 +52,7 @@ Issue a start/stop of the Heater
 
        {
             "time": timestamp
-            "startHeater": true or false
+            "startHeater": True or False
        }
     routing key: incubator.hardware.gpio.heaterManipulate
 
