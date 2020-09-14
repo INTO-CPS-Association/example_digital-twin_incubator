@@ -2,6 +2,7 @@ from time import sleep
 import pika
 import sys
 import json
+import ast
 
 import wire1temperature as wire1
 from gpiozero import LED
@@ -16,13 +17,18 @@ temperatureSensers = (
   "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
 )
 
-tempState = {"time":False,
+tempState = {"Time":False,
              "sensorReading1":False,
              "sensorReading2":False,
              "sensorReading3":False
              }
 def read_temperatures(ch, method, properties, body):
+    print(" [x] %r:%r" % (method.routing_key, body))
+    #print(type(body))
+    body = json.loads(body)
+    #print(type(body))
     for idx,key in enumerate(body):
+        #print("idx is",idx,"key is",key)
         if idx >=1:
             if body[key]  == True:
                 temp = wire1.read_sensor(temperatureSensers[idx-1])
@@ -37,6 +43,7 @@ def read_temperatures(ch, method, properties, body):
     print(tempState)
     channel.basic_publish(
         exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
+    print("Keep listening")
 
 
     #topic  ="incubator/hardware/w1/"+str(idx)
@@ -66,3 +73,5 @@ channel.queue_bind(
 
 channel.basic_consume(
     queue=queue_name, on_message_callback=read_temperatures, auto_ack=True)
+print("listening")
+channel.start_consuming()
