@@ -4,7 +4,7 @@ import sys
 import json
 import ast
 import time
-from datetime import datetime, timezone
+import datetime
 
 import wire1temperature as wire1
 from gpiozero import LED
