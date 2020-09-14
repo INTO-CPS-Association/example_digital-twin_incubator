@@ -52,7 +52,7 @@ class IncubatorControl:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchangename, exchange_type=self.exchange_type)
 
-    def queueDeclare(self, callbackFunc, queuename="1", routingkey="#"):
+    def queueDeclare(self, callbackFunc, queuename="1", routingkey="incubator.hardware.w1.tempReading"):
         self.result = self.channel.queue_declare(queuename, exclusive=True)
         self.queue_name = self.result.method.queue
         self.channel.queue_bind(
@@ -97,4 +97,6 @@ class IncubatorControl:
 
 if __name__ == '__main__':
     incubator = IncubatorControl()
+    incubator.connectionToserver()
+    incubator.queueDeclare(read_temperatures)
 
