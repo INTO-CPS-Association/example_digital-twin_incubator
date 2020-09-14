@@ -68,7 +68,7 @@ class IncubatorControl:
         print("Bind ",routingkey," with ",queuename)
 
     def startListening(self):
-        print("Startinh listening")
+        print("Start listening")
         self.channel.start_consuming()
 
     def read_temperatures(self,ch, method, properties, body):
@@ -152,7 +152,7 @@ class IncubatorControl:
 if __name__ == '__main__':
     incubator = IncubatorControl()
     incubator.connectionToserver()
-    incubator.queueDeclare(incubator.read_temperatures)
+    # incubator.queueDeclare(incubator.read_temperatures)
     incubator.queueDeclare(incubator.ctrlFan,queuename="1",routingkey=" incubator.hardware.gpio.fanManipulate")
     incubator.queueDeclare(incubator.ctrlheater,queuename="2",routingkey=" incubator.hardware.gpio.heaterManipulate")
     incubator.startListening()
