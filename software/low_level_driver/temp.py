@@ -98,5 +98,5 @@ class IncubatorControl:
 if __name__ == '__main__':
     incubator = IncubatorControl()
     incubator.connectionToserver()
-    incubator.queueDeclare(read_temperatures)
+    incubator.queueDeclare(incubator.read_temperatures())
 
