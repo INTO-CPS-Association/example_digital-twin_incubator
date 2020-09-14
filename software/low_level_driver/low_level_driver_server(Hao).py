@@ -69,6 +69,26 @@ def ctrlFan(ch, method, properties, body):
     #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
     print("Keep listening")
 
+def ctrlheater(ch, method, properties, body):
+    print(" [x] %r:%r" % (method.routing_key, body))
+    # print(type(body))
+    body = json.loads(body)
+    for idx, key in enumerate(body):
+        # print("idx is",idx,"key is",key)
+        if idx >= 1:
+            if body[key] == True:
+                led_heater.on()
+            if body[key] == False:
+                led_heater.off()
+        else:
+            if body[key] == True:
+                tempState["Time"] = "2019-01-04T16:41:24+02:00"
+            else:
+                tempState["Time"] = False
+        # channel.basic_publish(
+        #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
+    print("Keep listening")
+
 
     #topic  ="incubator/hardware/w1/"+str(idx)
     #print("Publishing %s %s"%(topic,temp))
@@ -102,6 +122,13 @@ channel.queue_bind(
         exchange='Incubator_AMQP', queue=queue_names, routing_key="incubator.hardware.gpio.fanManipulate")
 channel.basic_consume(
     queue=queue_names, on_message_callback=ctrlFan, auto_ack=True)
+
+resultss = channel.queue_declare('', exclusive=True)
+queue_namess = resultss.method.queue
+channel.queue_bind(
+        exchange='Incubator_AMQP', queue=queue_namess, routing_key="incubator.hardware.gpio.heaterManipulate")
+channel.basic_consume(
+    queue=queue_namess, on_message_callback=ctrlFan, auto_ack=True)
 
 
 print("listening")
