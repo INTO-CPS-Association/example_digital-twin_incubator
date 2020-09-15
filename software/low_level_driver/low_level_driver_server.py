@@ -104,7 +104,7 @@ class IncubatorDriver:
             queue=queue_name,
             routing_key=routing_key
         )
-        self.logger.info("Bound ", routing_key, " with queue name ", queue_name)
+        self.logger.info(f"Bound {routing_key}--> {queue_name}")
 
     def control_loop(self, exec_interval=5, strict_interval=True):
         try:
