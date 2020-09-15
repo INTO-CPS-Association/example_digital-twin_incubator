@@ -15,7 +15,7 @@ class IncubatorDriver:
                  exchange_type='topic',
                  heater_pin=12,
                  fan_pin=13,
-                 simulate_actuation=False
+                 simulate_actuation=True
                  ):
         self.ip_raspberry = ip_raspberry
         self.port = port
