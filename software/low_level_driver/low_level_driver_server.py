@@ -30,7 +30,6 @@ class IncubatorDriver:
                                                     credentials)
         self.connection = None
 
-
         # TODO: What is this doing here?
         self.tempState = {"Time": False,
                           "sensorReading1": False,
@@ -61,7 +60,7 @@ class IncubatorDriver:
         self.declare_queue(self.on_temperature_read_msg, queue_name="0",
                            routing_key="incubator.hardware.w1.tempRead")
         self.declare_queue(self.on_fan_control_msg, queue_name="1", routing_key="incubator.hardware.gpio.fanManipulate")
-        self.declare_queue(self.on_heat_control_message, queue_name="2",
+        self.declare_queue(self.on_heat_control_message, queue_name="heater_control",
                            routing_key="incubator.hardware.gpio.heaterManipulate")
 
     def declare_queue(self, callback, queue_name, routing_key):
@@ -71,12 +70,12 @@ class IncubatorDriver:
             queue=queue_name,
             routing_key=routing_key
         )
-        self.channel.basic_consume(
-            queue=queue_name,
-            on_message_callback=callback,
-            auto_ack=True
-        )
-        print("Bind ", routing_key, " with queue name ", queue_name)
+        # self.channel.basic_consume(
+        #     queue=queue_name,
+        #     on_message_callback=callback,
+        #     auto_ack=True
+        # )
+        # print("Bind ", routing_key, " with queue name ", queue_name)
 
     def start_listening(self):
         print("Start listening")
@@ -166,5 +165,9 @@ class IncubatorDriver:
 if __name__ == '__main__':
     incubator = IncubatorDriver()
     incubator.connect_to_server()
+
+    (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
+    print(f"Ctrl message received: {(method, properties, body)}")
+
     incubator.start_listening()
     print("Started Listening.")
