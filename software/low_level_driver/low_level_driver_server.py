@@ -89,6 +89,7 @@ class IncubatorDriver:
                            routing_key=ROUTING_KEY_HEATER)
 
     def cleanup(self):
+        self.logger.debug("Cleaning up.")
         self.actuators_off()
         self.connection.close()
 
@@ -177,6 +178,7 @@ class IncubatorDriver:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     incubator = IncubatorDriver()
     incubator.setup()
     incubator.control_loop()
