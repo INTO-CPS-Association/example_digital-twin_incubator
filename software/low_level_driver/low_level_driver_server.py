@@ -19,7 +19,7 @@ def _convert_str_to_bool(body):
     if body is None:
         return None
     else:
-        return body == "True"
+        return body.decode(ENCODING) == "True"
 
 
 class IncubatorDriver:
