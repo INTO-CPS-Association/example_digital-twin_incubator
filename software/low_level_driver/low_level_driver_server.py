@@ -62,17 +62,16 @@ class IncubatorDriver:
 
     def setup(self):
         self.connection = pika.BlockingConnection(self.parameters)
+        print("Connected.")
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        self.channel.queue_declare(self.TEMP_READ_QUEUE, exclusive=True)
-
         # TODO: Make these routing keys global between client and server
-        self.declare_queue(self.on_temperature_read_msg, queue_name=self.TEMP_READ_QUEUE,
+        self.declare_queue(queue_name=self.TEMP_READ_QUEUE,
                            routing_key="incubator.hardware.w1.tempRead")
-        self.declare_queue(self.on_fan_control_msg, queue_name=self.FAN_CTRL_QUEUE,
+        self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
                            routing_key="incubator.hardware.gpio.fanManipulate")
-        self.declare_queue(self.on_heat_control_message, queue_name=self.HEAT_CTRL_QUEUE,
+        self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
                            routing_key="incubator.hardware.gpio.heaterManipulate")
 
     def cleanup(self):
@@ -90,7 +89,7 @@ class IncubatorDriver:
             queue=queue_name,
             routing_key=routing_key
         )
-        print("Bind ", routing_key, " with queue name ", queue_name)
+        print("Bound ", routing_key, " with queue name ", queue_name)
 
     def start_listening(self):
         print("Start listening")
@@ -197,7 +196,7 @@ class IncubatorDriver:
         self.read_temperature_signals()
 
     def react_control_signals(self):
-        (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
+        (method, properties, body) = incubator.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
         print(f"Ctrl message received: {(method, properties, body)}")
 
     def read_temperature_signals(self):
