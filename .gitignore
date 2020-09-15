@@ -1,3 +1,4 @@
 /experiments/.idea
 docs/_build
 .vscode
+/software/low_level_driver/.idea

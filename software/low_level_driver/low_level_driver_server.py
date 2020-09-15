@@ -5,14 +5,14 @@ import json
 import ast
 import time
 import datetime
-import wire1temperature as wire1
 from gpiozero import LED
+import temperature_sensor_read
 
-#id=12=heater, id=13=fan, and 1,2,3 for temperature sensors
+# id=12=heater, id=13=fan, and 1,2,3 for temperature sensors
 # def connectionParas()
 
 class IncubatorControl:
-    def __init__(self,IP_raspberry='10.17.98.141',
+    def __init__(self, IP_raspberry='10.17.98.141',
                  port=5672,
                  username='incubator',
                  password='incubator',
@@ -22,7 +22,7 @@ class IncubatorControl:
                  ):
         self.IP_raspberry = IP_raspberry
         self.port = port
-        self.username=username
+        self.username = username
         self.password = password
         self.vhost = vhost
         self.exchangename = exchangename
@@ -31,10 +31,10 @@ class IncubatorControl:
                                    "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
                                    "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
                                    )
-        self.tempState = {"Time":False,
-                          "sensorReading1":False,
-                          "sensorReading2":False,
-                          "sensorReading3":False
+        self.tempState = {"Time": False,
+                          "sensorReading1": False,
+                          "sensorReading2": False,
+                          "sensorReading3": False
                           }
         self.heater = 12
         self.fan = 13
@@ -65,13 +65,13 @@ class IncubatorControl:
             on_message_callback=callbackFunc,
             auto_ack=True
         )
-        print("Bind ",routingkey," with queue name ",queuename)
+        print("Bind ", routingkey, " with queue name ", queuename)
 
     def startListening(self):
         print("Start listening")
         self.channel.start_consuming()
 
-    def read_temperatures(self,ch, method, properties, body):
+    def read_temperatures(self, ch, method, properties, body):
         print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
@@ -80,7 +80,7 @@ class IncubatorControl:
             # print("idx is",idx,"key is",key)
             if self.idx >= 1:
                 if self.body[self.key] == True:
-                    self.temp = wire1.read_sensor(self.temperatureSensers[self.idx - 1])
+                    self.temp = temperature_sensor_read.read_sensor(self.temperatureSensers[self.idx - 1])
                     self.tempState["sensorReading" + str(self.idx)] = self.temp
                 else:
                     self.tempState["sensorReading" + str(self.idx)] = False
@@ -89,7 +89,7 @@ class IncubatorControl:
                     # seconds = time.time()
                     # local_time = time.ctime(seconds)
                     self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
-                                                                        tzinfo=datetime.timezone.utc).isoformat()
+                                                                             tzinfo=datetime.timezone.utc).isoformat()
                 else:
                     self.tempState["Time"] = False
         self.channel.basic_publish(
@@ -97,7 +97,7 @@ class IncubatorControl:
         print("Published Messages: ", self.tempState)
         print("Keep listening")
 
-    def ctrlFan(self,ch, method, properties, body):
+    def ctrlFan(self, ch, method, properties, body):
         print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
@@ -120,7 +120,7 @@ class IncubatorControl:
         #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
         print("Keep listening")
 
-    def ctrlheater(self,ch, method, properties, body):
+    def ctrlheater(self, ch, method, properties, body):
         print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
@@ -143,13 +143,13 @@ class IncubatorControl:
             #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
         print("Keep listening")
 
+
 if __name__ == '__main__':
     incubator = IncubatorControl()
     incubator.led_fan.off()
     incubator.led_heater.off()
     incubator.connectionToserver()
-    incubator.queueDeclare(incubator.read_temperatures, queuename="0",routingkey="incubator.hardware.w1.tempRead")
-    incubator.queueDeclare(incubator.ctrlFan, queuename="1",routingkey="incubator.hardware.gpio.fanManipulate")
-    incubator.queueDeclare(incubator.ctrlheater, queuename="2",routingkey="incubator.hardware.gpio.heaterManipulate")
+    incubator.queueDeclare(incubator.read_temperatures, queuename="0", routingkey="incubator.hardware.w1.tempRead")
+    incubator.queueDeclare(incubator.ctrlFan, queuename="1", routingkey="incubator.hardware.gpio.fanManipulate")
+    incubator.queueDeclare(incubator.ctrlheater, queuename="2", routingkey="incubator.hardware.gpio.heaterManipulate")
     incubator.startListening()
-
