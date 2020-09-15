@@ -4,10 +4,16 @@ import pika
 import json
 import datetime
 from gpiozero import LED
+from pika import BlockingConnection
+
 import temperature_sensor_read
 
 
 class IncubatorDriver:
+    TEMP_READ_QUEUE = "temperature_read"
+    HEAT_CTRL_QUEUE = "heater_control"
+    FAN_CTRL_QUEUE = "fan_control"
+
     def __init__(self, ip_raspberry='10.17.98.141',
                  port=5672,
                  username='incubator',
@@ -31,6 +37,7 @@ class IncubatorDriver:
                                                     '/',
                                                     credentials)
         self.connection = None
+        self.channel = None
 
         # TODO: What is this doing here?
         self.tempState = {"Time": False,
@@ -51,33 +58,39 @@ class IncubatorDriver:
         self.simulate_actuation = simulate_actuation
 
         # Always start in safe mode.
-        self.fan.off()
-        self.heater.off()
+        self.actuators_off()
 
-    def connect_to_server(self):
+    def setup(self):
         self.connection = pika.BlockingConnection(self.parameters)
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        self.declare_queue(self.on_temperature_read_msg, queue_name="0",
+        self.channel.queue_declare(self.TEMP_READ_QUEUE, exclusive=True)
+
+        # TODO: Make these routing keys global between client and server
+        self.declare_queue(self.on_temperature_read_msg, queue_name=self.TEMP_READ_QUEUE,
                            routing_key="incubator.hardware.w1.tempRead")
-        self.declare_queue(self.on_fan_control_msg, queue_name="1", routing_key="incubator.hardware.gpio.fanManipulate")
-        self.declare_queue(self.on_heat_control_message, queue_name="heater_control",
+        self.declare_queue(self.on_fan_control_msg, queue_name=self.FAN_CTRL_QUEUE,
+                           routing_key="incubator.hardware.gpio.fanManipulate")
+        self.declare_queue(self.on_heat_control_message, queue_name=self.HEAT_CTRL_QUEUE,
                            routing_key="incubator.hardware.gpio.heaterManipulate")
 
-    def declare_queue(self, callback, queue_name, routing_key):
+    def cleanup(self):
+        self.actuators_off()
+        self.connection.close()
+
+    def actuators_off(self):
+        self.fan.off()
+        self.heater.off()
+
+    def declare_queue(self, queue_name, routing_key):
         self.channel.queue_declare(queue_name, exclusive=True)
         self.channel.queue_bind(
             exchange=self.exchange_name,
             queue=queue_name,
             routing_key=routing_key
         )
-        # self.channel.basic_consume(
-        #     queue=queue_name,
-        #     on_message_callback=callback,
-        #     auto_ack=True
-        # )
-        # print("Bind ", routing_key, " with queue name ", queue_name)
+        print("Bind ", routing_key, " with queue name ", queue_name)
 
     def start_listening(self):
         print("Start listening")
@@ -163,16 +176,35 @@ class IncubatorDriver:
                     self.tempState["Time"] = False
         print("Keep listening")
 
+    def control_loop(self, exec_interval=5, strict_interval=True):
+        try:
+            while True:
+                start = time.time()
+                self.control_step()
+                elapsed = time.time() - start
+                if elapsed > exec_interval:
+                    print(f"Error: control step taking {elapsed - exec_interval}s more than specified interval {exec_interval}s. Please specify higher interval.")
+                    if strict_interval:
+                        raise ValueError(exec_interval)
+                else:
+                    time.sleep(exec_interval - elapsed)
+        except:
+            self.cleanup()
+            raise
+
+    def control_step(self):
+        self.react_control_signals()
+        self.read_temperature_signals()
+
+    def react_control_signals(self):
+        (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
+        print(f"Ctrl message received: {(method, properties, body)}")
+
+    def read_temperature_signals(self):
+        pass
+
 
 if __name__ == '__main__':
     incubator = IncubatorDriver()
-    incubator.connect_to_server()
-    # Wait for messages to be available at the exchange.
-    time.sleep(5)
-
-    # Then get them.
-    (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
-    print(f"Ctrl message received: {(method, properties, body)}")
-
-    #incubator.start_listening()
-    print("Started Listening.")
+    incubator.setup()
+    incubator.control_loop()
