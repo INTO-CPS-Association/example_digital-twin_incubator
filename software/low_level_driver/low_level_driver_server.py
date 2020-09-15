@@ -1,3 +1,5 @@
+import time
+
 import pika
 import json
 import datetime
@@ -165,6 +167,8 @@ class IncubatorDriver:
 if __name__ == '__main__':
     incubator = IncubatorDriver()
     incubator.connect_to_server()
+
+    time.sleep(5)
 
     (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
     print(f"Ctrl message received: {(method, properties, body)}")
