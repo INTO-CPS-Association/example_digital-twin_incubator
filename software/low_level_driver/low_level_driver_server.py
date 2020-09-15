@@ -167,9 +167,10 @@ class IncubatorDriver:
 if __name__ == '__main__':
     incubator = IncubatorDriver()
     incubator.connect_to_server()
-
+    # Wait for messages to be available at the exchange.
     time.sleep(5)
 
+    # Then get them.
     (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
     print(f"Ctrl message received: {(method, properties, body)}")
 
