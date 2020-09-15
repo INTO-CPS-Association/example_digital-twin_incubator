@@ -17,81 +17,86 @@ class IncubatorDriver:
                  fan_pin=13,
                  simulate_actuation=True
                  ):
-        self.ip_raspberry = ip_raspberry
-        self.port = port
-        self.username = username
-        self.password = password
+
+        # Connection info
         self.vhost = vhost
         self.exchange_name = exchange_name
         self.exchange_type = exchange_type
-        self.simulate_actuation = simulate_actuation
-        self.temperature_sensor = ("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
-                                   "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
-                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
-                                   )
+
+        credentials = pika.PlainCredentials(username, password)
+        self.parameters = pika.ConnectionParameters(ip_raspberry,
+                                                    port,
+                                                    '/',
+                                                    credentials)
+        self.connection = None
+
+
         # TODO: What is this doing here?
         self.tempState = {"Time": False,
                           "sensorReading1": False,
                           "sensorReading2": False,
                           "sensorReading3": False
                           }
+
+        # IO
         self.heater = LED(heater_pin)
         self.fan = LED(fan_pin)
+        self.temperature_sensor = ("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
+                                   "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
+                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
+                                   )
+
+        # Safety
+        self.simulate_actuation = simulate_actuation
 
         # Always start in safe mode.
         self.fan.off()
         self.heater.off()
 
     def connect_to_server(self):
-        self.credentials = pika.PlainCredentials(self.username, self.password)
-        self.parameters = pika.ConnectionParameters(self.ip_raspberry,
-                                                    5672,
-                                                    '/',
-                                                    self.credentials)
         self.connection = pika.BlockingConnection(self.parameters)
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        self.declare_queue(self.on_temperature_read_msg, queuename="0",
-                           routingkey="incubator.hardware.w1.tempRead")
-        self.declare_queue(self.on_fan_control_msg, queuename="1", routingkey="incubator.hardware.gpio.fanManipulate")
-        self.declare_queue(self.on_heat_control_message, queuename="2",
-                           routingkey="incubator.hardware.gpio.heaterManipulate")
+        self.declare_queue(self.on_temperature_read_msg, queue_name="0",
+                           routing_key="incubator.hardware.w1.tempRead")
+        self.declare_queue(self.on_fan_control_msg, queue_name="1", routing_key="incubator.hardware.gpio.fanManipulate")
+        self.declare_queue(self.on_heat_control_message, queue_name="2",
+                           routing_key="incubator.hardware.gpio.heaterManipulate")
 
-    def declare_queue(self, callbackFunc, queuename, routingkey):
-        self.result = self.channel.queue_declare(queuename, exclusive=True)
-        self.queue_name = self.result.method.queue
+    def declare_queue(self, callback, queue_name, routing_key):
+        self.channel.queue_declare(queue_name, exclusive=True)
         self.channel.queue_bind(
             exchange=self.exchange_name,
-            queue=self.queue_name,
-            routing_key=routingkey
+            queue=queue_name,
+            routing_key=routing_key
         )
         self.channel.basic_consume(
-            queue=self.queue_name,
-            on_message_callback=callbackFunc,
+            queue=queue_name,
+            on_message_callback=callback,
             auto_ack=True
         )
-        print("Bind ", routingkey, " with queue name ", queuename)
+        print("Bind ", routing_key, " with queue name ", queue_name)
 
     def start_listening(self):
         print("Start listening")
         self.channel.start_consuming()
 
     def on_temperature_read_msg(self, ch, method, properties, body):
-        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
-        self.body = json.loads(body)
+        body = json.loads(body)
         # print(type(body))
-        for self.idx, self.key in enumerate(self.body):
+        for idx, key in enumerate(body):
             # print("idx is",idx,"key is",key)
-            if self.idx >= 1:
-                if self.body[self.key] == True:
-                    self.temp = temperature_sensor_read.read_sensor(self.temperature_sensor[self.idx - 1])
-                    self.tempState["sensorReading" + str(self.idx)] = self.temp
+            if idx >= 1:
+                if body[key] == True:
+                    temp = temperature_sensor_read.read_sensor(self.temperature_sensor[idx - 1])
+                    self.tempState["sensorReading" + str(self.idx)] = temp
                 else:
                     self.tempState["sensorReading" + str(self.idx)] = False
             else:
-                if self.body[self.key] == True:
+                if body[key] == True:
                     # seconds = time.time()
                     # local_time = time.ctime(seconds)
                     self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
@@ -104,7 +109,7 @@ class IncubatorDriver:
         print("Keep listening")
 
     def on_fan_control_msg(self, ch, method, properties, body):
-        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
         for self.idx, self.key in enumerate(self.body):
@@ -133,7 +138,7 @@ class IncubatorDriver:
         print("Keep listening")
 
     def on_heat_control_message(self, ch, method, properties, body):
-        print(" Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
+        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
         # print(type(body))
         self.body = json.loads(body)
         for self.idx, self.key in enumerate(self.body):
