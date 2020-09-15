@@ -169,5 +169,5 @@ if __name__ == '__main__':
     (method, properties, body) = incubator.channel.basic_get("heater_control", auto_ack=True)
     print(f"Ctrl message received: {(method, properties, body)}")
 
-    incubator.start_listening()
+    #incubator.start_listening()
     print("Started Listening.")

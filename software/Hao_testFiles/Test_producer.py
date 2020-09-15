@@ -20,7 +20,7 @@ if __name__ == '__main__':
     #print("passing connection phase")
     channel.exchange_declare(exchange='Incubator_AMQP', exchange_type='topic')
 
-    routing_key = "incubator.hardware.w1.tempRead"#sys.argv[1] if len(sys.argv) > 2 else 'anonymous.info'
+    routing_key = "incubator.hardware.gpio.heaterManipulate"#sys.argv[1] if len(sys.argv) > 2 else 'anonymous.info'
     message = {
         "Time": True,
         "readTemperature1": False,
