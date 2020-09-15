@@ -1,3 +1,5 @@
+import logging
+import sys
 import time
 
 import pika
@@ -5,22 +7,34 @@ import json
 import datetime
 from gpiozero import LED
 from pika import BlockingConnection
-
 import temperature_sensor_read
+
+# Import parameters and shared stuff
+sys.path.append("../shared/")
+from connection_parameters import *
+from protocol import *
+
+
+def _convert_str_to_bool(body):
+    if body is None:
+        return None
+    else:
+        return body == "True"
 
 
 class IncubatorDriver:
     TEMP_READ_QUEUE = "temperature_read"
     HEAT_CTRL_QUEUE = "heater_control"
     FAN_CTRL_QUEUE = "fan_control"
+    logger = logging.getLogger("Incubator")
 
-    def __init__(self, ip_raspberry='10.17.98.141',
-                 port=5672,
-                 username='incubator',
-                 password='incubator',
-                 vhost='/',
-                 exchange_name='Incubator_AMQP',
-                 exchange_type='topic',
+    def __init__(self, ip_raspberry=RASPBERRY_IP,
+                 port=RASPBERRY_PORT,
+                 username=PIKA_USERNAME,
+                 password=PIKA_PASSWORD,
+                 vhost=PIKA_VHOST,
+                 exchange_name=PIKA_EXCHANGE,
+                 exchange_type=PIKA_EXCHANGE_TYPE,
                  heater_pin=12,
                  fan_pin=13,
                  simulate_actuation=True
@@ -34,7 +48,7 @@ class IncubatorDriver:
         credentials = pika.PlainCredentials(username, password)
         self.parameters = pika.ConnectionParameters(ip_raspberry,
                                                     port,
-                                                    '/',
+                                                    vhost,
                                                     credentials)
         self.connection = None
         self.channel = None
@@ -62,7 +76,7 @@ class IncubatorDriver:
 
     def setup(self):
         self.connection = pika.BlockingConnection(self.parameters)
-        print("Connected.")
+        self.logger.info("Connected.")
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
@@ -70,9 +84,9 @@ class IncubatorDriver:
         self.declare_queue(queue_name=self.TEMP_READ_QUEUE,
                            routing_key="incubator.hardware.w1.tempRead")
         self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
-                           routing_key="incubator.hardware.gpio.fanManipulate")
+                           routing_key=ROUTING_KEY_FAN)
         self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
-                           routing_key="incubator.hardware.gpio.heaterManipulate")
+                           routing_key=ROUTING_KEY_HEATER)
 
     def cleanup(self):
         self.actuators_off()
@@ -89,91 +103,7 @@ class IncubatorDriver:
             queue=queue_name,
             routing_key=routing_key
         )
-        print("Bound ", routing_key, " with queue name ", queue_name)
-
-    def start_listening(self):
-        print("Start listening")
-        self.channel.start_consuming()
-
-    def on_temperature_read_msg(self, ch, method, properties, body):
-        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
-        # print(type(body))
-        body = json.loads(body)
-        # print(type(body))
-        for idx, key in enumerate(body):
-            # print("idx is",idx,"key is",key)
-            if idx >= 1:
-                if body[key] == True:
-                    temp = temperature_sensor_read.read_sensor(self.temperature_sensor[idx - 1])
-                    self.tempState["sensorReading" + str(self.idx)] = temp
-                else:
-                    self.tempState["sensorReading" + str(self.idx)] = False
-            else:
-                if body[key] == True:
-                    # seconds = time.time()
-                    # local_time = time.ctime(seconds)
-                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
-                                                                             tzinfo=datetime.timezone.utc).isoformat()
-                else:
-                    self.tempState["Time"] = False
-        self.channel.basic_publish(
-            exchange=self.exchange_name, routing_key="incubator.hardware.w1.tempState", body=json.dumps(self.tempState))
-        print("Published Messages: ", self.tempState)
-        print("Keep listening")
-
-    def on_fan_control_msg(self, ch, method, properties, body):
-        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
-        # print(type(body))
-        self.body = json.loads(body)
-        for self.idx, self.key in enumerate(self.body):
-            # print("idx is",idx,"key is",key)
-            if self.idx >= 1:
-                if self.body[self.key] == True:
-                    if not self.simulate_actuation:
-                        self.fan.on()
-                    else:
-                        print("Pretending to turn the fan on.")
-                if self.body[self.key] == False:
-                    if not self.simulate_actuation:
-                        self.fan.off()
-                    else:
-                        print("Pretending to turn the fan off.")
-            else:
-                if self.body[self.key] == True:
-                    # seconds = time.time()
-                    # local_time = time.ctime(seconds)
-                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
-                                                                             tzinfo=datetime.timezone.utc).isoformat()
-                else:
-                    self.tempState["Time"] = False
-        # channel.basic_publish(
-        #     exchange='Incubator_AMQP', routing_key="incubator.hardware.w1.tempState", body=json.dumps(tempState))
-        print("Keep listening")
-
-    def on_heat_control_message(self, ch, method, properties, body):
-        print("Received Routing Key:%r \n Messages:%r" % (method.routing_key, body))
-        # print(type(body))
-        self.body = json.loads(body)
-        for self.idx, self.key in enumerate(self.body):
-            # print("idx is",idx,"key is",key)
-            if self.idx >= 1:
-                if self.body[self.key] == True:
-                    if not self.simulate_actuation:
-                        self.heater.on()
-                    else:
-                        print("Pretending to turn the heater on.")
-                if self.body[self.key] == False:
-                    if not self.simulate_actuation:
-                        self.heater.off()
-                    else:
-                        print("Pretending to turn the heater off.")
-            else:
-                if self.body[self.key] == True:
-                    self.tempState["Time"] = datetime.datetime.now().replace(microsecond=0,
-                                                                             tzinfo=datetime.timezone.utc).isoformat()
-                else:
-                    self.tempState["Time"] = False
-        print("Keep listening")
+        self.logger.info("Bound ", routing_key, " with queue name ", queue_name)
 
     def control_loop(self, exec_interval=5, strict_interval=True):
         try:
@@ -182,7 +112,8 @@ class IncubatorDriver:
                 self.control_step()
                 elapsed = time.time() - start
                 if elapsed > exec_interval:
-                    print(f"Error: control step taking {elapsed - exec_interval}s more than specified interval {exec_interval}s. Please specify higher interval.")
+                    self.logger.error(
+                        f"Control step taking {elapsed - exec_interval}s more than specified interval {exec_interval}s. Please specify higher interval.")
                     if strict_interval:
                         raise ValueError(exec_interval)
                 else:
@@ -193,14 +124,56 @@ class IncubatorDriver:
 
     def control_step(self):
         self.react_control_signals()
-        self.read_temperature_signals()
+        self.read_upload_state()
 
     def react_control_signals(self):
-        (method, properties, body) = incubator.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
-        print(f"Ctrl message received: {(method, properties, body)}")
+        heat_cmd = self._try_read_heat_control()
+        fan_cmd = self._try_read_fan_control()
 
-    def read_temperature_signals(self):
+        if heat_cmd is not None:
+            self.logger.debug(f"Heat command: on={heat_cmd}")
+            self._safe_set_actuator(self.heater, fan_cmd)
+        if fan_cmd is not None:
+            self.logger.debug(f"Fan command: on={fan_cmd}")
+            self._safe_set_actuator(self.fan, fan_cmd)
+
+    def _safe_set_actuator(self, gpio_led: LED, on: bool):
+        if on and gpio_led.is_lit:
+            self.logger.debug(f"  Ignored command as it is already on.")
+            return
+        elif (not on) and (not gpio_led.is_lit):
+            self.logger.debug(f"  Ignored command as it is already off.")
+            return
+
+        if on:
+            if not self.simulate_actuation:
+                gpio_led.on()
+            else:
+                self.logger.info("Pretending to set actuator on.")
+        else:
+            if not self.simulate_actuation:
+                gpio_led.off()
+            else:
+                self.logger.info("Pretending to set actuator off.")
+
+    def read_upload_state(self):
         pass
+
+    def _log_message(self, queue_name, method, properties, body):
+        self.logger.debug(f"Message received in queue {queue_name}.")
+        self.logger.debug(f"  method={method}")
+        self.logger.debug(f"  properties={properties}")
+        self.logger.debug(f"  body={body}")
+
+    def _try_read_heat_control(self):
+        (method, properties, body) = incubator.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
+        self._log_message(self.HEAT_CTRL_QUEUE, method, properties, body)
+        return _convert_str_to_bool(body)
+
+    def _try_read_fan_control(self):
+        (method, properties, body) = incubator.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
+        self._log_message(self.FAN_CTRL_QUEUE, method, properties, body)
+        return _convert_str_to_bool(body)
 
 
 if __name__ == '__main__':

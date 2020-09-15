@@ -1,5 +1,9 @@
-/experiments/.idea
 docs/_build
 .vscode
-/software/low_level_driver/.idea
-/software/Hao_testFiles/.idea
+.idea
+/electronics/doc/doc.aux
+/electronics/doc/doc.fdb_latexmk
+/electronics/doc/doc.fls
+/electronics/doc/doc.log
+/electronics/doc/doc.synctex.gz
+*.pyc
