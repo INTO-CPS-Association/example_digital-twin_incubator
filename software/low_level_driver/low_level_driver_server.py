@@ -122,7 +122,7 @@ class IncubatorDriver:
 
         if heat_cmd is not None:
             self.logger.debug(f"Heat command: on={heat_cmd}")
-            self._safe_set_actuator(self.heater, fan_cmd)
+            self._safe_set_actuator(self.heater, heat_cmd)
         if fan_cmd is not None:
             self.logger.debug(f"Fan command: on={fan_cmd}")
             self._safe_set_actuator(self.fan, fan_cmd)
@@ -167,7 +167,7 @@ class IncubatorDriver:
         message["elapsed"] = time.time() - start
 
         self.channel.basic_publish(
-            exchange='Incubator_AMQP', routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
+            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 

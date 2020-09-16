@@ -11,7 +11,6 @@ from protocol import *
 
 outfile = "output.csv"
 overwrite = True
-spacing = "\t"
 header_written = False
 csv_writer = None
 out_file_handle = None
