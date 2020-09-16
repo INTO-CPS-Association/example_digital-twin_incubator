@@ -156,7 +156,9 @@ class IncubatorDriver:
 
         message = {
             "time": time.time(),
-            "execution_interval": exec_interval
+            "execution_interval": exec_interval,
+            "heater_on": self.heater.is_lit,
+            "fan_on": self.fan.is_lit
         }
         for i in range(n_sensors):
             message[f"t{i}"] = readings[i]
