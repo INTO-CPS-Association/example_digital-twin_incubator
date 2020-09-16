@@ -7,7 +7,7 @@ import json
 import datetime
 from gpiozero import LED
 from pika import BlockingConnection
-import temperature_sensor_read
+import temperature_sensor
 
 # Import parameters and shared stuff
 sys.path.append("../shared/")
@@ -23,7 +23,6 @@ def _convert_str_to_bool(body):
 
 
 class IncubatorDriver:
-    TEMP_READ_QUEUE = "temperature_read"
     HEAT_CTRL_QUEUE = "heater_control"
     FAN_CTRL_QUEUE = "fan_control"
     logger = logging.getLogger("Incubator")
@@ -53,20 +52,12 @@ class IncubatorDriver:
         self.connection = None
         self.channel = None
 
-        # TODO: What is this doing here?
-        self.tempState = {"Time": False,
-                          "sensorReading1": False,
-                          "sensorReading2": False,
-                          "sensorReading3": False
-                          }
-
         # IO
         self.heater = LED(heater_pin)
         self.fan = LED(fan_pin)
         self.temperature_sensor = ("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
                                    "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
-                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave"
-                                   )
+                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave")
 
         # Safety
         self.simulate_actuation = simulate_actuation
@@ -81,8 +72,6 @@ class IncubatorDriver:
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
         # TODO: Make these routing keys global between client and server
-        self.declare_queue(queue_name=self.TEMP_READ_QUEUE,
-                           routing_key="incubator.hardware.w1.tempRead")
         self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
                            routing_key=ROUTING_KEY_FAN)
         self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
@@ -110,7 +99,7 @@ class IncubatorDriver:
         try:
             while True:
                 start = time.time()
-                self.control_step()
+                self.control_step(exec_interval)
                 elapsed = time.time() - start
                 if elapsed > exec_interval:
                     self.logger.error(
@@ -123,9 +112,9 @@ class IncubatorDriver:
             self.cleanup()
             raise
 
-    def control_step(self):
+    def control_step(self, exec_interval):
         self.react_control_signals()
-        self.read_upload_state()
+        self.read_upload_state(exec_interval)
 
     def react_control_signals(self):
         heat_cmd = self._try_read_heat_control()
@@ -157,8 +146,27 @@ class IncubatorDriver:
             else:
                 self.logger.info("Pretending to set actuator off.")
 
-    def read_upload_state(self):
-        pass
+    def read_upload_state(self, exec_interval):
+        n_sensors = len(self.temperature_sensor)
+        readings = []*n_sensors
+        timestamps = []*n_sensors
+        for i in range(n_sensors):
+            readings.append(temperature_sensor.read_sensor(self.temperature_sensor[0]))
+            timestamps.append(time.time())
+
+        message = {
+            "time": time.time(),
+            "execution_interval": exec_interval
+        }
+        for i in range(n_sensors):
+            message[f"t{i}"] = readings[i]
+            message[f"time_t{i}"] = timestamps[i]
+
+        self.channel.basic_publish(
+            exchange='Incubator_AMQP', routing_key=ROUTING_KEY_STATE, body=message)
+        self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
+        self.logger.debug(message)
+
 
     def _log_message(self, queue_name, method, properties, body):
         self.logger.debug(f"Message received in queue {queue_name}.")
