@@ -16,7 +16,7 @@ header_written = False
 csv_writer = None
 out_file_handle = None
 print_exclude = "time"
-line_format = "{:20} {:10} {:10} {:10} {:10} {:10}"
+line_format = "{:20} {:10} {:10} {:10} {:10} {:10} {:10}"
 
 def read_state(ch, method, properties, body):
     global header_written
@@ -27,7 +27,7 @@ def read_state(ch, method, properties, body):
         header = list(body_json.keys())
         csv_writer.writerow(header) 
         headers_to_print = [h for h in header if not h.startswith(print_exclude)]
-        assert len(headers_to_print)==6
+        assert len(headers_to_print)==7
         print(line_format.format(*headers_to_print))
         header_written = True
     
