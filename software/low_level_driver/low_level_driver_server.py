@@ -95,11 +95,11 @@ class IncubatorDriver:
         )
         self.logger.info(f"Bound {routing_key}--> {queue_name}")
 
-    def control_loop(self, exec_interval=5, strict_interval=True):
+    def control_loop(self, exec_interval=3, strict_interval=True):
         try:
             while True:
                 start = time.time()
-                self.control_step(exec_interval)
+                self.control_step(start, exec_interval)
                 elapsed = time.time() - start
                 if elapsed > exec_interval:
                     self.logger.error(
@@ -112,9 +112,9 @@ class IncubatorDriver:
             self.cleanup()
             raise
 
-    def control_step(self, exec_interval):
+    def control_step(self, start, exec_interval):
         self.react_control_signals()
-        self.read_upload_state(exec_interval)
+        self.read_upload_state(start, exec_interval)
 
     def react_control_signals(self):
         heat_cmd = self._try_read_heat_control()
@@ -146,7 +146,7 @@ class IncubatorDriver:
             else:
                 self.logger.info("Pretending to set actuator off.")
 
-    def read_upload_state(self, exec_interval):
+    def read_upload_state(self, start, exec_interval):
         n_sensors = len(self.temperature_sensor)
         readings = []*n_sensors
         timestamps = []*n_sensors
@@ -163,6 +163,8 @@ class IncubatorDriver:
         for i in range(n_sensors):
             message[f"t{i}"] = readings[i]
             message[f"time_t{i}"] = timestamps[i]
+
+        message["elapsed"] = time.time() - start
 
         self.channel.basic_publish(
             exchange='Incubator_AMQP', routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
