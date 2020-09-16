@@ -165,7 +165,7 @@ class IncubatorDriver:
             message[f"time_t{i}"] = timestamps[i]
 
         self.channel.basic_publish(
-            exchange='Incubator_AMQP', routing_key=ROUTING_KEY_STATE, body=message)
+            exchange='Incubator_AMQP', routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 
