@@ -161,8 +161,8 @@ class IncubatorDriver:
             "fan_on": self.fan.is_lit
         }
         for i in range(n_sensors):
-            message[f"t{i}"] = readings[i]
-            message[f"time_t{i}"] = timestamps[i]
+            message[f"t{i+1}"] = readings[i]
+            message[f"time_t{i+1}"] = timestamps[i]
 
         message["elapsed"] = time.time() - start
 

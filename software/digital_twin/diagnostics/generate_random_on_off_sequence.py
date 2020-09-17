@@ -38,5 +38,6 @@ if __name__ == '__main__':
             print(f"Sleeping for {sleep_time}s.")
             time.sleep(sleep_time)
     except: 
+        channel.basic_publish(exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_HEATER, body=str(False).encode(ENCODING))
         connection.close()
         raise
