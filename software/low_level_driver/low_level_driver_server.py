@@ -151,7 +151,7 @@ class IncubatorDriver:
         readings = []*n_sensors
         timestamps = []*n_sensors
         for i in range(n_sensors):
-            readings.append(temperature_sensor.read_sensor(self.temperature_sensor[0]))
+            readings.append(temperature_sensor.read_sensor(self.temperature_sensor[i]))
             timestamps.append(time.time())
 
         message = {

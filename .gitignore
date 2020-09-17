@@ -1,6 +1,7 @@
 docs/_build
 .vscode
 .idea
+venv/
 /electronics/doc/doc.aux
 /electronics/doc/doc.fdb_latexmk
 /electronics/doc/doc.fls
