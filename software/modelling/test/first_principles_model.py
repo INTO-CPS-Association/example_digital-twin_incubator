@@ -29,9 +29,9 @@ class MyTestCase(unittest.TestCase):
 
         fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1)
 
-        ax1.plot(data["time"], data["t0"], label="t0")
         ax1.plot(data["time"], data["t1"], label="t1")
         ax1.plot(data["time"], data["t2"], label="t2")
+        ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
         ax1.legend()
 
@@ -62,8 +62,8 @@ class MyTestCase(unittest.TestCase):
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
 
         data["energy_in"] = data.apply(lambda row: integrate.trapz(data[0:row.name+1]["power_in"], x=data[0:row.name+1]["time"]), axis=1)
-        data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t0, row.t1, row.t2]), axis=1)
-        data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t0, row.t1, row.t2]), axis=1)
+        data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t1, row.t2, row.t3]), axis=1)
+        data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t1, row.t2, row.t3]), axis=1)
         zero_kelvin = 273.15
         data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
         air_mass = 0.04 # Kg
@@ -74,9 +74,9 @@ class MyTestCase(unittest.TestCase):
 
         fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1)
 
-        ax1.plot(data["time"], data["t0"], label="t0")
         ax1.plot(data["time"], data["t1"], label="t1")
         ax1.plot(data["time"], data["t2"], label="t2")
+        ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
         ax1.legend()
 
