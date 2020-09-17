@@ -9,8 +9,8 @@ from connection_parameters import *
 from protocol import *
 
 
-MIN_TIME = 10
-MAX_TIME = 50
+MIN_TIME = 5
+MAX_TIME = 10
 
 if __name__ == '__main__':
     credentials = pika.PlainCredentials(PIKA_USERNAME, PIKA_PASSWORD)
