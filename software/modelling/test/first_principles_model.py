@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../digital_twin/diagnostics/output.csv")
+        data = load_data("../../digital_twin/diagnostics/random_on_off_sequences.csv")
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
 
@@ -26,7 +26,7 @@ class MyTestCase(unittest.TestCase):
         data["potential_energy"] = data["avg_temp_kelvin"] * air_mass * air_heat_capacity
         data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
 
-        fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1)
+        fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, 1)
 
         ax1.plot(data["time"], data["t1"], label="t1")
         ax1.plot(data["time"], data["t2"], label="t2")
@@ -45,12 +45,9 @@ class MyTestCase(unittest.TestCase):
         ax4.plot(data["time"], data["power_in"], label="power_in")
         ax4.legend()
 
-        ax5.plot(data["time"], data["std_dev_temperature"], label="std_dev_temperature")
+        ax5.plot(data["time"], data["energy_in"], label="energy_in")
+        ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         ax5.legend()
-
-        ax6.plot(data["time"], data["energy_in"], label="energy_in")
-        ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
-        ax6.legend()
 
         plt.show()
 
