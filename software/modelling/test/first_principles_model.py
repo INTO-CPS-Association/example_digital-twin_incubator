@@ -8,7 +8,19 @@ import matplotlib.pyplot as plt
 from scipy import integrate
 
 
-class MyTestCase(unittest.TestCase):
+class ModellingTests(unittest.TestCase):
+
+    def test_calibrate_model(self):
+        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        experiments = [
+            "../../../datasets/calibration/random_on_off_sequences",
+            # "../../../datasets/calibration/random_on_off_sequences_1",
+            # "../../../datasets/calibration/random_on_off_sequences_2"
+            ]
+        params = [1.0,  # C_air
+                  1.0]  # G_box
+
+        print(minimize(error, params, method='BFGS', options={'maxiter': 1}))
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
