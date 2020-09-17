@@ -1,6 +1,5 @@
 from oomodelling.ModelSolver import ModelSolver
 
-from data_processing import load_data
 from first_principles_model import IncubatorPlant
 
 
@@ -43,25 +42,24 @@ def create_lookup_table(time_range, data):
     return signal
 
 
-def run_experiment(exp, params):
-    data = load_data(exp)
-
+def run_experiment(data, params):
     C_air = params[0]
     G_box = params[1]
 
-    model = IncubatorPlant(initial_heat_voltage=11.8,
-                           initial_heat_current=9.0,
-                           initial_room_temperature=25.0,
-                           initial_box_temperature=25.0,
+    model = IncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
+                           initial_box_temperature=data.iloc[0]["t1"],
                            C_air=C_air, G_box=G_box)
 
-    model.in_heater_on = create_lookup_table(data["time"], data["heater_on"])
-    model.in_room_temperature = create_lookup_table(data["time"], data["t1"])
+    in_heater_table = create_lookup_table(data["time"], data["heater_on"])
+    in_room_temperature = create_lookup_table(data["time"], data["t1"])
+    model.in_heater_on = lambda: in_heater_table(model.time())
+    model.in_room_temperature = lambda: in_room_temperature(model.time())
     model.C_air = C_air
     model.G_box = G_box
 
-    t_eval = data["time"]
-    ModelSolver().simulate(model, 0.0, exp["time_f"], 0.1, t_eval)
+    tf = data.iloc[-1]["time"]
+    h = 1.0
+    ModelSolver().simulate(model, 0.0, tf, h)
     return model
 
 
