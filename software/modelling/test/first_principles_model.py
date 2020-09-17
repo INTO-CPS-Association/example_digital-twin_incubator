@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../digital_twin/diagnostics/random_on_off_sequences.csv")
+        data = load_data("../../../datasets/calibration/random_on_off_sequences.csv")
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
 
@@ -20,8 +20,8 @@ class MyTestCase(unittest.TestCase):
         data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t2, row.t3]), axis=1)
         zero_kelvin = 273.15
         data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
-        air_mass = 0.04 # Kg
-        air_heat_capacity = 700 # (j kg^-1 °K^-1)
+        air_mass = 0.04  # Kg
+        air_heat_capacity = 700  # (j kg^-1 °K^-1)
 
         data["potential_energy"] = data["avg_temp_kelvin"] * air_mass * air_heat_capacity
         data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
