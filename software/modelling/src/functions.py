@@ -2,7 +2,7 @@ import numpy
 from oomodelling.ModelSolver import ModelSolver
 
 from data_processing import derive_data, load_data
-from first_principles_model import IncubatorPlant
+from two_parameter_model import TwoParameterIncubatorPlant
 
 import logging
 
@@ -51,9 +51,9 @@ def run_experiment(data, params, h=3.0):
     C_air = params[0]
     G_box = params[1]
 
-    model = IncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
-                           initial_box_temperature=data.iloc[0]["average_temperature"],
-                           C_air=C_air, G_box=G_box)
+    model = TwoParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
+                                       initial_box_temperature=data.iloc[0]["average_temperature"],
+                                       C_air=C_air, G_box=G_box)
 
     in_heater_table = create_lookup_table(data["time"], data["heater_on"])
     in_room_temperature = create_lookup_table(data["time"], data["t1"])
