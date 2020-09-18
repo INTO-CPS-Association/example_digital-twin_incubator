@@ -21,11 +21,12 @@ class TestsModelling(unittest.TestCase):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         experiments = [
             "../../../datasets/calibration/ramp_up_cool_down.csv",
-            # "../../../datasets/calibration/random_on_off_sequences_1",
-            # "../../../datasets/calibration/random_on_off_sequences_2"
+            "../../../datasets/calibration/random_on_off_sequences",
+            "../../../datasets/calibration/random_on_off_sequences_1",
+            "../../../datasets/calibration/random_on_off_sequences_2"
             ]
-        params = [546.72725922,  # C_air
-                  0.67488101]  # G_box
+        params = [638.35778306,  # C_air
+                  0.77556735]  # G_box
 
         residual = construct_residual(experiments)
 
