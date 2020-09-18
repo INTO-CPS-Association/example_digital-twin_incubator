@@ -1,3 +1,5 @@
+import math
+
 import numpy
 import pandas
 from scipy import integrate
@@ -5,11 +7,26 @@ from scipy import integrate
 from globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
-def load_data(filepath):
+def load_data(filepath, desired_timeframe=(- math.inf, math.inf)):
     csv = pandas.read_csv(filepath)
     # normalize time
     csv["time"] = csv["time"] - csv.iloc[0]["time"]
+
+    start_idx = 0
+    while csv.iloc[start_idx]["time"] < desired_timeframe[0]:
+        start_idx = start_idx + 1
+
+    end_idx = len(csv["time"]) - 1
+    while csv.iloc[end_idx]["time"] > desired_timeframe[1]:
+        end_idx = end_idx - 1
+
+    assert start_idx < end_idx
+
+    indices = range(start_idx, end_idx + 1)
+    csv = csv.iloc[indices]
+
     return csv
+
 
 def derive_data(data):
     data["power_in"] = data.apply(lambda row: HEATER_VOLTAGE * HEATER_CURRENT if row.heater_on else 0.0, axis=1)
