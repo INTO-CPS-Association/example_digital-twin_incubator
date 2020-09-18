@@ -14,7 +14,9 @@ from functions import run_experiment, construct_residual
 
 class TestsModelling(unittest.TestCase):
 
-    def test_calibrate_model(self):
+    
+
+    def test_calibrate_two_parameter_model(self):
         NEvals = 100
         logging.basicConfig(level=logging.INFO)
 
@@ -32,7 +34,7 @@ class TestsModelling(unittest.TestCase):
 
         print(leastsq(residual, params, maxfev=NEvals))
 
-    def test_run_experiment(self):
+    def test_run_experiment_two_parameter_model(self):
         params = [638.35778306,  # C_air
                   0.77556735]  # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
@@ -68,7 +70,7 @@ class TestsModelling(unittest.TestCase):
 
         plt.show()
 
-    def test_check_model_inputs(self):
+    def test_check_two_parameter_model_inputs(self):
         params = [800.0,  # C_air
                   0.3]  # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
