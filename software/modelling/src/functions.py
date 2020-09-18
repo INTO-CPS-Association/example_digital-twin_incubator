@@ -1,7 +1,12 @@
+import numpy
 from oomodelling.ModelSolver import ModelSolver
 
+from data_processing import derive_data, load_data
 from first_principles_model import IncubatorPlant
 
+import logging
+
+l = logging.getLogger("Functions")
 
 def find_closest_idx(t, start_idx, time_range):
     assert start_idx >= 0
@@ -42,12 +47,12 @@ def create_lookup_table(time_range, data):
     return signal
 
 
-def run_experiment(data, params):
+def run_experiment(data, params, h=3.0):
     C_air = params[0]
     G_box = params[1]
 
     model = IncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
-                           initial_box_temperature=data.iloc[0]["t1"],
+                           initial_box_temperature=data.iloc[0]["average_temperature"],
                            C_air=C_air, G_box=G_box)
 
     in_heater_table = create_lookup_table(data["time"], data["heater_on"])
@@ -58,18 +63,33 @@ def run_experiment(data, params):
     model.G_box = G_box
 
     tf = data.iloc[-1]["time"]
-    h = 1.0
-    ModelSolver().simulate(model, 0.0, tf, h)
-    return model
+    sol = ModelSolver().simulate(model, 0.0, tf, h, t_eval=data["time"])
+    return model, sol
 
 
-def construct_error(experiments):
-    def error(params):
+def construct_residual(experiments):
+    def residual(params):
         errors = []
         for exp in experiments:
-            m = run_experiment(exp, params)
-            est_TF = m.box_air.signals['T'][-1]
-            errors.append((exp["TF"] - est_TF) ** 2)
+            data = derive_data(load_data(exp))
+            m, sol = run_experiment(data, params, h=3.0)
+            state_names = m.state_names()
+            state_over_time = sol.y
+
+            T_indexes = numpy.where(state_names == 'T')
+            assert len(T_indexes) == 1
+            approx_Troom = state_over_time[T_indexes[0], :][0]
+            Troom = data["average_temperature"].to_numpy()
+            assert len(approx_Troom) == len(Troom), f"Inconsistent troom arrays. One has {len(approx_Troom)} elements " \
+                                                    f"and the other one has {len(Troom)}. " \
+                                                    f"Their shapes are {approx_Troom.shape} and {Troom.shape}"
+            assert approx_Troom.shape == Troom.shape, f"Inconsistent troom arrays. One has shape {approx_Troom.shape} elements " \
+                                                    f"and the other one has {Troom.shape}."
+            res = Troom - approx_Troom
+            cost = sum(res**2)
+            l.info(f"Parameters {params} -> Cost: {cost}")
+            return res
 
         cost = sum(errors)
         return cost
+    return residual
