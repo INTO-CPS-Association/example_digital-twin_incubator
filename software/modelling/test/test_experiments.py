@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from functions import run_experiment_two_parameter_model, construct_residual, run_experiment_four_parameter_model
 
 
-class TestsModelling(unittest.TestCase):
+class FourParameterModelTests(unittest.TestCase):
 
     def test_calibrate_four_parameter_model(self):
         NEvals = 100
