@@ -1,4 +1,5 @@
 import logging
+import math
 import unittest
 
 import numpy
@@ -18,23 +19,26 @@ class TestsModelling(unittest.TestCase):
 
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         experiments = [
-            "../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
-            "../../../datasets/calibration_fan_12v/random_on_off_sequences",
-            "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
-            "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
+            "../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+            # "../../../datasets/calibration_fan_12v/random_on_off_sequences",
+            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
+            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
             ]
-        params = [638.35778306,  # C_air
-                  0.77556735]  # G_box
+        params = [616.56464029,  # C_air
+                  0.65001889]  # G_box
 
-        residual = construct_residual(experiments, run_exp=run_experiment_two_parameter_model)
+        residual = construct_residual(experiments,
+                                      run_exp=run_experiment_two_parameter_model,
+                                      desired_timeframe=(-math.inf, 750))
 
         print(leastsq(residual, params, maxfev=NEvals))
 
     def test_run_experiment_two_parameter_model(self):
-        params = [638.35778306,  # C_air
-                  0.77556735]  # G_box
+        params = [616.56464029,  # C_air
+                  0.65001889]   # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv"))
+        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 4000)))
         results, sol = run_experiment_two_parameter_model(data, params)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)

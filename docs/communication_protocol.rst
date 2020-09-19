@@ -1,5 +1,23 @@
 Communication Protocol
 ======================
+
+There are two protocols to consider here:
+
+A. Communication with low_level_driver
+
+B. Communication with rabbitmq fmu.
+
+Communication with low_level_driver
+-----------------------------------
+
+Specified in the python class `IncubatorDriver`.
+Essentially, a single message is published for each control loop execution.
+That message contains the readings of all temperature sensors, and state of the controller (parameters, etc.).
+
+
+Communication with RabbitMQ FMU
+-------------------------------
+
 The protocol has to match with https://into-cps-rabbitmq-fmu.readthedocs.io/en/latest/user-manual.html
 
 

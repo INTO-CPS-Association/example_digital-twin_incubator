@@ -15,4 +15,3 @@ Anyone else interested in this communication, such as the digital twin, can list
     Communication System Setup
 
 .. include:: communication_protocol.rst
-
