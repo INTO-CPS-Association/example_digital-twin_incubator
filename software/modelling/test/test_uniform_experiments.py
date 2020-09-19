@@ -56,7 +56,7 @@ class UniformExperimentTests(unittest.TestCase):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        plt.show()
+        # plt.show()
 
     def test_show_temperature_sensor_redundant(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
@@ -103,7 +103,7 @@ class UniformExperimentTests(unittest.TestCase):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        plt.show()
+        # plt.show()
 
 
 

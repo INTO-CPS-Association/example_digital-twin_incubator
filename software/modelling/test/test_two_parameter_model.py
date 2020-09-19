@@ -18,10 +18,10 @@ class TestsModelling(unittest.TestCase):
 
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         experiments = [
-            "../../../datasets/calibration/ramp_up_cool_down.csv",
-            "../../../datasets/calibration/random_on_off_sequences",
-            "../../../datasets/calibration/random_on_off_sequences_1",
-            "../../../datasets/calibration/random_on_off_sequences_2"
+            "../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
+            "../../../datasets/calibration_fan_12v/random_on_off_sequences",
+            "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
+            "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
             ]
         params = [638.35778306,  # C_air
                   0.77556735]  # G_box
@@ -34,7 +34,7 @@ class TestsModelling(unittest.TestCase):
         params = [638.35778306,  # C_air
                   0.77556735]  # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration/ramp_up_cool_down.csv"))
+        data = derive_data(load_data("../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv"))
         results, sol = run_experiment_two_parameter_model(data, params)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)
@@ -56,13 +56,13 @@ class TestsModelling(unittest.TestCase):
         ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
         ax4.legend()
 
-        plt.show()
+        # plt.show()
 
     def test_check_two_parameter_model_inputs(self):
         params = [800.0,  # C_air
                   0.3]  # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration/random_on_off_sequences.csv"))
+        data = derive_data(load_data("../../../datasets/calibration_fan_12v/random_on_off_sequences.csv"))
         results, sol = run_experiment_two_parameter_model(data, params, h=3.0)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)

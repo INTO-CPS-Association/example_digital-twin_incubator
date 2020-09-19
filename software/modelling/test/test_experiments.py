@@ -13,45 +13,35 @@ from functions import run_experiment_two_parameter_model, construct_residual, ru
 
 class TestsModelling(unittest.TestCase):
 
-    def test_lse(self):
-        params = [502.63299016,  # C_air
-                  0.83135322,  # G_box
-                  22.15685039,  # C_heater
-                  0.58522791]  # G_heater
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration/ramp_up_cool_down.csv"))
-        results, sol = run_experiment_four_parameter_model(data, params)
-        print(results.state_names())
-        print(results.derivatives())
-
     def test_calibrate_four_parameter_model(self):
         NEvals = 100
         logging.basicConfig(level=logging.INFO)
 
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         experiments = [
-            # "../../../datasets/calibration/ramp_up_cool_down.csv",
-            "../../../datasets/calibration/random_on_off_sequences.csv",
-            # "../../../datasets/calibration/random_on_off_sequences_1",
-            # "../../../datasets/calibration/random_on_off_sequences_2"
+            "../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+            # "../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
+            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
+            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
         ]
-        params = [556.754479,  # C_air
-                  0.80855366,  # G_box
-                  -25.90049941,  # C_heater
-                  -0.70702576]  # G_heater
+        params = [459.12364521,  # C_air
+                  0.87855404,  # G_box
+                  41.97178367,  # C_heater
+                  1.00696745]  # G_heater
 
         residual = construct_residual(experiments, run_exp=run_experiment_four_parameter_model,
-                                      desired_timeframe=(-math.inf, 500))
+                                      desired_timeframe=(-math.inf, 750))
 
         print(leastsq(residual, params, maxfev=NEvals))
 
     def test_run_experiment_four_parameter_model(self):
-        params = [502.63299016,  # C_air
-                  0.83135322,  # G_box
-                  22.15685039,  # C_heater
-                  0.58522791]  # G_heater
+        params = [486.1198196,  # C_air
+                  0.85804919,  # G_box
+                  33.65074598,  # C_heater
+                  0.86572258]  # G_heater
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration/random_on_off_sequences.csv"))
+        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 2000)))
         results, sol = run_experiment_four_parameter_model(data, params)
 
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
@@ -60,7 +50,7 @@ class TestsModelling(unittest.TestCase):
         ax1.plot(data["time"], data["t2"], label="t2")
         ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(results.signals["time"], results.signals["T"], label="~T(4)")
-        ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
+        ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
         ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
         ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
         ax1.legend()
@@ -77,7 +67,7 @@ class TestsModelling(unittest.TestCase):
         ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
         ax4.legend()
 
-        plt.show()
+        # plt.show()
 
 
     def test_run_experiment_compare_models(self):
@@ -89,8 +79,8 @@ class TestsModelling(unittest.TestCase):
                   25.90049941,  # C_heater
                   0.70702576]  # G_heater
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration/random_on_off_sequences.csv",
-                                     desired_timeframe=(-math.inf, 400)))
+        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 2000)))
         results_4p, sol = run_experiment_four_parameter_model(data, params)
         results_2p, sol = run_experiment_two_parameter_model(data, params)
 
@@ -122,7 +112,7 @@ class TestsModelling(unittest.TestCase):
         # ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax5.legend()
 
-        plt.show()
+        # plt.show()
 
 
 

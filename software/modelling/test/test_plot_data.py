@@ -1,4 +1,5 @@
 import logging
+import math
 import unittest
 
 import numpy
@@ -14,7 +15,8 @@ class TestsModelling(unittest.TestCase):
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../../datasets/calibration/random_on_off_sequences.csv")
+        data = load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+                         desired_timeframe=(- math.inf, 2000))
 
         data = derive_data(data)
 
@@ -41,7 +43,7 @@ class TestsModelling(unittest.TestCase):
         ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         ax5.legend()
 
-        plt.show()
+        # plt.show()
 
 
 if __name__ == '__main__':
