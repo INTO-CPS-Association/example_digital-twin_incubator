@@ -5,7 +5,8 @@ Experiments
 Software
 ======================
 
-
+We used the low_level_driver for controlling the system, and to activate the actuators and record data we used the code in 
+`/software/digital_twin/experiments/`.
 
 
 Temperature Uniformity
