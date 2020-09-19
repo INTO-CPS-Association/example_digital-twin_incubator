@@ -3,12 +3,12 @@ Much information is currently captured in issues. Please consult the issues for 
 # The Incubator Digital Twin
 
 This is a case study of an Incubator with the purpose of understanding the steps and processes involved in developing a digital twin system.
-An incubator, or heater, is an insulated container with the ability to keep a temperture and heat, but not cool.
+An incubator, or heater, is an insulated container with the ability to keep a temperature and heat, but not cool.
 
-The main novelity potential is the ability to answer what-if questions, which is somewhat general for digital twins.
+The main novelty potential is the ability to answer what-if questions, which is somewhat general for digital twins.
 The controller does not need any sophisticated model to work, but any other questions regarding the future behaviour of a system with possibly open loop control, will require a somewhat good model of what’s actually happening inside the box at the time the questions are asked.
 
-Furthermore, the hope is that the approach used / created during this case study can be reused for the next case study (i.e. robotti/arm/water) and therey validated/adjusted.
+Furthermore, the hope is that the approach used / created during this case study can be reused for the next case study (i.e. robotti/arm/water) and thereby validated/adjusted.
 
 ## The System
 The overall purpose of the system is to reach a certain temperature within a box and keep the temperature regardless of content.
@@ -16,9 +16,9 @@ The overall purpose of the system is to reach a certain temperature within a box
 
 The system consists of:
 
-- A styrofoam box in order to have an insulated container.
+- A Styrofoam box in order to have an insulated container.
 
-- A heat source to heat up the content within the styrofoam box.
+- A heat source to heat up the content within the Styrofoam box.
 
 - A fan to distribute the heating within the box
 
@@ -62,7 +62,7 @@ https://www.aliexpress.com/item/4000848132589.html?spm=a2g0o.productlist.0.0.885
 - Controller: Raspberry Pie? 
 - Styrofoam box: https://www.bauhaus.dk/opbevaringskasse-med-lag-50-l-59-5-x-39-5-cm
 
-Heater and fan are currently the same, but it would be good to seperate them. Any inputs are very welcome!
+Heater and fan are currently the same, but it would be good to separate them. Any inputs are very welcome!
 
 ## Software
 - Microcontroller programming
@@ -71,4 +71,29 @@ Heater and fan are currently the same, but it would be good to seperate them. An
 - Models of the Physical System (Fan, Heater, Temperature Sensor, one or more FMUs?)
 - Maestro 
 
+# Repository Maintenance Instructions
 
+General guidelines (instructions are in the following subsections)
+
+1. Run the tests as often as possible.
+2. Create tests as much as possible.
+3. Ask for code reviews (code readable by at least two people is much more likely readable by a third)
+4. Organize and document your datasets, and experiments: use the sphinx documents for this.
+5. Beware of large datasets.
+6. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everything. Discuss with Casper, Kenneth, or Claudio before doing so.
+
+
+
+## Running Tests
+
+
+
+## Creating Tests
+
+
+
+## Large Datasets
+
+
+
+## Generate the Docs
