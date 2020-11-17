@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2020-11-13T12:55:03.744Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/13.5.1 Chrome/83.0.4103.122 Electron/9.1.1 Safari/537.36" etag="W5H69m09QBAwAHBKh5qj" compressed="false" version="13.5.1" type="device">
+<mxfile host="Electron" modified="2020-11-17T13:29:57.611Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/13.5.1 Chrome/83.0.4103.122 Electron/9.1.1 Safari/537.36" etag="kR-_CFlTQsk6uKPbYPCm" compressed="false" version="13.5.1" type="device">
   <diagram id="1IEk_Nb3fTFsxIXIZDjR" name="Page-1">
-    <mxGraphModel dx="6088" dy="4248" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2431" dy="2031" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -118,7 +118,7 @@
           <mxGeometry x="1970" y="259" width="203" height="53" as="geometry" />
         </mxCell>
         <mxCell id="Xfdw-Jkxc4dPvAUYHgu_-44" value="Design" style="rounded=0;whiteSpace=wrap;html=1;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
-          <mxGeometry x="-147" y="-485" width="1068" height="54.5" as="geometry" />
+          <mxGeometry x="-147" y="-485" width="675" height="54.5" as="geometry" />
         </mxCell>
         <mxCell id="Xfdw-Jkxc4dPvAUYHgu_-45" value="Monitoring" style="rounded=0;whiteSpace=wrap;html=1;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="939" y="-485" width="626" height="54.5" as="geometry" />
@@ -414,6 +414,9 @@
         </mxCell>
         <mxCell id="eqjgwghVcDIJU0efO2f4-5" value="1. Figure out what the user might want?&lt;br&gt;2. Making the tools." style="rounded=1;whiteSpace=wrap;html=1;align=left;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;" parent="1" vertex="1">
           <mxGeometry x="1463" y="474" width="244" height="81" as="geometry" />
+        </mxCell>
+        <mxCell id="VwhJdy6CKWFo0XkRKYoI-1" value="Create" style="rounded=0;whiteSpace=wrap;html=1;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="533" y="-485" width="400" height="54.5" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
