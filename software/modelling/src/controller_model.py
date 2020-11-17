@@ -11,12 +11,18 @@ class ControllerModel(Model):
 
         self.in_temperature = self.input(lambda: 20.0)
 
-        self.heater_on = self.var(lambda: self.calculate_ctrl_action(self.TL, self.in_temperature()))
+        self.cached_heater_on = False
+
+        self.heater_on = self.var(lambda: self.cached_heater_on)
 
         self.save()
+
+    def discrete_step(self):
+        self.cached_heater_on = self.calculate_ctrl_action(self.TL, self.in_temperature())
+        return super().discrete_step()
 
     def calculate_ctrl_action(self, tl, in_temperature):
         """
         Returns whether heater is on or not (true or false)
         """
-        return True
+        return not self.cached_heater_on

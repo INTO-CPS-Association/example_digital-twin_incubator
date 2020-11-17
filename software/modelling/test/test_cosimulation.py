@@ -19,6 +19,6 @@ class CosimulationTests(unittest.TestCase):
         plt.plot(m.signals['time'], m.plant.signals['T'])
 
         plt.figure()
-        plt.plot(m.signals['time'], m.ctrl.signals['heater_on'])
+        plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
         plt.show()
