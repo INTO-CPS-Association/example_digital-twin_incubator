@@ -13,7 +13,7 @@ class CosimulationTests(unittest.TestCase):
     def test_run_cosim_2param_model(self):
         m = SystemModel()
 
-        ModelSolver().simulate(m, 0.0, 10, 0.1)
+        ModelSolver().simulate(m, 0.0, 10, 0.01)
 
         plt.figure()
         plt.plot(m.signals['time'], m.plant.signals['T'])
