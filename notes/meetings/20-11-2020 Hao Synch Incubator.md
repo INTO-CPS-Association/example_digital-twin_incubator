@@ -3,6 +3,6 @@
 
 
 Tasks:
-- [ ] Prepare picture of new directory structure
-- [ ] New iteration on controller.
+- [x] Prepare picture of new directory structure
+- [x] New iteration on controller.
 

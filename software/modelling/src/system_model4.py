@@ -8,7 +8,7 @@ class SystemModel(Model):
     def __init__(self):
         super().__init__()
 
-        self.ctrl = ControllerModel4(desired_temperature=45)
+        self.ctrl = ControllerModel4(desired_temperature=35)
         self.plant = FourParameterIncubatorPlant()
 
         self.ctrl.in_temperature = self.plant.T

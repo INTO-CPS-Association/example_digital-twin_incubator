@@ -5,7 +5,10 @@ sys.path.append("../shared")
 from connection_parameters import *
 from protocol import *
 
+
+
 class Rabbitmq:
+
     HEAT_CTRL_QUEUE = "heater_control"
     FAN_CTRL_QUEUE = "fan_control"
 
@@ -20,11 +23,11 @@ class Rabbitmq:
         self.exchange_name = exchange_name
         self.exchange_type = exchange_type
 
-        credentials = pika.PlainCredentials(username, password)
+        self.credentials = pika.PlainCredentials(username, password)
         self.parameters = pika.ConnectionParameters(ip_raspberry,
                                                     port,
                                                     vhost,
-                                                    credentials)
+                                                    self.credentials)
         self.connection = None
         self.channel = None
 

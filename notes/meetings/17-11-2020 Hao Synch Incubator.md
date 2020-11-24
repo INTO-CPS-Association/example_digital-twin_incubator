@@ -8,7 +8,7 @@ Repo:
 
 
 Tasks:
-- [ ] Implement controller model
+- [x] Implement controller model
   - [ ] Run with test_cosimulation.py
   - [ ] Create new co-simulation using the 4 parameter model.
 - [ ] Implement controller code.
