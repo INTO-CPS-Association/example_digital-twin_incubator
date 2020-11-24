@@ -5,3 +5,4 @@ PIKA_PASSWORD = "incubator"
 PIKA_EXCHANGE = "Incubator_AMQP"
 PIKA_EXCHANGE_TYPE = "topic"
 PIKA_VHOST = "/"
+

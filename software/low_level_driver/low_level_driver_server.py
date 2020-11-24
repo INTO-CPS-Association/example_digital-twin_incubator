@@ -10,7 +10,7 @@ from pika import BlockingConnection
 import temperature_sensor
 
 # Import parameters and shared stuff
-sys.path.append("../shared/")
+sys.path.append("../shared/communication/shared")
 from connection_parameters import *
 from protocol import *
 
