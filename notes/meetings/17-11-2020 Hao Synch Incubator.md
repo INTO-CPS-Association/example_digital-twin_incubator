@@ -5,12 +5,16 @@
 Repo:
 - software
 
+- [ ] asas
+- [ ] asasa
+- [ ] asas 
+
 
 
 Tasks:
 - [x] Implement controller model
-  - [ ] Run with test_cosimulation.py
-  - [ ] Create new co-simulation using the 4 parameter model.
+  - [x] Run with test_cosimulation.py
+  - [x] Create new co-simulation using the 4 parameter model.
 - [ ] Implement controller code.
   - [ ] Starting point: software\old_digital_twin\experiments\
 
