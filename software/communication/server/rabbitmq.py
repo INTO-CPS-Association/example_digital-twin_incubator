@@ -1,24 +1,23 @@
 import sys
 import pika
-
+import json
+import logging
 sys.path.append("../shared")
-from connection_parameters import *
-from protocol import *
-
-
+try:
+    from connection_parameters import *
+    from protocol import *
+except:
+    raise
 
 class Rabbitmq:
-
-    HEAT_CTRL_QUEUE = "heater_control"
-    FAN_CTRL_QUEUE = "fan_control"
-
-    def __init__(self,ip_raspberry=RASPBERRY_IP,
+    def __init__(self, ip_raspberry=RASPBERRY_IP,
                  port=RASPBERRY_PORT,
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
                  vhost=PIKA_VHOST,
                  exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE):
+                 exchange_type=PIKA_EXCHANGE_TYPE
+                 ):
         self.vhost = vhost
         self.exchange_name = exchange_name
         self.exchange_type = exchange_type
@@ -30,29 +29,80 @@ class Rabbitmq:
                                                     self.credentials)
         self.connection = None
         self.channel = None
+        self.queue_name = None
+        self.routing_key = None
+        self.method = None
+        self.properties = None
+        self.body = None
+        self.logger = logging.getLogger("RabbitMQ Class")
 
-    def connection(self):
+    def __del__(self):
+        self.connection.close()
+        self.logger.info("Connection closed.")
+
+    def connect_to_server(self):
+        # self.queue_name = queue_name
+        # self.routing_key = routing_key
         self.connection = pika.BlockingConnection(self.parameters)
+        self.logger.info("Connected.")
+        # print("connected")
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
-                           routing_key=ROUTING_KEY_FAN)
-        self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
-                           routing_key=ROUTING_KEY_HEATER)
+        # self.declare_queue(queue_name=self.queue_name,
+        #                    routing_key=self.routing_key)
 
-    def send_message(self):
-        return 0
+    def send_message(self, routing_key, message='', ):
+        self.channel.basic_publish(
+            exchange=self.exchange_name, routing_key=routing_key, body=json.dumps(message))
+        self.logger.info("Message Sent.")
 
-    def get_message(self):
-        return 0
+    def get_message(self, queue_name, routing_key):
+        self.queue_name = queue_name
+        self.routing_key = routing_key
+        self.declare_queue(queue_name=self.queue_name,
+                           routing_key=self.routing_key)
+        (self.method, self.properties, self.body) = self.channel.basic_get(self.queue_name,
+                                                                           auto_ack=True)
+        self.logger.debug("Received message is",self.body,self.method,self.properties)
+        print("body is",self.body,self.method,self.properties)
+        return self._convert_str_to_bool(self.body)
 
-    def declare_queue(self, queue_name, routing_key):
-        self.channel.queue_declare(queue_name, exclusive=True)
+    def declare_queue(self, queue_name, routing_key, exclusive=False):
+        self.channel.queue_declare(queue_name, exclusive=exclusive)
         self.channel.queue_bind(
             exchange=self.exchange_name,
             queue=queue_name,
             routing_key=routing_key
         )
 
+    def _convert_str_to_bool(self, body):
+        self.body = body
+        if self.body is None:
+            return None
+        else:
+            return self.body.decode(ENCODING)
 
+
+
+
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    # test_receive.declare_queue(queue_name="sdfd", routing_key="asd")
+    # test_receive.get_message(queue_name="sdfd", routing_key="asd")
+
+    test_send = Rabbitmq()
+    test_send.connect_to_server()
+    test_send.send_message(routing_key="asd",message="321")
+    # import time
+    # time.sleep(4)
+    # print("received message is", test_receive.body)
+    test_receive = Rabbitmq()
+    test_receive.connect_to_server()
+    aaa = test_receive.get_message(queue_name="sdfd",routing_key="asd")
+    print("received message 1st is",aaa)
+    # print(test_receive.body)
+
+    # test_send.send_message(routing_key="asd", message="321")
+    test_receive.get_message(queue_name="sdfd",routing_key="asd")
+    print("received message 2nd is",test_receive.body)
