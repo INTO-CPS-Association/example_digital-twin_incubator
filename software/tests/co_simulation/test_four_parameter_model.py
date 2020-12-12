@@ -13,10 +13,9 @@ from tests.cli_mode_test import CLIModeTest
 class FourParameterModelTests(CLIModeTest):
 
     def test_calibrate_four_parameter_model(self):
-        NEvals = 100 if not self.cli_mode() else 1
+        NEvals = 100 if self.ide_mode() else 1
         logging.basicConfig(level=logging.INFO)
 
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software
         experiments = [
             "../datasets/calibration_fan_24v/semi_random_movement.csv",
             # "../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
@@ -38,9 +37,9 @@ class FourParameterModelTests(CLIModeTest):
                   0.85804919,  # G_box
                   33.65074598,  # C_heater
                   0.86572258]  # G_heater
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, 2000)))
+        # CWD: Example_Digital-Twin_Incubator\software\
+        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 2000))
         results, sol = run_experiment_four_parameter_model(data, params)
 
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
@@ -66,7 +65,7 @@ class FourParameterModelTests(CLIModeTest):
         ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
         ax4.legend()
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
     def test_run_experiment_compare_models(self):
@@ -77,9 +76,9 @@ class FourParameterModelTests(CLIModeTest):
                   0.85804919,  # G_box
                   33.65074598,  # C_heater
                   0.86572258]  # G_heater
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, 2000)))
+        # CWD: Example_Digital-Twin_Incubator\software\
+        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 2000))
 
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
@@ -116,7 +115,7 @@ class FourParameterModelTests(CLIModeTest):
         # ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax5.legend()
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
 

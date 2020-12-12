@@ -10,3 +10,6 @@ class CLIModeTest(unittest.TestCase):
         :return:
         """
         return "CLIMODE" in os.environ
+
+    def ide_mode(self):
+        return not self.cli_mode()

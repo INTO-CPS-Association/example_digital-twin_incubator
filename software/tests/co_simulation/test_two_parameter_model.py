@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from digital_twin.models.plant_models.data_processing import derive_data, load_data
 from digital_twin.models.plant_models.functions import construct_residual, run_experiment_two_parameter_model
 from tests.cli_mode_test import CLIModeTest
+import sympy as sp
 
 
 class TestsModelling(CLIModeTest):
@@ -18,7 +19,7 @@ class TestsModelling(CLIModeTest):
         NEvals = 1
         logging.basicConfig(level=logging.INFO)
 
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        # CWD: Example_Digital-Twin_Incubator\software\
         experiments = [
             "../datasets/calibration_fan_24v/semi_random_movement.csv",
             # "../datasets/calibration_fan_12v/random_on_off_sequences",
@@ -37,9 +38,9 @@ class TestsModelling(CLIModeTest):
     def test_run_experiment_two_parameter_model(self):
         params = [616.56464029,  # C_air
                   0.65001889]   # G_box
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, 4000)))
+        # CWD: Example_Digital-Twin_Incubator\software\
+        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
+                                     desired_timeframe=(-math.inf, 4000))
         results, sol = run_experiment_two_parameter_model(data, params)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)
@@ -66,8 +67,8 @@ class TestsModelling(CLIModeTest):
     def test_check_two_parameter_model_inputs(self):
         params = [800.0,  # C_air
                   0.3]  # G_box
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../datasets/calibration_fan_12v/random_on_off_sequences.csv"))
+        # CWD: Example_Digital-Twin_Incubator\software\
+        data = load_data("../datasets/calibration_fan_12v/random_on_off_sequences.csv")
         results, sol = run_experiment_two_parameter_model(data, params, h=3.0)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)
@@ -100,9 +101,38 @@ class TestsModelling(CLIModeTest):
         self.assertTrue(least_squared_error(data["power_in"],
                                             results.signals["power_in"]) < 1.0)
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
+    def test_show_symbolic_equations(self):
+        P_in = sp.symbols("P_in")
+        P_out = sp.symbols("P_out")
+        P_total = sp.symbols("P_total")
+
+        m_air = sp.symbols("m_air")
+        c_air = sp.symbols("c_air")  # Specific heat capacity
+
+        C_air = m_air * c_air
+
+        dT_dt = 1 / C_air * (P_in - P_out)
+        if self.ide_mode():
+            print(f"dT_dt = {dT_dt}")
+
+        V_heater = sp.symbols("V_heater")  # Voltage of heater
+        i_heater = sp.symbols("i_heater")  # Current of heater
+
+        P_in_num = V_heater * i_heater  # Electrical power in
+
+        G_out = sp.symbols("G_out")  # Coefficient of heat transfer through the styrofoam box.
+        T = sp.symbols("T")  # Temperature in the box
+        T_room = sp.symbols("T_room")  # Temperature in the room
+
+        P_out_num = G_out * (T - T_room)
+
+        dT_dt = dT_dt.subs(P_in, P_in_num).subs(P_out, P_out_num)
+
+        if self.ide_mode():
+            print(f"dT_dt = {dT_dt}")
 
 if __name__ == '__main__':
     unittest.main()

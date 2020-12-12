@@ -21,7 +21,7 @@ class CosimulationTests(CLIModeTest):
         plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
 

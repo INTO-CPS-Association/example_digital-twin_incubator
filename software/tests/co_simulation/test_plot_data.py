@@ -10,11 +10,9 @@ from tests.cli_mode_test import CLIModeTest
 class TestsModelling(CLIModeTest):
 
     def test_plot_data_default_setup(self):
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                          desired_timeframe=(- math.inf, 2000))
-
-        data = derive_data(data)
 
         fig, (ax1, ax2, ax3, ax4, ax5) = plt.subplots(5, 1)
 
@@ -39,7 +37,7 @@ class TestsModelling(CLIModeTest):
         ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         ax5.legend()
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
 

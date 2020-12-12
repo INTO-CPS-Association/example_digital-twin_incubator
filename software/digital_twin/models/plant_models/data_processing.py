@@ -27,7 +27,7 @@ def load_data(filepath, desired_timeframe=(- math.inf, math.inf)):
     indices = range(start_idx, end_idx + 1)
     csv = csv.iloc[indices]
 
-    return csv
+    return derive_data(csv)
 
 
 def derive_data(data):

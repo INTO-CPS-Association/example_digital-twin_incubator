@@ -14,7 +14,7 @@ from tests.cli_mode_test import CLIModeTest
 class UniformExperimentTests(CLIModeTest):
 
     def test_plot_data_uniform_experiment(self):
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, 400))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
@@ -60,11 +60,11 @@ class UniformExperimentTests(CLIModeTest):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
     def test_show_temperature_sensor_redundant(self):
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/uniform_temperature/unitform_temperature_better_fan.csv",
                          desired_timeframe=(-math.inf, 400))
 
@@ -111,7 +111,7 @@ class UniformExperimentTests(CLIModeTest):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        if not self.cli_mode():
+        if self.ide_mode():
             plt.show()
 
 
