@@ -3,6 +3,7 @@ import math
 import unittest
 from scipy.optimize import leastsq
 import matplotlib.pyplot as plt
+import sympy as sp
 
 from digital_twin.data_processing.data_processing import load_data
 from digital_twin.models.plant_models.model_functions import construct_residual, run_experiment_four_parameter_model, \
@@ -117,6 +118,68 @@ class FourParameterModelTests(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+
+    def test_show_symbolic_equations(self):
+        # Parameters
+        C_air = sp.symbols("C_air")  # Specific heat capacity
+        G_box = sp.symbols("G_box")  # Specific heat capacity
+        C_heater = sp.symbols("C_heater")  # Specific heat capacity
+        G_heater = sp.symbols("G_heater")  # Specific heat capacity
+
+        # Constants
+        V_heater = sp.symbols("V_heater")
+        i_heater = sp.symbols("i_heater")
+
+        # Inputs
+        in_room_temperature = sp.symbols("T_room")
+        on_heater = sp.symbols("on_heater")
+
+        # States
+        T = sp.symbols("T")
+        T_heater = sp.symbols("T_h")
+
+        power_in = on_heater*V_heater*i_heater
+
+        power_transfer_heat = G_heater * (T_heater - T)
+
+        total_power_heater = power_in - power_transfer_heat
+
+        power_out_box = G_box * (T - in_room_temperature)
+
+        total_power_box = power_transfer_heat - power_out_box
+
+        der_T =  (1.0 / C_air) * (total_power_box)
+        der_T_heater =  (1.0 / C_heater) * (total_power_heater)
+
+        # Turn above into a linear system
+        """
+        States are:
+        [[ T_heater ]
+         [ T        ]]
+        """
+        A = sp.Matrix([
+            [der_T_heater.diff(T_heater), der_T_heater.diff(T)],
+            [der_T.diff(T_heater),        der_T.diff(T)]
+        ])
+
+        B = sp.Matrix([
+            [der_T_heater.diff(on_heater),  der_T_heater.diff(in_room_temperature)],
+            [der_T.diff(on_heater),         der_T.diff(in_room_temperature)]
+        ])
+
+        # Observation matrix: only T can be measured
+        C = sp.Matrix([[0.0, 1.0]])
+
+        if self.ide_mode():
+            print(f"dTh_dt = {der_T_heater}")
+            print(f"dT_dt = {der_T}")
+            print(f"A:")
+            print(A)
+            print(f"B:")
+            print(B)
+            print(f"C:")
+            print(C)
+
 
 
 if __name__ == '__main__':
