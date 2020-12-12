@@ -7,8 +7,8 @@ from scipy.optimize import leastsq
 
 import matplotlib.pyplot as plt
 
-from digital_twin.models.plant_models.data_processing import derive_data, load_data
-from digital_twin.models.plant_models.functions import construct_residual, run_experiment_two_parameter_model
+from digital_twin.data_processing.data_processing import load_data
+from digital_twin.models.plant_models.model_functions import construct_residual, run_experiment_two_parameter_model
 from tests.cli_mode_test import CLIModeTest
 import sympy as sp
 

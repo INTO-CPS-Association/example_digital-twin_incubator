@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from scipy import integrate
 
-from digital_twin.models.plant_models.data_processing import load_data
+from digital_twin.data_processing.data_processing import load_data
 from tests.cli_mode_test import CLIModeTest
 
 

@@ -45,3 +45,4 @@ def derive_data(data):
     data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
 
     return data
+

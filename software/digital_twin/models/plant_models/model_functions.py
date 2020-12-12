@@ -5,7 +5,7 @@ from oomodelling.ModelSolver import ModelSolver
 
 import logging
 
-from digital_twin.models.plant_models.data_processing import load_data
+from digital_twin.data_processing.data_processing import load_data
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from digital_twin.models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
 
