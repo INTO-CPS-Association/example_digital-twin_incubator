@@ -80,31 +80,12 @@ General guidelines (instructions are in the following subsections)
 3. Ask for code reviews (code readable by at least two people is much more likely readable by a third)
 4. Organize and document your datasets, and experiments: use the sphinx documents for this.
 5. Beware of large datasets.
-6. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everything. Discuss with Casper, Kenneth, or Claudio before doing so.
+6. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everyone. Discuss with Casper, Kenneth, or Claudio before doing so if you're not sure.
 7. Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
 
+## Running and Creating Tests
 
-
-## Running Tests
-
-The modelling part of this project can be tested following the script in `run_tests.ps1`.
-
-## Creating Tests
-
-Each test should correspond to one experiment, and each experiment should be targeted at answering one question.
-
-Commit the tests in a way that they can be run automatically and quickly:
-
-1. Comment out the `plt.show()` so that no plot windows are shown to the user (these block the execution of python).
-2. Optimization problems can be parameterized with a small number of evaluations (so they still run, but it's much quicker).
-3. Tests that involves large data should be parameterized in a way that it can be run quickly (e.g., with a subset of the data).
-
-## Handling Datasets
-
-1. Small datasets can be committed as csv files into the dataset folder.
-2. Each dataset should come in its own folder, with some documentation explaining what it is all about, and a description of the physical setup.
-3. Medium sized datasets should be zipped (same name as the csv file it contains, so it's easy to find when tests fail to load it).
-4. Large datasets need to be put elsewhere (but a small version of the same dataset should be committed to this repo.)
+Follow the instructions in ![software/README.md](software/README.md)
 
 ## Generating the Docs
 
