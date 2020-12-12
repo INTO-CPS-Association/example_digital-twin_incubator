@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 from digital_twin.models.plant_models.data_processing import derive_data, load_data
 from digital_twin.models.plant_models.functions import construct_residual, run_experiment_four_parameter_model, \
     run_experiment_two_parameter_model
+from tests.cli_mode_test import CLIModeTest
 
 
-class FourParameterModelTests(unittest.TestCase):
+class FourParameterModelTests(CLIModeTest):
 
     def test_calibrate_four_parameter_model(self):
-        NEvals = 100
+        NEvals = 100 if not self.cli_mode() else 1
         logging.basicConfig(level=logging.INFO)
 
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software
@@ -65,8 +66,8 @@ class FourParameterModelTests(unittest.TestCase):
         ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
         ax4.legend()
 
-        # plt.show()
-
+        if not self.cli_mode():
+            plt.show()
 
     def test_run_experiment_compare_models(self):
         """
@@ -115,9 +116,8 @@ class FourParameterModelTests(unittest.TestCase):
         # ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax5.legend()
 
-        # plt.show()
-
-
+        if not self.cli_mode():
+            plt.show()
 
 
 if __name__ == '__main__':

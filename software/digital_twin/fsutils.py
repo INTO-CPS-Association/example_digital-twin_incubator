@@ -9,9 +9,9 @@ def resource_file_path(filename):
     """
     pythonpath = os.environ.get("PYTHONPATH")
     if pythonpath is None:
-        print(f"Specify the PYTHONPATH env variable with the directories you want the file {filename} to be searched in.")
-        sys.exit(1)
-    directories = pythonpath.split(os.pathsep)
+        directories = ['.']
+    else:
+        directories = pythonpath.split(os.pathsep)
     for d in directories:
         filepath = os.path.join(d, filename)
         if os.path.exists(filepath):

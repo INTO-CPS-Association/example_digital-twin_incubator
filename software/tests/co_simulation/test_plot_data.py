@@ -4,9 +4,10 @@ import unittest
 import matplotlib.pyplot as plt
 
 from digital_twin.models.plant_models.data_processing import load_data, derive_data
+from tests.cli_mode_test import CLIModeTest
 
 
-class TestsModelling(unittest.TestCase):
+class TestsModelling(CLIModeTest):
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
@@ -38,7 +39,8 @@ class TestsModelling(unittest.TestCase):
         ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
         ax5.legend()
 
-        # plt.show()
+        if not self.cli_mode():
+            plt.show()
 
 
 if __name__ == '__main__':

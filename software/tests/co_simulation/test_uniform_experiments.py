@@ -8,24 +8,27 @@ import matplotlib.pyplot as plt
 from scipy import integrate
 
 from digital_twin.models.plant_models.data_processing import load_data
+from tests.cli_mode_test import CLIModeTest
 
 
-class UniformExperimentTests(unittest.TestCase):
+class UniformExperimentTests(CLIModeTest):
 
     def test_plot_data_uniform_experiment(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         data = load_data("../datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, 400))
 
-        data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
+        data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
-        data["energy_in"] = data.apply(lambda row: integrate.trapz(data[0:row.name+1]["power_in"], x=data[0:row.name+1]["time"]), axis=1)
+        data["energy_in"] = data.apply(
+            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
         data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t1, row.t2, row.t3]), axis=1)
         data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t1, row.t2, row.t3]), axis=1)
-        data["max_dev_temperature"] = data.apply(lambda row: max([row.t1, row.t2, row.t3]) - min([row.t1, row.t2, row.t3]), axis=1)
+        data["max_dev_temperature"] = data.apply(
+            lambda row: max([row.t1, row.t2, row.t3]) - min([row.t1, row.t2, row.t3]), axis=1)
         zero_kelvin = 273.15
         data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
-        air_mass = 0.04 # Kg
-        air_heat_capacity = 700 # (j kg^-1 °K^-1)
+        air_mass = 0.04  # Kg
+        air_heat_capacity = 700  # (j kg^-1 °K^-1)
 
         data["potential_energy"] = data["avg_temp_kelvin"] * air_mass * air_heat_capacity
         data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
@@ -57,22 +60,26 @@ class UniformExperimentTests(unittest.TestCase):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        # plt.show()
+        if not self.cli_mode():
+            plt.show()
 
     def test_show_temperature_sensor_redundant(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../datasets/uniform_temperature/unitform_temperature_better_fan.csv", desired_timeframe=(-math.inf, 400))
+        data = load_data("../datasets/uniform_temperature/unitform_temperature_better_fan.csv",
+                         desired_timeframe=(-math.inf, 400))
 
-        data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
+        data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
-        data["energy_in"] = data.apply(lambda row: integrate.trapz(data[0:row.name+1]["power_in"], x=data[0:row.name+1]["time"]), axis=1)
+        data["energy_in"] = data.apply(
+            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
         data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t2, row.t3]), axis=1)
         data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t2, row.t3]), axis=1)
-        data["max_dev_temperature"] = data.apply(lambda row: max([row.t2, row.t3]) - min([row.t1, row.t2, row.t3]), axis=1)
+        data["max_dev_temperature"] = data.apply(lambda row: max([row.t2, row.t3]) - min([row.t1, row.t2, row.t3]),
+                                                 axis=1)
         zero_kelvin = 273.15
         data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
-        air_mass = 0.04 # Kg
-        air_heat_capacity = 700 # (j kg^-1 °K^-1)
+        air_mass = 0.04  # Kg
+        air_heat_capacity = 700  # (j kg^-1 °K^-1)
 
         data["potential_energy"] = data["avg_temp_kelvin"] * air_mass * air_heat_capacity
         data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
@@ -104,9 +111,8 @@ class UniformExperimentTests(unittest.TestCase):
         # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
         # ax6.legend()
 
-        # plt.show()
-
-
+        if not self.cli_mode():
+            plt.show()
 
 
 if __name__ == '__main__':

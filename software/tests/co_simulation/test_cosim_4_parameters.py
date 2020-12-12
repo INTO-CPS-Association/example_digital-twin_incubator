@@ -5,9 +5,10 @@ from oomodelling import ModelSolver
 import matplotlib.pyplot as plt
 
 from digital_twin.models.plant_models.two_parameters_model.system_model import SystemModel
+from tests.cli_mode_test import CLIModeTest
 
 
-class CosimulationTests(unittest.TestCase):
+class CosimulationTests(CLIModeTest):
 
     def test_run_cosim_4param_model(self):
         m = SystemModel()
@@ -20,4 +21,9 @@ class CosimulationTests(unittest.TestCase):
         plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
-        plt.show()
+        if not self.cli_mode():
+            plt.show()
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -9,9 +9,10 @@ import matplotlib.pyplot as plt
 
 from digital_twin.models.plant_models.data_processing import derive_data, load_data
 from digital_twin.models.plant_models.functions import construct_residual, run_experiment_two_parameter_model
+from tests.cli_mode_test import CLIModeTest
 
 
-class TestsModelling(unittest.TestCase):
+class TestsModelling(CLIModeTest):
 
     def test_calibrate_two_parameter_model(self):
         NEvals = 1
@@ -99,7 +100,8 @@ class TestsModelling(unittest.TestCase):
         self.assertTrue(least_squared_error(data["power_in"],
                                             results.signals["power_in"]) < 1.0)
 
-        # plt.show()
+        if not self.cli_mode():
+            plt.show()
 
 
 if __name__ == '__main__':
