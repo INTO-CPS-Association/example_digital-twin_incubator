@@ -5,10 +5,10 @@ import unittest
 import numpy
 from scipy.optimize import leastsq
 
-from data_processing import load_data, derive_data
 import matplotlib.pyplot as plt
 
-from functions import run_experiment_two_parameter_model, construct_residual, run_experiment_four_parameter_model
+from digital_twin.models.plant_models.data_processing import derive_data, load_data
+from digital_twin.models.plant_models.functions import construct_residual, run_experiment_two_parameter_model
 
 
 class TestsModelling(unittest.TestCase):
@@ -19,10 +19,10 @@ class TestsModelling(unittest.TestCase):
 
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
         experiments = [
-            "../../../datasets/calibration_fan_24v/semi_random_movement.csv",
-            # "../../../datasets/calibration_fan_12v/random_on_off_sequences",
-            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
-            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
+            "../datasets/calibration_fan_24v/semi_random_movement.csv",
+            # "../datasets/calibration_fan_12v/random_on_off_sequences",
+            # "../datasets/calibration_fan_12v/random_on_off_sequences_1",
+            # "../datasets/calibration_fan_12v/random_on_off_sequences_2"
             ]
         params = [616.56464029,  # C_air
                   0.65001889]  # G_box
@@ -37,7 +37,7 @@ class TestsModelling(unittest.TestCase):
         params = [616.56464029,  # C_air
                   0.65001889]   # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                                      desired_timeframe=(-math.inf, 4000)))
         results, sol = run_experiment_two_parameter_model(data, params)
 
@@ -66,7 +66,7 @@ class TestsModelling(unittest.TestCase):
         params = [800.0,  # C_air
                   0.3]  # G_box
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration_fan_12v/random_on_off_sequences.csv"))
+        data = derive_data(load_data("../datasets/calibration_fan_12v/random_on_off_sequences.csv"))
         results, sol = run_experiment_two_parameter_model(data, params, h=3.0)
 
         fig, (ax1, ax2, ax4) = plt.subplots(3, 1)

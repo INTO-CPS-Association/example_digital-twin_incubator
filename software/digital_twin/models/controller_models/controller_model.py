@@ -1,8 +1,5 @@
 from oomodelling import Model
 
-from globals import HEATER_VOLTAGE, HEATER_CURRENT
-
-
 class ControllerModel(Model):
     def __init__(self, desired_temperature=45.0):
         super().__init__()

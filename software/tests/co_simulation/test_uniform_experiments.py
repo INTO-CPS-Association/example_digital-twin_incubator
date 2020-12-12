@@ -3,17 +3,18 @@ import unittest
 
 import numpy
 
-from data_processing import load_data
 import matplotlib.pyplot as plt
 
 from scipy import integrate
+
+from digital_twin.models.plant_models.data_processing import load_data
 
 
 class UniformExperimentTests(unittest.TestCase):
 
     def test_plot_data_uniform_experiment(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../../datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, 400))
+        data = load_data("../datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, 400))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
 
@@ -60,7 +61,7 @@ class UniformExperimentTests(unittest.TestCase):
 
     def test_show_temperature_sensor_redundant(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../../datasets/uniform_temperature/unitform_temperature_better_fan.csv", desired_timeframe=(-math.inf, 400))
+        data = load_data("../datasets/uniform_temperature/unitform_temperature_better_fan.csv", desired_timeframe=(-math.inf, 400))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis = 1)
 

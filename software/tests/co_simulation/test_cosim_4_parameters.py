@@ -2,10 +2,9 @@ import unittest
 
 from oomodelling import ModelSolver
 
-from controller_model import ControllerModel
 import matplotlib.pyplot as plt
 
-from system_model4 import SystemModel
+from digital_twin.models.plant_models.two_parameters_model.system_model import SystemModel
 
 
 class CosimulationTests(unittest.TestCase):

@@ -1,14 +1,12 @@
 import logging
 import math
 import unittest
-
-import numpy
 from scipy.optimize import leastsq
-
-from data_processing import load_data, derive_data
 import matplotlib.pyplot as plt
 
-from functions import run_experiment_two_parameter_model, construct_residual, run_experiment_four_parameter_model
+from digital_twin.models.plant_models.data_processing import derive_data, load_data
+from digital_twin.models.plant_models.functions import construct_residual, run_experiment_four_parameter_model, \
+    run_experiment_two_parameter_model
 
 
 class FourParameterModelTests(unittest.TestCase):
@@ -17,12 +15,12 @@ class FourParameterModelTests(unittest.TestCase):
         NEvals = 100
         logging.basicConfig(level=logging.INFO)
 
-        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
+        # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software
         experiments = [
-            "../../../datasets/calibration_fan_24v/semi_random_movement.csv",
-            # "../../../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
-            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_1",
-            # "../../../datasets/calibration_fan_12v/random_on_off_sequences_2"
+            "../datasets/calibration_fan_24v/semi_random_movement.csv",
+            # "../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
+            # "../datasets/calibration_fan_12v/random_on_off_sequences_1",
+            # "../datasets/calibration_fan_12v/random_on_off_sequences_2"
         ]
         params = [486.1198196,  # C_air
                   0.85804919,  # G_box
@@ -40,7 +38,7 @@ class FourParameterModelTests(unittest.TestCase):
                   33.65074598,  # C_heater
                   0.86572258]  # G_heater
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                                      desired_timeframe=(-math.inf, 2000)))
         results, sol = run_experiment_four_parameter_model(data, params)
 
@@ -79,7 +77,7 @@ class FourParameterModelTests(unittest.TestCase):
                   33.65074598,  # C_heater
                   0.86572258]  # G_heater
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = derive_data(load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+        data = derive_data(load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                                      desired_timeframe=(-math.inf, 2000)))
 
         results_4p, sol = run_experiment_four_parameter_model(data, params)

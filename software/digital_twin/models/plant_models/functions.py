@@ -3,11 +3,11 @@ import math
 import numpy
 from oomodelling.ModelSolver import ModelSolver
 
-from data_processing import derive_data, load_data
-from four_parameter_model import FourParameterIncubatorPlant
-from two_parameter_model import TwoParameterIncubatorPlant
-
 import logging
+
+from digital_twin.models.plant_models.data_processing import derive_data, load_data
+from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
+from digital_twin.models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
 
 l = logging.getLogger("Functions")
 

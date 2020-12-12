@@ -1,21 +1,16 @@
-import logging
 import math
 import unittest
 
-import numpy
-from scipy.optimize import leastsq
-
-from data_processing import load_data, derive_data
 import matplotlib.pyplot as plt
 
-from functions import run_experiment_two_parameter_model, construct_residual, run_experiment_four_parameter_model
+from digital_twin.models.plant_models.data_processing import load_data, derive_data
 
 
 class TestsModelling(unittest.TestCase):
 
     def test_plot_data_default_setup(self):
         # CWD: H:\srcctrl\github\Example_Digital-Twin_Incubator\software\modelling\test
-        data = load_data("../../../datasets/calibration_fan_24v/semi_random_movement.csv",
+        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                          desired_timeframe=(- math.inf, 2000))
 
         data = derive_data(data)

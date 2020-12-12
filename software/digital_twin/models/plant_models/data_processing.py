@@ -4,11 +4,13 @@ import numpy
 import pandas
 from scipy import integrate
 
-from globals import HEATER_VOLTAGE, HEATER_CURRENT
+from digital_twin.fsutils import resource_file_path
+from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 def load_data(filepath, desired_timeframe=(- math.inf, math.inf)):
-    csv = pandas.read_csv(filepath)
+    realpath = resource_file_path(filepath)
+    csv = pandas.read_csv(realpath)
     # normalize time
     csv["time"] = csv["time"] - csv.iloc[0]["time"]
 

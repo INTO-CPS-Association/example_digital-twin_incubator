@@ -1,6 +1,6 @@
 from oomodelling import Model
 
-from globals import HEATER_VOLTAGE, HEATER_CURRENT
+from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 class FourParameterIncubatorPlant(Model):
