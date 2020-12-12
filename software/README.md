@@ -12,7 +12,7 @@ This folder contains the code that makes the digital twin possible.
 
 # Running the Tests
 
-## First time setup
+## First-time setup
 1. Open terminal in this folder.
 2. Optional: create a virtual environment: `python -m venv venv`
 3. Optional: activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 

@@ -29,3 +29,4 @@ def get_all_files_with_extension(directory, extension):
         if file.endswith(extension):
             files.append(os.path.join(directory, file))
     return files
+
