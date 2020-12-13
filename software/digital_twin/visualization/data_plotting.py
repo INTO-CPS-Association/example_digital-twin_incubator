@@ -48,10 +48,10 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
                         subplot_titles=titles)
 
     if show_sensor_temperatures:
-        fig.add_trace(go.Scatter(x=data["time"], y=data["t2"], name="t2"), row=1, col=1)
-        fig.add_trace(go.Scatter(x=data["time"], y=data["t3"], name="t3"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data["time"], y=data["t2"], name="t2 (right)"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data["time"], y=data["t3"], name="t3 (top)"), row=1, col=1)
 
-    fig.add_trace(go.Scatter(x=data["time"], y=data["average_temperature"], name="avg_temp"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=data["time"], y=data["average_temperature"], name="avg_T"), row=1, col=1)
     if overlay_heater:
         fig.add_trace(go.Scatter(x=data["time"], y=[50 if b else 30 for b in data["heater_on"]], name="heater_on"), row=1, col=1)
 

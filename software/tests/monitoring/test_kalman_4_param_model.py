@@ -16,8 +16,7 @@ class TestKalmanFilter(CLIModeTest):
         data_sample_size = 3.0
 
         # Load the data
-        tf = 800.0
-        # tf = 2000.0
+        tf = 2000.0 if self.ide_mode() else 800.0
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                          desired_timeframe=(- math.inf, tf))
 

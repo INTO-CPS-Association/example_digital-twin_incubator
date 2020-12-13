@@ -95,7 +95,7 @@ class KalmanFilter4P(Model):
 
         Inputs are: 
         [ [ on_heater ], 
-          [ in_room_temperature ]]
+          [ in_room_ptemperature ]]
         """
         A = sp.Matrix([
             [der_T_heater.diff(T_heater), der_T_heater.diff(T)],
