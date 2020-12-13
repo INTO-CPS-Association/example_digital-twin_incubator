@@ -5,6 +5,6 @@
 $Env:CLIMODE = "ON"
 
 # Run unittest in discovery mode for the tests folder
-& python -m unittest discover tests -p "*.py"
+& python -m unittest discover -v tests -p "*.py"
 
 pause

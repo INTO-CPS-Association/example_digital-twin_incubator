@@ -4,6 +4,7 @@ from oomodelling import ModelSolver
 
 import matplotlib.pyplot as plt
 
+from digital_twin.models.plant_models.four_parameters_model.system_model4 import SystemModel4Parameters
 from digital_twin.models.plant_models.two_parameters_model.system_model import SystemModel
 from tests.cli_mode_test import CLIModeTest
 
@@ -11,7 +12,7 @@ from tests.cli_mode_test import CLIModeTest
 class CosimulationTests(CLIModeTest):
 
     def test_run_cosim_4param_model(self):
-        m = SystemModel()
+        m = SystemModel4Parameters()
 
         ModelSolver().simulate(m, 0.0, 10, 0.01)
 

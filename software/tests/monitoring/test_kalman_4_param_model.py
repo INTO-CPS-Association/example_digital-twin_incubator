@@ -1,18 +1,13 @@
 import math
 import unittest
-import sympy as sp
-from control import ss
-from filterpy.common import Q_discrete_white_noise
-from filterpy.kalman import KalmanFilter
+
+import numpy as np
 
 from digital_twin.data_processing.data_processing import load_data
-from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from digital_twin.models.plant_models.model_functions import run_experiment_four_parameter_model
 from digital_twin.monitoring.kalman_filter_4p import KalmanFilter4P
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
 from tests.cli_mode_test import CLIModeTest
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 class TestKalmanFilter(CLIModeTest):
@@ -47,21 +42,17 @@ class TestKalmanFilter(CLIModeTest):
         G_heater_num = params[3]
 
         f = KalmanFilter4P(data_sample_size, std_dev,
-                           C_air = C_air_num,
-                           G_box = G_box_num,
-                           C_heater = C_heater_num,
-                           G_heater = G_heater_num,
+                           C_air=C_air_num,
+                           G_box=G_box_num,
+                           C_heater=C_heater_num,
+                           G_heater=G_heater_num,
                            initial_room_temperature=25.0,
-                           initial_box_temperature= 25.0).filter
+                           initial_box_temperature=25.0)
 
         kalman_prediction = []
         for i in range(len(measurements_heater)):
-            f.predict(u=np.array([
-                [measurements_heater[i]],
-                [measurements_Troom[i]]
-            ]))
-            f.update(np.array([[measurements_T[i]]]))
-            kalman_prediction.append(f.x)
+            x = f.kalman_step(measurements_heater[i], measurements_Troom[i], measurements_T[i])
+            kalman_prediction.append(x)
 
         kalman_prediction = np.array(kalman_prediction).squeeze(2)
 
@@ -69,16 +60,16 @@ class TestKalmanFilter(CLIModeTest):
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
         fig = plotly_incubator_data(data, compare_to={
-                                            "4pModel": {
-                                                "time": results_4p.signals["time"],
-                                                "T": results_4p.signals["T"],
-                                            },
-                                            "Kalman": {
-                                                "time": time,
-                                                "T": kalman_prediction[:, 1]
-                                            },
+                                        "4pModel": {
+                                            "time": results_4p.signals["time"],
+                                            "T": results_4p.signals["T"],
                                         },
-                                    heater_T_data = {
+                                        "Kalman": {
+                                            "time": time,
+                                            "T": kalman_prediction[:, 1]
+                                        },
+                                    },
+                                    heater_T_data={
                                         "4pModel": {
                                             "time": results_4p.signals["time"],
                                             "T_heater": results_4p.signals["T_heater"],
@@ -92,13 +83,6 @@ class TestKalmanFilter(CLIModeTest):
 
         if self.ide_mode():
             show_plotly(fig)
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

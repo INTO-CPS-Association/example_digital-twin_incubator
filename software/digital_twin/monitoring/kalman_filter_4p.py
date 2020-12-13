@@ -22,6 +22,7 @@ class KalmanFilter4P(Model):
         self.in_T = self.input(lambda: initial_box_temperature)
 
         self.cached_T = initial_box_temperature
+        self.cached_T_heater = initial_box_temperature
         self.filter = self.construct_filter(step_size, std_dev,
                                             C_air,
                                             G_box,
@@ -29,15 +30,23 @@ class KalmanFilter4P(Model):
                                             G_heater,
                                             initial_room_temperature, initial_box_temperature)
 
-        self.outT = self.var(lambda: self.cached_T)
+        self.out_T = self.var(lambda: self.cached_T)
+        self.out_T_heater = self.var(lambda: self.cached_T_heater)
 
         self.save()
 
     def kalman_step(self, in_heater, in_room_T, in_T):
-        return in_T
+        self.filter.predict(u=np.array([
+            [in_heater],
+            [in_room_T]
+        ]))
+        self.filter.update(np.array([[in_T]]))
+        return self.filter.x
 
     def discrete_step(self):
-        self.cached_T = self.kalman_step(self.in_heater_on(), self.in_room_T(), self.in_T())
+        next_x = self.kalman_step(1.0 if self.in_heater_on() else 0.0, self.in_room_T(), self.in_T())
+        self.cached_T_heater = next_x[0, 0]
+        self.cached_T = next_x[1, 0]
         return super().discrete_step()
 
     def construct_filter(self, step_size, std_dev,

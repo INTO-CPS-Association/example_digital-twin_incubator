@@ -15,7 +15,7 @@ class FourParameterModelTests(CLIModeTest):
 
     def test_calibrate_four_parameter_model(self):
         NEvals = 100 if self.ide_mode() else 1
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.WARN)
 
         experiments = [
             "../datasets/calibration_fan_24v/semi_random_movement.csv",
@@ -28,8 +28,10 @@ class FourParameterModelTests(CLIModeTest):
                   33.65074598,  # C_heater
                   0.86572258]  # G_heater
 
+        tf = 750 if self.ide_mode() else 30
+
         residual = construct_residual(experiments, run_exp=run_experiment_four_parameter_model,
-                                      desired_timeframe=(-math.inf, 750))
+                                      desired_timeframe=(-math.inf, tf))
 
         print(leastsq(residual, params, maxfev=NEvals))
 
