@@ -10,8 +10,8 @@ from tests.cli_mode_test import CLIModeTest
 class TestKalmanSimulation(CLIModeTest):
 
     def test_kalman_4_param_model_variable_noise(self):
-        step_size = 0.1
-        std_dev = 0.1
+        step_size = 0.5
+        std_dev = 0.001
 
         params = [486.1198196,  # C_air
                   0.85804919,  # G_box
@@ -28,11 +28,11 @@ class TestKalmanSimulation(CLIModeTest):
                               C_heater=C_heater_num,
                               G_heater=G_heater_num)
 
-        ModelSolver().simulate(m, 0.0, 300, step_size)
+        ModelSolver().simulate(m, 0.0, 800, step_size)
 
         plt.figure()
         plt.plot(m.signals['time'], m.noise_sensor.signals['y'], label="sensor T")
-        plt.plot(m.signals['time'], m.plant.signals['T'], label="real T")
+        # plt.plot(m.signals['time'], m.plant.signals['T'], label="real T")
         plt.plot(m.signals['time'], m.kalman.signals['out_T'], label="kalman T")
         plt.legend()
 

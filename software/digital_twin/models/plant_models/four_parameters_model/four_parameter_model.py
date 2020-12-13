@@ -20,7 +20,7 @@ class FourParameterIncubatorPlant(Model):
         self.power_in = self.var(lambda: self.in_heater_voltage() * self.in_heater_current() if self.in_heater_on() else 0.0)
 
         self.C_air = self.parameter(C_air)
-        self.G_box = self.parameter(G_box)
+        self.G_box = self.input(lambda: G_box)
 
         self.C_heater = self.parameter(C_heater)
         self.G_heater = self.parameter(G_heater)
@@ -32,7 +32,7 @@ class FourParameterIncubatorPlant(Model):
 
         self.total_power_heater = self.var(lambda: self.power_in() - self.power_transfer_heat())
 
-        self.power_out_box = self.var(lambda: self.G_box*(self.T() - self.in_room_temperature()))
+        self.power_out_box = self.var(lambda: self.G_box()*(self.T() - self.in_room_temperature()))
 
         self.total_power_box = self.var(lambda: self.power_transfer_heat() - self.power_out_box())
 

@@ -5,7 +5,6 @@ from oomodelling import ModelSolver
 import matplotlib.pyplot as plt
 
 from digital_twin.models.plant_models.four_parameters_model.system_model4 import SystemModel4Parameters
-from digital_twin.models.plant_models.two_parameters_model.system_model import SystemModel
 from tests.cli_mode_test import CLIModeTest
 
 
