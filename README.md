@@ -53,16 +53,8 @@ The system consists of:
 - Need to answer “what-if” questions: suppose you want turn off the heating element for some hours (maybe due to power loss or some other intervention). Is there anything that you can do to keep the temperature inside the box within range? Maybe place a bottle of hot water? If so, how warm must the water be?
 
 ## Hardware Equipment
-**An issue is created on each piece of hardware!!!**
-- Heater: https://www.amazon.com/Fdit-Constant-Temperature-Heating-Element/dp/B07B26KKH7/ref=sr_1_10?dchild=1&keywords=12v+heating+element&qid=1597655263&sr=8-10
-https://www.aliexpress.com/item/32997813152.html?spm=2114.search0302.3.17.7656418cbXZztz&ws_ab_test=searchweb0_0,searchweb201602_0,searchweb201603_0,ppcSwitch_0&algo_pvid=6afeafe2-eb67-4473-93ee-cbe1065571b7&algo_expid=6afeafe2-eb67-4473-93ee-cbe1065571b7-2
-- Fan: https://www.amazon.com/Fdit-Constant-Temperature-Heating-Element/dp/B07B26KKH7/ref=sr_1_10?dchild=1&keywords=12v+heating+element&qid=1597655263&sr=8-10
-https://www.aliexpress.com/item/4000848132589.html?spm=a2g0o.productlist.0.0.885f7442oFm8UR&algo_pvid=7cfddd05-26ec-4d3c-9e05-a7a9bb0a0fcd&algo_expid=7cfddd05-26ec-4d3c-9e05-a7a9bb0a0fcd-1&btsid=0ab6f81615976634158253060e6690&ws_ab_test=searchweb0_0,searchweb201602_,searchweb201603_
-- Tempearture Sensor: https://let-elektronik.dk/shop/1350-temperatur/245-one-wire-digital-temperature-sensor---ds18b20/ precise enough? -+ 0.5 C
-- Controller: Raspberry Pie? 
-- Styrofoam box: https://www.bauhaus.dk/opbevaringskasse-med-lag-50-l-59-5-x-39-5-cm
 
-Heater and fan are currently the same, but it would be good to separate them. Any inputs are very welcome!
+See the docs for more details on this.
 
 ## Software
 - Microcontroller programming
