@@ -2,7 +2,7 @@ import sys
 import pika
 # import json
 import logging
-
+TEST = "test_succeed"
 sys.path.append("../shared")
 try:
     from connection_parameters import *
@@ -39,7 +39,7 @@ class Rabbitmq:
         self.logger = logging.getLogger("RabbitMQ Class")
 
     def __del__(self):
-        print("Class desructured")
+        print("Cleaning connection")
         self.channel.close()
         self.connection.close()
         self.logger.info("Connection closed.")
@@ -136,26 +136,26 @@ if __name__ == '__main__':
     test_receive.get_message(queue_name="test_queue", binding_key="test")
     print("received message 2nd is", test_receive.body)
 
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 3rd is", test_receive.body)
-    #
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 4th is", test_receive.body)
-    #
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 5th is", test_receive.body)
-    #
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 6th is", test_receive.body)
-    #
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 7th", test_receive.body)
-    #
-    # test_receive.get_message(queue_name="test_queue", binding_key="test")
-    # print("received message 8th is", test_receive.body)
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 3rd is", test_receive.body)
+
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 4th is", test_receive.body)
+
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 5th is", test_receive.body)
+
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 6th is", test_receive.body)
+
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 7th", test_receive.body)
+
+    test_receive.get_message(queue_name="test_queue", binding_key="test")
+    print("received message 8th is", test_receive.body)
 
 
     # test_send.channel.queue_purge('test_queue')
     test_send.queue_delete('test_queue')
-    test_send.close()
-    test_receive.close()
+    # test_send.close()
+    # test_receive.close()
