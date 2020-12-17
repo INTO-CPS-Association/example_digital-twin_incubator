@@ -1,5 +1,7 @@
 ﻿# Digit Lunch Presentation Feedback
 
+Video: https://web.microsoftstream.com/video/d2528dd5-eac5-47d5-beb2-19a9b5966a4b
+
 # Giuseppe
 
 We should use a filter that works with co-simulations, like a Bayesian Kalman filter.
