@@ -10,9 +10,9 @@ from pika import BlockingConnection
 import temperature_sensor
 
 # Import parameters and shared stuff
-sys.path.append("../communication/shared")
-from connection_parameters import *
-from protocol import *
+# sys.path.append("../communication/shared")
+from communication.shared.connection_parameters import *
+from communication.shared.protocol import *
 
 
 def _convert_str_to_bool(body):
@@ -80,6 +80,11 @@ class IncubatorDriver:
     def cleanup(self):
         self.logger.debug("Cleaning up.")
         self.actuators_off()
+        self.channel.queue_unbind(queue=FAN_CTRL_QUEUE, exchange=self.exchange_name)
+        self.channel.queue_delete(queue=FAN_CTRL_QUEUE)
+        self.channel.queue_unbind(queue=HEAT_CTRL_QUEUE, exchange=self.exchange_name)
+        self.channel.queue_delete(queue=HEAT_CTRL_QUEUE)
+        self.channel.close()
         self.connection.close()
 
     def actuators_off(self):
@@ -170,7 +175,6 @@ class IncubatorDriver:
             exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
-
 
     def _log_message(self, queue_name, method, properties, body):
         self.logger.debug(f"Message received in queue {queue_name}.")

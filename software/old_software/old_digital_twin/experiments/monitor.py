@@ -4,9 +4,9 @@ import json
 import os
 import csv
 
-sys.path.append("../../shared/")
-from connection_parameters import *
-from protocol import *
+# sys.path.append("../../shared/")
+from communication.shared.connection_parameters import *
+from communication.shared.protocol import *
 
 
 outfile = "output.csv"

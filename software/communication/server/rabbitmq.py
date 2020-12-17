@@ -1,12 +1,11 @@
-import sys
+import json
 import pika
 # import json
 import logging
-TEST = "test_succeed"
-sys.path.append("../shared")
+
 try:
-    from connection_parameters import *
-    from protocol import *
+    from communication.shared.connection_parameters import *
+    from communication.shared.protocol import *
 except:
     raise
 
@@ -82,7 +81,7 @@ class Rabbitmq:
 
         self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
         print("body is", self.body, self.method, self.properties)
-        return self._convert_str_to_bool(self.body)
+        return json.loads(self.body)
 
     def declare_queue(self, queue_name, routing_key):
         self.channel.queue_declare(queue_name)
@@ -98,7 +97,7 @@ class Rabbitmq:
         self.channel.queue_delete(queue=queue_name)
 
     def close(self):
-        self.channel.exchange_delete(exchange=self.exchange_name)
+        # self.channel.exchange_delete(exchange=self.exchange_name)
         self.channel.close()
         self.connection.close()
 
