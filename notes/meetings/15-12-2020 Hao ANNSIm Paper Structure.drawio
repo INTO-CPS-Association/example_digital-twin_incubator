@@ -1,0 +1,136 @@
+<mxfile host="Electron" modified="2020-12-15T16:38:41.197Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/13.5.1 Chrome/83.0.4103.122 Electron/9.1.1 Safari/537.36" etag="w2VWbdq_EYq0-K8NH-ZA" compressed="false" version="13.5.1" type="device">
+  <diagram id="1IEk_Nb3fTFsxIXIZDjR" name="Page-1">
+    <mxGraphModel dx="2473" dy="1014" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="B-7cD9OvoBh734unxdCR-1" value="Goal: breakdown concept of digital twin into concrete techniques in the SOTA" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-789" y="122" width="237" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-2" target="B-7cD9OvoBh734unxdCR-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-2" value="Overview Definitions of Digital Twin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-691" y="207" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-3" value="Introduce the concept of digital shadow; compare it to the digital twin concept." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="274" width="257" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-7" value="Define terms in Physical Twin" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-691" y="355" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-8" value="Introduce plant of our running example" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="428" width="257" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-7" target="B-7cD9OvoBh734unxdCR-8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-627.25" y="277.0000000000001" as="sourcePoint" />
+            <mxPoint x="-586" y="314" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-10" value="Introduce controller of our running example" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="502" width="257" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-7" target="B-7cD9OvoBh734unxdCR-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-627.25" y="425" as="sourcePoint" />
+            <mxPoint x="-586" y="468" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-12" value="Constructing a Digital Shadow" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-691" y="607" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-13" value="Comunication PhysicalTwin (PT) -&amp;gt; DS: Overview of different technologies to implement this (RabbitMQ, ROS, Kafka, Ditto, influxdata, ...)." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="690" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-14" value="Explain our choice of communication: AMQP with rabbitmq as an implemention of that protocol." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="761" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-15" value="Visualization of Data: Overview of different technologies to implement this (Grafana, Dash, Unity, QT3D, Gazebo...)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="837" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-16" value="Communication DT -&amp;gt; PT: Overview of different technologies to implement the two-way communication (Ditto)." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="2100" width="215" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-17" value="Constructing a DT. I.e., establishing two-way communication between system, with algorithms to determine best configurations." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-691" y="2028" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-18" value="Show results of our technique for the incubator case study." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="907" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-19" value="Stress that this is a difficult research problem, and out of the scope of our research in DTs." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="973" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-20" target="B-7cD9OvoBh734unxdCR-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-20" value="State Estimation: the underlying enabling technique for digital shadow. Give an overview of different state estimation techniques: Kalman Filter, and the other is Non Linear LSE" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="1256" width="215" height="101" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-21" target="B-7cD9OvoBh734unxdCR-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-21" target="B-7cD9OvoBh734unxdCR-32">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-21" value="Show results of Kalman filter for the incubator case study." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="1581" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-22" target="B-7cD9OvoBh734unxdCR-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-22" value="Explain modelling of the incubator. Mention the fact that we&#39;re modelling the average temperature in the box, so we also need to remember other signal processing techniques. They should be part of the DT&#39;s atomic blocks." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="1373" width="215" height="101" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-23" target="B-7cD9OvoBh734unxdCR-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-23" value="Explain how the model was calibrated for the incubator" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-381" y="1490" width="215" height="47" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-25" value="Signal Processing: mention some noise filtering techniques, such as moving average, hamming window, etc.." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="1048" width="215" height="101" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-26" value="We used moving average in our incubator" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="1174" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-27" value="Perform validation experiment by using the third temp sensor in the heatbed." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-248" y="1630" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-35" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="B-7cD9OvoBh734unxdCR-32" target="B-7cD9OvoBh734unxdCR-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-32" value="Show results of Tracking Simulator for the incubator case study." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="1699" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-36" value="What-if (Co)-Simulations: describe different techniques. Mention simulation and co-simulation, and explain the differences." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="1799" width="215" height="101" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-37" value="Show application of what-if simulation for the incubator case study." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="1912" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-38" value="Self-Adaptation: Overview of self-adaptive systems, models@runtime, autonomic computing, etc..." style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="2187" width="215" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-40" value="Show simple self-adaptation resulting from what-if simulation" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="2259" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-41" value="Show complex self-adaptation resulting from what-if simulation" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="2327" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-42" value="Show Hao&#39;s self-adaptation technique" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-515" y="2393" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-44" value="Discussion" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-691" y="2499" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-45" value="Research Questions" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="2570" width="215" height="61" as="geometry" />
+        </mxCell>
+        <mxCell id="B-7cD9OvoBh734unxdCR-46" value="Ongoing Case Studies" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-596" y="2645" width="215" height="61" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
