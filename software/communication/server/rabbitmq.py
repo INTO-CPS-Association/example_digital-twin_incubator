@@ -1,6 +1,5 @@
-import json
 import pika
-# import json
+import json
 import logging
 
 try:
@@ -30,7 +29,7 @@ class Rabbitmq:
                                                     self.credentials)
         self.connection = None
         self.channel = None
-        # self.queue_name = None
+        self.queue_name = []
         # self.routing_key = None
         self.method = None
         self.properties = None
@@ -38,14 +37,17 @@ class Rabbitmq:
         self.logger = logging.getLogger("RabbitMQ Class")
 
     def __del__(self):
-        print("Cleaning connection")
-        self.channel.close()
-        self.connection.close()
+        print("Deleting queues, close channel and connection")
+        if not self.channel.is_closed and not self.connection.is_closed:
+            self.close()
         self.logger.info("Connection closed.")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         self.logger.info("Connection closed.")
+
+    def __enter__(self):
+        self.connect_to_server()
 
     def connect_to_server(self):
         # self.queue_name = queue_name
@@ -59,29 +61,32 @@ class Rabbitmq:
         # self.declare_queue(queue_name=self.queue_name,
         #                    routing_key=self.routing_key)
 
-    def send_message(self, routing_key, queue_name, message=''):
+    def send_message(self,queue_name, routing_key, message=''):
         # self.routing_key = routing_key
         self.declare_queue(queue_name=queue_name, routing_key=routing_key)
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
-                                   body=bytes(message, ENCODING)
+                                   body=json.dumps(message)
+                                   #bytes(message, ENCODING)
                                    )
-
-        self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
+        self.logger.debug(f"Message sent to {routing_key}.")
         self.logger.debug(message)
         self.logger.info("Message Sent.")
 
-    def get_message(self, queue_name, binding_key):
+    def get_message(self, queue_name):
         self.logger.debug("Creating a new queue.")
         # print("creating a new queue")
-        self.declare_queue(queue_name=queue_name, routing_key=binding_key)
+        # self.declare_queue(queue_name=queue_name, routing_key=binding_key)
 
         (self.method, self.properties, self.body) = self.channel.basic_get(queue=queue_name,
                                                                            auto_ack=True)
 
         self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
         print("body is", self.body, self.method, self.properties)
-        return json.loads(self.body)
+        if self.body is not None:
+            return json.loads(self.body)
+        else:
+            return None
 
     def declare_queue(self, queue_name, routing_key):
         self.channel.queue_declare(queue_name)
@@ -90,71 +95,39 @@ class Rabbitmq:
             queue=queue_name,
             routing_key=routing_key
         )
+        self.queue_name.append(queue_name)
         self.logger.info(f"Bound {routing_key}--> {queue_name}")
 
-    def queue_delete(self, queue_name):
-        self.channel.queue_unbind(queue=queue_name, exchange=self.exchange_name)
-        self.channel.queue_delete(queue=queue_name)
+    def queues_delete(self):
+        self.queue_name = list(set(self.queue_name))
+        for name in self.queue_name:
+            self.channel.queue_unbind(queue=name, exchange=self.exchange_name)
+            self.channel.queue_delete(queue=name)
 
     def close(self):
-        # self.channel.exchange_delete(exchange=self.exchange_name)
+        self.queues_delete()
         self.channel.close()
         self.connection.close()
 
-    def _convert_str_to_bool(self, body):
-        self.body = body
-        if self.body is None:
-            return None
-        else:
-            return self.body.decode(ENCODING) == "True"
-
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.ERROR)
     # test_receive.declare_queue(queue_name="sdfd", routing_key="asd")
     # test_receive.get_message(queue_name="sdfd", routing_key="asd")
 
-    test_send = Rabbitmq()
-    test_send.connect_to_server()
-    test_send.send_message(routing_key="test", queue_name='test_queue', message="321")
-    test_send.send_message(routing_key="test", queue_name='test_queue', message="32122")
-    test_send.send_message(routing_key="test", queue_name='test_queue', message="32145")
-    test_send.send_message(routing_key="test", queue_name='test_queue', message="321452222222")
-    test_send.send_message(routing_key="test", queue_name='test_queue', message="321454444444444")
-    # import time
-    # time.sleep(4)
-    # print("received message is", test_receive.body)
-    test_receive = Rabbitmq()
-    test_receive.connect_to_server()
+    sender = Rabbitmq()
+    sender.connect_to_server()
+    sender.send_message(queue_name='test_queue',routing_key="test", message="321")
 
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 1st is", test_receive.body)
-    # print(test_receive.body)
+    receiver = Rabbitmq()
+    receiver.connect_to_server()
+    receiver.get_message(queue_name="test_queue")
+    print("received message is", receiver.body)
 
-    # test_send.send_message(routing_key="asd", message="321")
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 2nd is", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 3rd is", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 4th is", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 5th is", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 6th is", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 7th", test_receive.body)
-
-    test_receive.get_message(queue_name="test_queue", binding_key="test")
-    print("received message 8th is", test_receive.body)
-
+    receiver.get_message(queue_name="test_queue")
+    print("received message is", receiver.body)
 
     # test_send.channel.queue_purge('test_queue')
-    test_send.queue_delete('test_queue')
+
     # test_send.close()
     # test_receive.close()

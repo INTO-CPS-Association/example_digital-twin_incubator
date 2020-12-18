@@ -25,6 +25,7 @@ def _convert_str_to_bool(body):
 class IncubatorDriver:
     HEAT_CTRL_QUEUE = "heater_control"
     FAN_CTRL_QUEUE = "fan_control"
+    STATE_QUEUE = "state_monitor"
     logger = logging.getLogger("Incubator")
 
     def __init__(self, ip_raspberry=RASPBERRY_IP,
@@ -76,14 +77,18 @@ class IncubatorDriver:
                            routing_key=ROUTING_KEY_FAN)
         self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
                            routing_key=ROUTING_KEY_HEATER)
+        self.declare_queue(queue_name=self.STATE_QUEUE,
+                           routing_key=ROUTING_KEY_STATE)
 
     def cleanup(self):
         self.logger.debug("Cleaning up.")
         self.actuators_off()
-        self.channel.queue_unbind(queue=FAN_CTRL_QUEUE, exchange=self.exchange_name)
-        self.channel.queue_delete(queue=FAN_CTRL_QUEUE)
-        self.channel.queue_unbind(queue=HEAT_CTRL_QUEUE, exchange=self.exchange_name)
-        self.channel.queue_delete(queue=HEAT_CTRL_QUEUE)
+        self.channel.queue_unbind(queue=self.FAN_CTRL_QUEUE, exchange=self.exchange_name)
+        self.channel.queue_delete(queue=self.FAN_CTRL_QUEUE)
+        self.channel.queue_unbind(queue=self.HEAT_CTRL_QUEUE, exchange=self.exchange_name)
+        self.channel.queue_delete(queue=self.HEAT_CTRL_QUEUE)
+        self.channel.queue_unbind(queue=self.STATE_QUEUE, exchange=self.exchange_name)
+        self.channel.queue_delete(queue=self.STATE_QUEUE)
         self.channel.close()
         self.connection.close()
 

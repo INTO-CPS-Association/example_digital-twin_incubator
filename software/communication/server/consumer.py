@@ -22,7 +22,7 @@ if __name__ == '__main__':
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     # 声明queue
-    channel.queue_declare(queue='hello')
+    # channel.queue_declare(queue='hello')
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
 
@@ -31,4 +31,7 @@ if __name__ == '__main__':
     # channel.basic_consume(callback, queue="hello",  no_ack=True,)
     # 开始循环监听
     (method, properties, body) = channel.basic_get(queue="hello",auto_ack=True)
+    if body is not None:
+        body_json = json.loads(body)
+    print(" [x] Received %r" % (body))
     # channel.start_consuming()
