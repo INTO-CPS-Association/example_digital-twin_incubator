@@ -1,6 +1,7 @@
 import pika
 import json
 import logging
+import time
 
 try:
     from communication.shared.connection_parameters import *
@@ -37,7 +38,7 @@ class Rabbitmq:
         self.logger = logging.getLogger("RabbitMQ Class")
 
     def __del__(self):
-        print("Deleting queues, close channel and connection")
+        self.logger.debug("Deleting queues, close channel and connection")
         if not self.channel.is_closed and not self.connection.is_closed:
             self.close()
         self.logger.info("Connection closed.")
@@ -61,28 +62,27 @@ class Rabbitmq:
         # self.declare_queue(queue_name=self.queue_name,
         #                    routing_key=self.routing_key)
 
-    def send_message(self,queue_name, routing_key, message=''):
+    def send_message(self, routing_key, message=''):
         # self.routing_key = routing_key
-        self.declare_queue(queue_name=queue_name, routing_key=routing_key)
+        # self.declare_queue(queue_name=queue_name, routing_key=routing_key)
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
                                    body=json.dumps(message)
-                                   #bytes(message, ENCODING)
+                                   # bytes(message, ENCODING)
                                    )
         self.logger.debug(f"Message sent to {routing_key}.")
         self.logger.debug(message)
         self.logger.info("Message Sent.")
 
-    def get_message(self, queue_name):
+    def get_message(self, queue_name, binding_key):
         self.logger.debug("Creating a new queue.")
         # print("creating a new queue")
-        # self.declare_queue(queue_name=queue_name, routing_key=binding_key)
-
+        self.declare_queue(queue_name=queue_name, routing_key=binding_key)
         (self.method, self.properties, self.body) = self.channel.basic_get(queue=queue_name,
                                                                            auto_ack=True)
 
         self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
-        print("body is", self.body, self.method, self.properties)
+        # print("body is", self.body, self.method, self.properties)
         if self.body is not None:
             return json.loads(self.body)
         else:
@@ -101,6 +101,7 @@ class Rabbitmq:
     def queues_delete(self):
         self.queue_name = list(set(self.queue_name))
         for name in self.queue_name:
+            self.logger.debug(f"Deleting queue:{name}")
             self.channel.queue_unbind(queue=name, exchange=self.exchange_name)
             self.channel.queue_delete(queue=name)
 
@@ -112,19 +113,20 @@ class Rabbitmq:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
-    # test_receive.declare_queue(queue_name="sdfd", routing_key="asd")
-    # test_receive.get_message(queue_name="sdfd", routing_key="asd")
-
-    sender = Rabbitmq()
-    sender.connect_to_server()
-    sender.send_message(queue_name='test_queue',routing_key="test", message="321")
 
     receiver = Rabbitmq()
     receiver.connect_to_server()
-    receiver.get_message(queue_name="test_queue")
+    receiver.declare_queue(queue_name='test_queue', routing_key="test")
+
+    sender = Rabbitmq()
+    sender.connect_to_server()
+    sender.send_message(routing_key="test", message="321")
+
+    time.sleep(0.01)  # in case too fast that the message has not been delivered.
+    receiver.get_message(queue_name="test_queue", binding_key="test")
     print("received message is", receiver.body)
 
-    receiver.get_message(queue_name="test_queue")
+    receiver.get_message(queue_name="test_queue", binding_key="test")
     print("received message is", receiver.body)
 
     # test_send.channel.queue_purge('test_queue')

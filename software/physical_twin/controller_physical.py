@@ -37,8 +37,8 @@ class ControllerPhysical():
         self.room_temperature = self.sensor1_reading
 
     def safe_protocol(self):
-        self.rabbitmq.send_message(queue_name=FAN_CTRL_QUEUE, routing_key=ROUTING_KEY_FAN, message='False')
-        self.rabbitmq.send_message(queue_name=HEAT_CTRL_QUEUE, routing_key=ROUTING_KEY_HEATER, message='False')
+        self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='False')
+        self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message='False')
 
     # this can be further used to self-adaption
     def change_controller_parameters(self, desired_temperature=35.0, lower_bound=5, heating_time=0.2, heating_gap=0.3):
@@ -56,10 +56,10 @@ class ControllerPhysical():
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.safe_protocol()
-        self.rabbitmq.send_message(queue_name=FAN_CTRL_QUEUE, routing_key=ROUTING_KEY_FAN, message='True')
+        self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='True')
 
     def get_state_message(self):
-        self.message = self.rabbitmq.get_message(self.state_queue_name, ROUTING_KEY_STATE)
+        self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, binding_key=ROUTING_KEY_STATE)
         self._message_decode()
 
     def ctrl_step(self):
@@ -100,8 +100,7 @@ class ControllerPhysical():
             while True:
                 self.get_state_message()
                 self.ctrl_step()
-                self.rabbitmq.send_message(queue_name=HEAT_CTRL_QUEUE,
-                                           routing_key=ROUTING_KEY_HEATER,
+                self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
                                            message=str(self.heater_ctrl)
                                            )
         except:

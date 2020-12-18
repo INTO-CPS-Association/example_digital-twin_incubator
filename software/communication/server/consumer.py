@@ -22,7 +22,7 @@ if __name__ == '__main__':
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
     # 声明queue
-    # channel.queue_declare(queue='hello')
+    channel.queue_declare(queue='hello')
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
 
