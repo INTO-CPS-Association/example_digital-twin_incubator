@@ -29,6 +29,9 @@ class ControllerPhysical():
         self.state_queue_name = 'state'
         self.message = None
 
+        print("Before running actually, please make sure that the low_level_deriver_server is sunning\n")
+        print("and using command (sudo rabbitmqctl list_queues) to check the (heater_control) queue and (fan_control) queue exist.")
+
     def _message_decode(self):
         self.sensor1_reading = self.message['t1']
         self.sensor2_reading = self.message['t2']
@@ -94,7 +97,7 @@ class ControllerPhysical():
         self.safe_protocol()
         self.rabbitmq.close()
 
-    def start_experiment(self):
+    def start_control(self):
         try:
             self.setup()
             while True:
@@ -110,5 +113,5 @@ class ControllerPhysical():
 
 if __name__ == '__main__':
     ctrl = ControllerPhysical()
-    ctrl.start_experiment()
+    ctrl.start_control()
     print(ctrl.message)
