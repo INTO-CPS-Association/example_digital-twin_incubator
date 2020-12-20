@@ -191,6 +191,6 @@ class IncubatorDriver:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    incubator = IncubatorDriver()
+    incubator = IncubatorDriver(simulate_actuation=False)
     incubator.setup()
     incubator.control_loop()
