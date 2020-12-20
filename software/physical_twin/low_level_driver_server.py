@@ -168,7 +168,7 @@ class IncubatorDriver:
         message["elapsed"] = time.time() - start
 
         self.channel.basic_publish(
-            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
+            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=str(message).encode(ENCODING))#    json.dumps(message))
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 

@@ -34,9 +34,9 @@ class ControllerPhysical():
 
     def _message_decode(self):
         if self.message is not None:
-            self.sensor1_reading = self.message['t1']
-            self.sensor2_reading = self.message['t2']
-            self.sensor3_reading = self.message['t3']
+            self.sensor1_reading = float(self.message['t1'])
+            self.sensor2_reading = float(self.message['t2'])
+            self.sensor3_reading = float(self.message['t3'])
             self.box_air_temperature = (self.sensor2_reading + self.sensor3_reading)/2
             self.room_temperature = self.sensor1_reading
 
@@ -64,7 +64,10 @@ class ControllerPhysical():
 
     def get_state_message(self):
         self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, binding_key=ROUTING_KEY_STATE)
-        self._message_decode()
+        if self.message is None:
+            print("No state information")
+        else:
+            self._message_decode()
 
     def ctrl_step(self):
         try:
@@ -143,9 +146,12 @@ class ControllerPhysical():
 
 if __name__ == '__main__':
     ctrl = ControllerPhysical()
-    ctrl.start_control()
+    # ctrl.start_control()
     # ctrl.rabbitmq.declare_queue(queue_name=ctrl.state_queue_name, routing_key=ROUTING_KEY_STATE)
-    # ctrl.setup()
-    # ctrl.get_state_message()
+    ctrl.setup()
+    ctrl.get_state_message()
+    time.sleep(10)
+    ctrl.get_state_message()
     print(ctrl.message)
-    # print(f"{ctrl.sensor1_reading},{ctrl.sensor2_reading},{ctrl.sensor3_reading},{ctrl.box_air_temperature},{ctrl.room_temperature}")
+    print(f"{ctrl.sensor1_reading},{ctrl.sensor2_reading},{ctrl.sensor3_reading},{ctrl.box_air_temperature},{ctrl.room_temperature}")
+    ctrl.cleanup()

@@ -67,7 +67,7 @@ class Rabbitmq:
         # self.declare_queue(queue_name=queue_name, routing_key=routing_key)
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
-                                   body=json.dumps(message)
+                                   body=str(message).encode(ENCODING)#  json.dumps(message)
                                    # bytes(message, ENCODING)
                                    )
         self.logger.debug(f"Message sent to {routing_key}.")
@@ -84,7 +84,7 @@ class Rabbitmq:
         self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
         # print("body is", self.body, self.method, self.properties)
         if self.body is not None:
-            return json.loads(self.body)
+            return eval(self.body)
         else:
             return None
 
