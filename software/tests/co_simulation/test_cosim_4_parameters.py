@@ -26,7 +26,7 @@ class CosimulationTests(CLIModeTest):
             m = SystemModel4Parameters(C_air=C_air_num,
                                   G_box=G_box_num,
                                   C_heater=C_heater_num,
-                                  G_heater=G_heater_num, heating_time=heating_time, heating_gap=1.0)
+                                  G_heater=G_heater_num, heating_time=heating_time, heating_gap=2.0)
             ModelSolver().simulate(m, 0.0, 1200, 0.5)
 
             plt.plot(m.signals['time'], m.plant.signals['T'], label=f"Trial_{heating_time}")

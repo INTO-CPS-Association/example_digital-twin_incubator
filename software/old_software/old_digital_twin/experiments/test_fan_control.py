@@ -1,10 +1,9 @@
-import sys
 import pika
 import json
 
-sys.path.append("../../shared/")
-from connection_parameters import *
-from protocol import *
+# sys.path.append("../../shared/")
+from communication.shared.connection_parameters import *
+from communication.shared.protocol import *
 
 
 if __name__ == '__main__':

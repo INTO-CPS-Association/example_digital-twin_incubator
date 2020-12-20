@@ -8,7 +8,7 @@ class SystemModel4Parameters(Model):
     def __init__(self, C_air,
                  G_box,
                  C_heater,
-                 G_heater, heating_time=0.1, heating_gap=1.0):
+                 G_heater, heating_time=0.2, heating_gap=2.0):
         super().__init__()
 
         self.ctrl = ControllerModel4(desired_temperature=35, heating_time=heating_time, heating_gap=heating_gap)

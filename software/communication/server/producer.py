@@ -15,10 +15,15 @@ if __name__ == '__main__':
                                            credentials)
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
+    channel.exchange_declare(exchange=PIKA_EXCHANGE, exchange_type=PIKA_EXCHANGE_TYPE)
 
     # 声明一个queue
-    channel.queue_declare(queue='hello')
-
+    channel.queue_declare(queue='state')
+    channel.queue_bind(
+        exchange=PIKA_EXCHANGE,
+        queue='state',
+        routing_key=ROUTING_KEY_STATE
+    )
 
     start = time.time()
     n_sensors = 3
@@ -39,7 +44,7 @@ if __name__ == '__main__':
     message["elapsed"] = time.time() - start
 
     # exchange为空的时候，routing_key就是指定的queue值
-    channel.basic_publish(exchange='', routing_key='hello', body=json.dumps(message))
+    channel.basic_publish(exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=json.dumps(message))
     print(f" [x] Sent '{message}'")
     # 关闭连接
     connection.close()
