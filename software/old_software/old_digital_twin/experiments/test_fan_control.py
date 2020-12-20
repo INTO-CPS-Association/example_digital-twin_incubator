@@ -2,8 +2,8 @@ import pika
 import json
 
 # sys.path.append("../../shared/")
-from communication.shared.connection_parameters import *
-from communication.shared.protocol import *
+# from communication.shared.connection_parameters import *
+# from communication.shared.protocol import *
 
 RASPBERRY_IP = "10.17.98.239"
 RASPBERRY_PORT = 5672
