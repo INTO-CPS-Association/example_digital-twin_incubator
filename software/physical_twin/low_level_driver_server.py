@@ -7,7 +7,7 @@ import json
 import datetime
 from gpiozero import LED
 from pika import BlockingConnection
-import temperature_sensor
+from physical_twin import temperature_sensor
 
 # Import parameters and shared stuff
 # sys.path.append("../communication/shared")
