@@ -82,7 +82,8 @@ class Rabbitmq:
                                                                            auto_ack=True)
 
         self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
-        # print("body is", self.body, self.method, self.properties)
+        #print("body is", self.body, self.method, self.properties)
+        #print(eval(self.body))
         if self.body is not None:
             return eval(self.body)
         else:

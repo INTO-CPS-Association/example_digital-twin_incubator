@@ -9,7 +9,7 @@ except:
 
 
 class ControllerPhysical():
-    def __init__(self, desired_temperature=35.0, lower_bound=5, heating_time=0.2, heating_gap=2):
+    def __init__(self, desired_temperature=35.0, lower_bound=5, heating_time=3, heating_gap=2):
         self.temperature_desired = desired_temperature
         self.lower_bound = lower_bound
         self.heating_time = heating_time
@@ -65,9 +65,11 @@ class ControllerPhysical():
     def get_state_message(self):
         self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, binding_key=ROUTING_KEY_STATE)
         if self.message is None:
-            print("No state information")
+            #print("No state information")
+            return None
         else:
             self._message_decode()
+            return 0
 
     def ctrl_step(self):
         try:
@@ -77,27 +79,16 @@ class ControllerPhysical():
                 if self.box_air_temperature <= self.temperature_desired - self.lower_bound:
                     self.current_state = "Heating"
                     self.heater_ctrl = True
-                    self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                               message=str(self.heater_ctrl)
-                                               )
                     self.next_time = time.time() + self.heating_time
-                    while not (0 < self.next_time <= time.time()):
-                        pass
+                    return
+            if self.current_state == "Heating":
+                # print("current state is: Heating")
+                self.heater_ctrl = True
+                if 0 < self.next_time <= time.time():
                     self.current_state = "Waiting"
                     self.heater_ctrl = False
-                    self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                               message=str(self.heater_ctrl)
-                                               )
                     self.next_time = time.time() + self.heating_gap
-                    # self.next_time = -1
                 return
-            # if self.current_state == "Heating":
-            #     # print("current state is: Heating")
-            #     self.heater_ctrl = True
-            #     if 0 < self.next_time <= time.time():
-            #         self.current_state = "Waiting"
-            #         self.next_time = time.time() + self.heating_gap
-            #     return
             if self.current_state == "Waiting":
                 # print("current state is: Waiting")
                 self.heater_ctrl = False
@@ -105,21 +96,10 @@ class ControllerPhysical():
                     if self.box_air_temperature <= self.temperature_desired:
                         self.current_state = "Heating"
                         self.heater_ctrl = True
-                        self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                                   message=str(self.heater_ctrl)
-                                                   )
-                        self.next_time = time.time() + self.heating_time
-                        while not (0 < self.next_time <= time.time()):
-                            pass
-                        self.current_state = "Waiting"
-                        self.heater_ctrl = False
-                        self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                                   message=str(self.heater_ctrl)
-                                                   )
-                        # print("next state is heating from waiting")
                         self.next_time = time.time() + self.heating_time
                     else:
                         self.current_state = "CoolingDown"
+                        self.heater_ctrl = False
                         self.next_time = -1
                 return
         except:
@@ -134,10 +114,23 @@ class ControllerPhysical():
         try:
             self.setup()
             while True:
-                self.get_state_message()
+                print("Start getting message")
+                while True:
+                    if self.get_state_message() is not None:
+                        break
+                    pass
+                print(f"Time: {time.ctime(self.message['time'])}\n"
+                      f"Box air temperature is: {self.box_air_temperature}\n"
+                      f"Heat state: {self.message['heater_on']}\n"
+                      f"Fan state: {self.message['fan_on']}\n"
+                      f"current state: {self.current_state}\n")
+                if self.box_air_temperature >= 50:
+                    print("Cleaning up")
+                    self.cleanup()
+                    break
                 self.ctrl_step()
                 self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                           message=str(self.heater_ctrl)
+                                           message=self.heater_ctrl
                                            )
         except:
             self.cleanup()
@@ -145,13 +138,38 @@ class ControllerPhysical():
 
 
 if __name__ == '__main__':
-    ctrl = ControllerPhysical()
-    # ctrl.start_control()
-    # ctrl.rabbitmq.declare_queue(queue_name=ctrl.state_queue_name, routing_key=ROUTING_KEY_STATE)
-    ctrl.setup()
-    ctrl.get_state_message()
-    time.sleep(10)
-    ctrl.get_state_message()
-    print(ctrl.message)
-    print(f"{ctrl.sensor1_reading},{ctrl.sensor2_reading},{ctrl.sensor3_reading},{ctrl.box_air_temperature},{ctrl.room_temperature}")
-    ctrl.cleanup()
+    idx = int(input("0-For testing the functionality\n1-For control: "))
+    if idx == 1:
+        desired_temperature = float(input("Please input desired temperature: "))
+        controller = ControllerPhysical(desired_temperature=desired_temperature)
+        #controller.rabbitmq.connect_to_server()
+        #controller.rabbitmq.declare_queue(queue_name=controller.state_queue_name, routing_key=ROUTING_KEY_STATE)
+        #time.sleep(5)
+        #controller.get_state_message()
+        #time.sleep(5)
+        print(f"sensor3 readings:{controller.sensor3_reading}\n"
+              f"sensor2 readings:{controller.sensor2_reading}\n"
+              f"sensor1 readings:{controller.sensor1_reading}\n"
+              f"box air temperature is:{controller.box_air_temperature}\n"
+              f"room temperature is:{controller.room_temperature}\n")
+        #if controller.sensor3_reading is None:
+            #print("None state message get")
+        #else:
+        controller.start_control()
+    else:
+        ctrl = ControllerPhysical()
+        # ctrl.start_control()
+        # ctrl.rabbitmq.declare_queue(queue_name=ctrl.state_queue_name, routing_key=ROUTING_KEY_STATE)
+        ctrl.setup()
+        ctrl.get_state_message()
+        ctrl.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message=True)
+        time.sleep(20)
+        ctrl.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message=False)
+        ctrl.get_state_message()
+        print(ctrl.message)
+        print(f"sensor3 readings:{ctrl.sensor3_reading}\n"
+              f"sensor2 readings:{ctrl.sensor2_reading}\n"
+              f"sensor1 readings:{ctrl.sensor1_reading}\n"
+              f"box air temperature is:{ctrl.box_air_temperature}\n"
+              f"room temperature is:{ctrl.room_temperature}\n")
+        ctrl.cleanup()
