@@ -1,5 +1,5 @@
 import time
-# import sys
+import sys
 try:
     from communication.shared.connection_parameters import *
     from communication.shared.protocol import *
@@ -29,6 +29,10 @@ class ControllerPhysical():
         self.state_queue_name = 'state'
         self.message = None
 
+        self.header_written= False
+        self.line_format = "{:20} {:10} {:10} {:10} {:10} {:10} {:20} {:20}"
+        self.body_json = None
+
         print("Before running actually, please make sure that the low_level_deriver_server is running")
         print("And using command (sudo rabbitmqctl list_queues) to check the (heater_control) queue and (fan_control) queue exist.")
 
@@ -39,14 +43,16 @@ class ControllerPhysical():
             self.sensor3_reading = float(self.message['t3'])
             self.box_air_temperature = (self.sensor2_reading + self.sensor3_reading)/2
             self.room_temperature = self.sensor1_reading
+        else:
+            print("Message is None")
 
     def safe_protocol(self):
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='False')
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message='False')
 
     # this can be further used to self-adaption
-    def change_controller_parameters(self, desired_temperature=35.0, lower_bound=5, heating_time=0.2, heating_gap=0.3):
-        self.temperature_desired = desired_temperature
+    def change_controller_parameters(self, desired_temperature_=35.0, lower_bound=5, heating_time=0.2, heating_gap=0.3):
+        self.temperature_desired = desired_temperature_
         self.lower_bound = lower_bound
         self.heating_time = heating_time
         self.heating_gap = heating_gap
@@ -64,12 +70,7 @@ class ControllerPhysical():
 
     def get_state_message(self):
         self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, binding_key=ROUTING_KEY_STATE)
-        if self.message is None:
-            #print("No state information")
-            return None
-        else:
-            self._message_decode()
-            return 0
+        self._message_decode()
 
     def ctrl_step(self):
         try:
@@ -110,29 +111,53 @@ class ControllerPhysical():
         self.safe_protocol()
         self.rabbitmq.close()
 
+    def print_terminal(self, body):
+        self.body_json = eval(body)
+
+        if not self.header_written:
+            header = list(self.body_json.keys())
+            # csv_writer.writerow(header)
+            headers_to_print = [h for h in header if not h.startswith("time")]
+            # print(headers_to_print)
+            headers_to_print.append("print_time")
+            # print(headers_to_print)
+            assert len(headers_to_print) == 8
+            print(self.line_format.format(*headers_to_print))
+            self.header_written = True
+
+        # values = list(self.body_json.values())
+        # csv_writer.writerow(values)
+        # out_file_handle.flush()
+        header_to_print = [h for h in self.body_json.keys() if not h.startswith("time")]
+        values_to_print = [str(self.body_json[h]) for h in header_to_print]
+        values_to_print.append(str(time.ctime()))
+        print(self.line_format.format(*values_to_print))
+
+    def control_loop_callback(self,ch, method, properties, body):
+        self.message = eval(body)
+        self._message_decode()
+        self.print_terminal(body)
+        if self.box_air_temperature >= 58:
+            print("Temperature exceeds 58, Cleaning up")
+            self.cleanup()
+            sys.exit(0)
+        self.ctrl_step()
+        self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
+                                   message=self.heater_ctrl
+                                   )
+
     def start_control(self):
         try:
             self.setup()
-            while True:
-                print("Start getting message")
-                while True:
-                    if self.get_state_message() is not None:
-                        break
-                    pass
-                print(f"Time: {time.ctime(self.message['time'])}\n"
-                      f"Box air temperature is: {self.box_air_temperature}\n"
-                      f"Heat state: {self.message['heater_on']}\n"
-                      f"Fan state: {self.message['fan_on']}\n"
-                      f"current state: {self.current_state}\n")
-                if self.box_air_temperature >= 50:
-                    print("Cleaning up")
-                    self.cleanup()
-                    break
-                self.ctrl_step()
-                self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER,
-                                           message=self.heater_ctrl
-                                           )
+            # self.get_state_message()
+            self.rabbitmq.declare_queue(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE)
+            self.rabbitmq.channel.basic_consume(queue=self.state_queue_name,
+                                                on_message_callback=self.control_loop_callback,
+                                                auto_ack=True
+                                                )
+            self.rabbitmq.channel.start_consuming()
         except:
+            print("Cleaning Process")
             self.cleanup()
             raise
 
@@ -142,19 +167,6 @@ if __name__ == '__main__':
     if idx == 1:
         desired_temperature = float(input("Please input desired temperature: "))
         controller = ControllerPhysical(desired_temperature=desired_temperature)
-        #controller.rabbitmq.connect_to_server()
-        #controller.rabbitmq.declare_queue(queue_name=controller.state_queue_name, routing_key=ROUTING_KEY_STATE)
-        #time.sleep(5)
-        #controller.get_state_message()
-        #time.sleep(5)
-        print(f"sensor3 readings:{controller.sensor3_reading}\n"
-              f"sensor2 readings:{controller.sensor2_reading}\n"
-              f"sensor1 readings:{controller.sensor1_reading}\n"
-              f"box air temperature is:{controller.box_air_temperature}\n"
-              f"room temperature is:{controller.room_temperature}\n")
-        #if controller.sensor3_reading is None:
-            #print("None state message get")
-        #else:
         controller.start_control()
     else:
         ctrl = ControllerPhysical()
