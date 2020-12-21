@@ -1,12 +1,27 @@
 import sys
 import pika
-import json
+# import json
 import os
 import csv
 
 # sys.path.append("../../shared/")
-from communication.shared.connection_parameters import *
-from communication.shared.protocol import *
+# from communication.shared.connection_parameters import *
+# from communication.shared.protocol import *
+
+RASPBERRY_IP = "10.17.98.239"
+RASPBERRY_PORT = 5672
+PIKA_USERNAME = "incubator"
+PIKA_PASSWORD = "incubator"
+PIKA_EXCHANGE = "Incubator_AMQP"
+PIKA_EXCHANGE_TYPE = "topic"
+PIKA_VHOST = "/"
+
+ROUTING_KEY_STATE = "incubator.driver.state"
+ROUTING_KEY_HEATER = "incubator.hardware.gpio.heater.on"
+ROUTING_KEY_FAN = "incubator.hardware.gpio.fan.on"
+ENCODING = "ascii"
+HEAT_CTRL_QUEUE = "heater_control"
+FAN_CTRL_QUEUE = "fan_control"
 
 
 outfile = "output.csv"
@@ -20,7 +35,7 @@ line_format = "{:20} {:10} {:10} {:10} {:10} {:10} {:10}"
 def read_state(ch, method, properties, body):
     global header_written
 
-    body_json = json.loads(body)
+    body_json = eval(body)
 
     if not header_written:
         header = list(body_json.keys())
