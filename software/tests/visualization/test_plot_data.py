@@ -27,6 +27,9 @@ class TestPlotData(CLIModeTest):
         data = load_data("../datasets/controller_tunning/output.csv",
                          desired_timeframe=(- math.inf, math.inf))
 
+        if self.ide_mode():
+            print(f"Experiment time from {data.iloc[0]['timestamp']} to {data.iloc[-1]['timestamp']}")
+
         params4pmodel = [486.1198196,  # C_air
                          0.85804919,  # G_box
                          33.65074598,  # C_heater
