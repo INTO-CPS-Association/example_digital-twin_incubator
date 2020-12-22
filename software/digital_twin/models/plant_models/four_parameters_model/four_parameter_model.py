@@ -6,7 +6,7 @@ from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURR
 class FourParameterIncubatorPlant(Model):
     def __init__(self,
                  initial_heat_voltage=HEATER_VOLTAGE, initial_heat_current=HEATER_CURRENT,
-                 initial_room_temperature=25.0, initial_box_temperature=25.0,
+                 initial_room_temperature=21.0, initial_box_temperature=25.0,
                  initial_heat_temperature=25.0,
                  C_air=1.0, G_box=1.0,
                  C_heater=1.0, G_heater=1.0):

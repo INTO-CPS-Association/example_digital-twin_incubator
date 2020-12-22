@@ -15,8 +15,8 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_data_default_setup(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                         desired_timeframe=(- math.inf, 2000))
+        data = load_data("../datasets/controller_tunning/output.csv",
+                         desired_timeframe=(- math.inf, math.inf))
 
         plot_incubator_data(data)
 
@@ -24,8 +24,8 @@ class TestPlotData(CLIModeTest):
             plt.show()
 
     def test_plot_data_plotly(self):
-        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                         desired_timeframe=(- math.inf, 2000))
+        data = load_data("../datasets/controller_tunning/output.csv",
+                         desired_timeframe=(- math.inf, math.inf))
 
         params4pmodel = [486.1198196,  # C_air
                          0.85804919,  # G_box
@@ -39,10 +39,10 @@ class TestPlotData(CLIModeTest):
 
         fig = plotly_incubator_data(data,
                                     compare_to={
-                                        "T(4)": {
-                                            "time": results4p.signals["time"],
-                                            "T": results4p.signals["T"],
-                                        },
+                                        # "T(4)": {
+                                        #     "time": results4p.signals["time"],
+                                        #     "T": results4p.signals["T"],
+                                        # },
                                         # "T(2)": {
                                         #     "time": results2p.signals["time"],
                                         #     "T": results2p.signals["T"],

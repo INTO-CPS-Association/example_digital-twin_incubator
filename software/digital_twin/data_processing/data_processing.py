@@ -11,6 +11,7 @@ from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURR
 def load_data(filepath, desired_timeframe=(- math.inf, math.inf)):
     realpath = resource_file_path(filepath)
     csv = pandas.read_csv(realpath)
+    csv["timestamp"] = pandas.to_datetime(csv["time"], unit='s')
     # normalize time
     csv["time"] = csv["time"] - csv.iloc[0]["time"]
 

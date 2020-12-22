@@ -3,7 +3,7 @@ import time
 
 
 class ControllerModel4(Model):
-    def __init__(self, desired_temperature=45.0, lower_bound=5, heating_time=0.2, heating_gap=0.3):
+    def __init__(self, desired_temperature=45.0, lower_bound=10, heating_time=0.2, heating_gap=0.3):
         super().__init__()
 
         self.T_desired = self.parameter(desired_temperature)

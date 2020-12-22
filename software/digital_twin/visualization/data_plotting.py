@@ -32,6 +32,7 @@ def plot_incubator_data(data):
     ax5.legend()
 
 
+
 def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
                           overlay_heater=True, show_actuators=False, show_sensor_temperatures=False):
     nRows = 2
@@ -53,7 +54,7 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
 
     fig.add_trace(go.Scatter(x=data["time"], y=data["average_temperature"], name="avg_T"), row=1, col=1)
     if overlay_heater:
-        fig.add_trace(go.Scatter(x=data["time"], y=[50 if b else 30 for b in data["heater_on"]], name="heater_on"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data["time"], y=[40 if b else 30 for b in data["heater_on"]], name="heater_on"), row=1, col=1)
 
     if compare_to is not None:
         for res in compare_to:
