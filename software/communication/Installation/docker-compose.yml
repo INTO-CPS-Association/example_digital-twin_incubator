@@ -1,11 +1,9 @@
 version: '3.0'
 
 services:
-
-
   rabbitmq:
+    container_name: rabbitmq-server
     build : ./
-#    image: rabbitmq:3.8.2-management
     restart: always
     ports:
       - 5672:5672
