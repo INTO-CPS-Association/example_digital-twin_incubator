@@ -15,7 +15,7 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_data_default_setup(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data = load_data("../datasets/controller_tunning/output.csv",
+        data = load_data("../datasets/controller_tunning/exp1_ht3_hg2.csv",
                          desired_timeframe=(- math.inf, math.inf))
 
         plot_incubator_data(data)
@@ -24,16 +24,16 @@ class TestPlotData(CLIModeTest):
             plt.show()
 
     def test_plot_data_plotly(self):
-        data = load_data("../datasets/controller_tunning/output.csv",
+        data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
                          desired_timeframe=(- math.inf, math.inf))
 
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp']} to {data.iloc[-1]['timestamp']}")
 
-        params4pmodel = [486.1198196,  # C_air
-                         0.85804919,  # G_box
-                         33.65074598,  # C_heater
-                         0.86572258]  # G_heater
+        params4pmodel = [145.69782402,  # C_air
+                         0.79154106,  # G_box
+                         227.76228512,  # C_heater
+                         1.92343277]  # G_heater
         results4p, sol = run_experiment_four_parameter_model(data, params4pmodel)
 
         params2pmodel = [616.56464029,  # C_air
@@ -42,10 +42,10 @@ class TestPlotData(CLIModeTest):
 
         fig = plotly_incubator_data(data,
                                     compare_to={
-                                        # "T(4)": {
-                                        #     "time": results4p.signals["time"],
-                                        #     "T": results4p.signals["T"],
-                                        # },
+                                        "T(4)": {
+                                            "time": results4p.signals["time"],
+                                            "T": results4p.signals["T"],
+                                        },
                                         # "T(2)": {
                                         #     "time": results2p.signals["time"],
                                         #     "T": results2p.signals["T"],

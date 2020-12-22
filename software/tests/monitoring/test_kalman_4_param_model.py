@@ -16,8 +16,8 @@ class TestKalmanFilter(CLIModeTest):
         data_sample_size = 3.0
 
         # Load the data
-        tf = 2000.0 if self.ide_mode() else 800.0
-        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
+        tf = math.inf if self.ide_mode() else 800.0
+        data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
                          desired_timeframe=(- math.inf, tf))
 
         time = data["time"]
@@ -31,10 +31,10 @@ class TestKalmanFilter(CLIModeTest):
 
         std_dev = 0.00001
 
-        params = [486.1198196,  # C_air
-                  0.85804919,  # G_box
-                  33.65074598,  # C_heater
-                  0.86572258]  # G_heater
+        params = [145.69782402,  # C_air
+                  0.79154106,  # G_box
+                  227.76228512,  # C_heater
+                  1.92343277]  # G_heater
         C_air_num = params[0]
         G_box_num = params[1]
         C_heater_num = params[2]
@@ -59,15 +59,15 @@ class TestKalmanFilter(CLIModeTest):
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
         fig = plotly_incubator_data(data, compare_to={
-                                        "4pModel": {
-                                            "time": results_4p.signals["time"],
-                                            "T": results_4p.signals["T"],
-                                        },
-                                        "Kalman": {
-                                            "time": time,
-                                            "T": kalman_prediction[:, 1]
-                                        },
-                                    },
+            "4pModel": {
+                "time": results_4p.signals["time"],
+                "T": results_4p.signals["T"],
+            },
+            "Kalman": {
+                "time": time,
+                "T": kalman_prediction[:, 1]
+            },
+        },
                                     heater_T_data={
                                         "4pModel": {
                                             "time": results_4p.signals["time"],

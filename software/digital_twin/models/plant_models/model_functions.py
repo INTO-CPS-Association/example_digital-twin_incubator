@@ -90,7 +90,7 @@ def run_experiment_four_parameter_model(data, params, h=3.0):
     return model, sol
 
 
-def construct_residual(experiments, run_exp=None, desired_timeframe=(-math.inf, math.inf)):
+def construct_residual(experiments, run_exp=None, desired_timeframe=(-math.inf, math.inf), h=3.0):
     """
     run_exp is, for instance, run_experiment_four_parameter_model
     """
@@ -98,7 +98,7 @@ def construct_residual(experiments, run_exp=None, desired_timeframe=(-math.inf, 
         errors = []
         for exp in experiments:
             data = load_data(exp, desired_timeframe=desired_timeframe)
-            m, sol = run_exp(data, params, h=3.0)
+            m, sol = run_exp(data, params, h=h)
             state_names = m.state_names()
             state_over_time = sol.y
 

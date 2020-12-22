@@ -13,10 +13,10 @@ class TestKalmanSimulation(CLIModeTest):
         step_size = 0.5
         std_dev = 0.001
 
-        params = [486.1198196,  # C_air
-                  0.85804919,  # G_box
-                  33.65074598,  # C_heater
-                  0.86572258]  # G_heater
+        params = [145.69782402,  # C_air
+                  0.79154106,  # G_box
+                  227.76228512,  # C_heater
+                  1.92343277]  # G_heater
         C_air_num = params[0]
         G_box_num = params[1]
         C_heater_num = params[2]

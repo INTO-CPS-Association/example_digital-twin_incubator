@@ -18,31 +18,32 @@ class FourParameterModelTests(CLIModeTest):
         logging.basicConfig(level=logging.WARN)
 
         experiments = [
-            "../datasets/calibration_fan_24v/semi_random_movement.csv",
+            "../datasets/controller_tunning/exp2_ht20_hg30.csv",
+            # "../datasets/calibration_fan_24v/semi_random_movement.csv",
             # "../datasets/calibration_fan_12v/ramp_up_cool_down.csv",
             # "../datasets/calibration_fan_12v/random_on_off_sequences_1",
             # "../datasets/calibration_fan_12v/random_on_off_sequences_2"
         ]
-        params = [486.1198196,  # C_air
-                  0.85804919,  # G_box
-                  33.65074598,  # C_heater
-                  0.86572258]  # G_heater
+        params = [145.69782402,  # C_air
+                  0.79154106,  # G_box
+                  227.76228512,  # C_heater
+                  1.92343277]  # G_heater
 
-        tf = 750 if self.ide_mode() else 30
+        tf = 1500 if self.ide_mode() else 30
 
         residual = construct_residual(experiments, run_exp=run_experiment_four_parameter_model,
-                                      desired_timeframe=(-math.inf, tf))
+                                      desired_timeframe=(-math.inf, tf), h=6.0)
 
         print(leastsq(residual, params, maxfev=NEvals))
 
     def test_run_experiment_four_parameter_model(self):
-        params = [486.1198196,  # C_air
-                  0.85804919,  # G_box
-                  33.65074598,  # C_heater
-                  0.86572258]  # G_heater
+        params = [145.69782402,  # C_air
+                  0.79154106,  # G_box
+                  227.76228512,  # C_heater
+                  1.92343277]  # G_heater
         # CWD: Example_Digital-Twin_Incubator\software\
-        data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, 2000))
+        data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
+                         desired_timeframe=(-math.inf, math.inf))
         results, sol = run_experiment_four_parameter_model(data, params)
 
         fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
@@ -75,13 +76,13 @@ class FourParameterModelTests(CLIModeTest):
         """
         If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
         """
-        params = [486.1198196,  # C_air
-                  0.85804919,  # G_box
-                  33.65074598,  # C_heater
-                  0.86572258]  # G_heater
+        params = [145.69782402,  # C_air
+                  0.79154106,  # G_box
+                  227.76228512,  # C_heater
+                  1.92343277]  # G_heater
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, 2000))
+                         desired_timeframe=(-math.inf, 2000))
 
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
@@ -140,7 +141,7 @@ class FourParameterModelTests(CLIModeTest):
         T = sp.symbols("T")
         T_heater = sp.symbols("T_h")
 
-        power_in = on_heater*V_heater*i_heater
+        power_in = on_heater * V_heater * i_heater
 
         power_transfer_heat = G_heater * (T_heater - T)
 
@@ -150,8 +151,8 @@ class FourParameterModelTests(CLIModeTest):
 
         total_power_box = power_transfer_heat - power_out_box
 
-        der_T =  (1.0 / C_air) * (total_power_box)
-        der_T_heater =  (1.0 / C_heater) * (total_power_heater)
+        der_T = (1.0 / C_air) * (total_power_box)
+        der_T_heater = (1.0 / C_heater) * (total_power_heater)
 
         # Turn above into a linear system
         """
@@ -161,12 +162,12 @@ class FourParameterModelTests(CLIModeTest):
         """
         A = sp.Matrix([
             [der_T_heater.diff(T_heater), der_T_heater.diff(T)],
-            [der_T.diff(T_heater),        der_T.diff(T)]
+            [der_T.diff(T_heater), der_T.diff(T)]
         ])
 
         B = sp.Matrix([
-            [der_T_heater.diff(on_heater),  der_T_heater.diff(in_room_temperature)],
-            [der_T.diff(on_heater),         der_T.diff(in_room_temperature)]
+            [der_T_heater.diff(on_heater), der_T_heater.diff(in_room_temperature)],
+            [der_T.diff(on_heater), der_T.diff(in_room_temperature)]
         ])
 
         # Observation matrix: only T can be measured
@@ -181,7 +182,6 @@ class FourParameterModelTests(CLIModeTest):
             print(B)
             print(f"C:")
             print(C)
-
 
 
 if __name__ == '__main__':
