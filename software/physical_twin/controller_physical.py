@@ -9,7 +9,7 @@ except:
 
 
 class ControllerPhysical():
-    def __init__(self, desired_temperature=35.0, lower_bound=5, heating_time=3, heating_gap=2):
+    def __init__(self, desired_temperature=35.0, lower_bound=5, heating_time=20, heating_gap=30):
         self.temperature_desired = desired_temperature
         self.lower_bound = lower_bound
         self.heating_time = heating_time
@@ -30,7 +30,7 @@ class ControllerPhysical():
         self.message = None
 
         self.header_written= False
-        self.line_format = "{:20} {:10} {:10} {:10} {:10} {:10} {:20} {:20}"
+        self.line_format = "{:20} {:10} {:10} {:10} {:10} {:10} {:20} {:<20} {:15} {:20}"
         self.body_json = None
 
         print("Before running actually, please make sure that the low_level_deriver_server is running")
@@ -47,7 +47,9 @@ class ControllerPhysical():
             print("Message is None")
 
     def safe_protocol(self):
+        print("Closing Fan")
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='False')
+        print("Closing Heater")
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message='False')
 
     # this can be further used to self-adaption
@@ -119,9 +121,11 @@ class ControllerPhysical():
             # csv_writer.writerow(header)
             headers_to_print = [h for h in header if not h.startswith("time")]
             # print(headers_to_print)
+            headers_to_print.append("box_air_temperature")
+            headers_to_print.append("state")
             headers_to_print.append("print_time")
             # print(headers_to_print)
-            assert len(headers_to_print) == 8
+            assert len(headers_to_print) == 10
             print(self.line_format.format(*headers_to_print))
             self.header_written = True
 
@@ -130,6 +134,8 @@ class ControllerPhysical():
         # out_file_handle.flush()
         header_to_print = [h for h in self.body_json.keys() if not h.startswith("time")]
         values_to_print = [str(self.body_json[h]) for h in header_to_print]
+        values_to_print.append(self.box_air_temperature)
+        values_to_print.append(self.current_state)
         values_to_print.append(str(time.ctime()))
         print(self.line_format.format(*values_to_print))
 

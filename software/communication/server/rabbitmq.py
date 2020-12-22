@@ -107,8 +107,11 @@ class Rabbitmq:
             self.channel.queue_delete(queue=name)
 
     def close(self):
+        print("Deleting created queues by Rabbitmq class")
         self.queues_delete()
+        print("Closing channel in rabbitmq")
         self.channel.close()
+        print("Closing connection in rabbitmq")
         self.connection.close()
 
 
