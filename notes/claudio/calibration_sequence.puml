@@ -7,7 +7,7 @@ database DataAccess as db
 database ModelManager as mod
 trig ->> cal: start(startDate, endDate, model, N)
 cal ->> lse: startOptimization(params_0)
-loop N times
+loop N times 
   lse -> cal: getResidual(params_i)
   cal -> db: getHistoricalData(startDate, endDate)
   return data

@@ -12,7 +12,7 @@ kf -> mod: instantiateModel(model, params)
 return model_i
 loop every sample_j
   comm ->> kf: sample
-  kf -> kf: sample_{j+1} := kalmanStep(model_i, sample_j)
-  kf ->> db: recordSample(model_i, sample_{j+1})
+  kf -> kf: data_{j+1} := kalmanStep(model_i, sample_j)
+  kf ->> db: recordSample(model_i, data_{j+1})
 end
 @enduml
