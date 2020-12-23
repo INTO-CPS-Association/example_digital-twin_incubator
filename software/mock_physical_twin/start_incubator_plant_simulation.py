@@ -47,7 +47,7 @@ class SampledRealTimeIncubator(Model):
 
     def discrete_step(self):
         # Read heater setting from rabbitmq, and store it.
-        heater_on = convert_str_to_bool(self.comm.get_message(queue_name=MOCK_HEATER_ON, routing_key=MOCK_HEATER_ON))
+        heater_on = self.comm.get_message(queue_name=MOCK_HEATER_ON)
         if heater_on is not None:
             self.cached_heater_on = heater_on
 
@@ -64,7 +64,7 @@ class SampledRealTimeIncubator(Model):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.WARN)
 
     C_air_num = four_param_model_params[0]
     G_box_num = four_param_model_params[1]

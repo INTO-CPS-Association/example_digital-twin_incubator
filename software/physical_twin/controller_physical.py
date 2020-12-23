@@ -9,7 +9,7 @@ except:
 
 
 class ControllerPhysical():
-    def __init__(self, desired_temperature=35.0, lower_bound=5, heating_time=20, heating_gap=30):
+    def __init__(self, rabbitmq_ip=RASPBERRY_IP, desired_temperature=35.0, lower_bound=5, heating_time=20, heating_gap=30):
         self.temperature_desired = desired_temperature
         self.lower_bound = lower_bound
         self.heating_time = heating_time
@@ -25,7 +25,7 @@ class ControllerPhysical():
         self.current_state = "CoolingDown"
         self.next_time = -1.0
 
-        self.rabbitmq = Rabbitmq()
+        self.rabbitmq = Rabbitmq(ip_raspberry=rabbitmq_ip)
         self.state_queue_name = 'state'
         self.message = None
 
@@ -67,11 +67,12 @@ class ControllerPhysical():
 
     def setup(self):
         self.rabbitmq.connect_to_server()
+        self.rabbitmq.declare_queue(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE)
         self.safe_protocol()
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='True')
 
     def get_state_message(self):
-        self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE)
+        self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name)
         self._message_decode()
 
     def ctrl_step(self):

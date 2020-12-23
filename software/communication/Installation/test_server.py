@@ -17,6 +17,6 @@ if __name__ == '__main__':
 
     time.sleep(0.01)  # in case too fast that the message has not been delivered.
 
-    msg = receiver.get_message(queue_name="test_queue", routing_key="test")
+    msg = receiver.get_message(queue_name="test_queue")
     print("received message is", msg)
 
