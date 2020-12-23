@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 from digital_twin.data_processing.data_processing import load_data
 from digital_twin.models.plant_models.model_functions import construct_residual, run_experiment_two_parameter_model
+from digital_twin.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
 from tests.cli_mode_test import CLIModeTest
 import sympy as sp
 
@@ -26,8 +27,7 @@ class TestsModelling(CLIModeTest):
             # "../datasets/calibration_fan_12v/random_on_off_sequences_1",
             # "../datasets/calibration_fan_12v/random_on_off_sequences_2"
             ]
-        params = [616.56464029,  # C_air
-                  0.65001889]  # G_box
+        params = two_param_model_params
 
         residual = construct_residual(experiments,
                                       run_exp=run_experiment_two_parameter_model,
@@ -36,8 +36,7 @@ class TestsModelling(CLIModeTest):
         print(leastsq(residual, params, maxfev=NEvals))
 
     def test_run_experiment_two_parameter_model(self):
-        params = [616.56464029,  # C_air
-                  0.65001889]   # G_box
+        params = two_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                                      desired_timeframe=(-math.inf, 4000))
@@ -65,8 +64,7 @@ class TestsModelling(CLIModeTest):
         # plt.show()
 
     def test_check_two_parameter_model_inputs(self):
-        params = [800.0,  # C_air
-                  0.3]  # G_box
+        params = two_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_12v/random_on_off_sequences.csv")
         results, sol = run_experiment_two_parameter_model(data, params, h=3.0)

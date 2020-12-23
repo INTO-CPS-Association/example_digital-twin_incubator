@@ -7,14 +7,8 @@ from gpiozero import LED
 # Import parameters and shared stuff
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import *
+from communication.shared.protocol import convert_str_to_bool
 from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
-
-
-def _convert_str_to_bool(body):
-    if body is None:
-        return None
-    else:
-        return body.decode(ENCODING) == "True"
 
 
 class IncubatorDriver:
@@ -176,12 +170,12 @@ class IncubatorDriver:
     def _try_read_heat_control(self):
         (method, properties, body) = incubator.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
         self._log_message(self.HEAT_CTRL_QUEUE, method, properties, body)
-        return _convert_str_to_bool(body)
+        return convert_str_to_bool(body)
 
     def _try_read_fan_control(self):
         (method, properties, body) = incubator.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
         self._log_message(self.FAN_CTRL_QUEUE, method, properties, body)
-        return _convert_str_to_bool(body)
+        return convert_str_to_bool(body)
 
 
 if __name__ == '__main__':

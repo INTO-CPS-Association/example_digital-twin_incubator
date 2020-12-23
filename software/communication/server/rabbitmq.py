@@ -60,9 +60,9 @@ class Rabbitmq:
         self.logger.debug(message)
         self.logger.info("Message Sent.")
 
-    def get_message(self, queue_name, binding_key):
+    def get_message(self, queue_name, routing_key):
         self.logger.debug("Creating a new queue.")
-        self.declare_queue(queue_name=queue_name, routing_key=binding_key)
+        self.declare_queue(queue_name=queue_name, routing_key=routing_key)
         (method, properties, body) = self.channel.basic_get(queue=queue_name, auto_ack=True)
 
         self.logger.debug(f"Received message is {body} {method} {properties}")
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
     time.sleep(0.01)  # in case too fast that the message has not been delivered.
 
-    msg = receiver.get_message(queue_name="test_queue", binding_key="test")
+    msg = receiver.get_message(queue_name="test_queue", routing_key="test")
     print("received message is", msg)
 
     # test_send.channel.queue_purge('test_queue')

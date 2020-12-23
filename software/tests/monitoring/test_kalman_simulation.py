@@ -3,6 +3,7 @@ import unittest
 import matplotlib.pyplot as plt
 from oomodelling import ModelSolver
 
+from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.monitoring.kalman_system_model import KalmanSystemModel
 from tests.cli_mode_test import CLIModeTest
 
@@ -13,10 +14,7 @@ class TestKalmanSimulation(CLIModeTest):
         step_size = 0.5
         std_dev = 0.001
 
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
+        params = four_param_model_params
         C_air_num = params[0]
         G_box_num = params[1]
         C_heater_num = params[2]

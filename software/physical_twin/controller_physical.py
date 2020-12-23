@@ -71,7 +71,7 @@ class ControllerPhysical():
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message='True')
 
     def get_state_message(self):
-        self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, binding_key=ROUTING_KEY_STATE)
+        self.message = self.rabbitmq.get_message(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE)
         self._message_decode()
 
     def ctrl_step(self):

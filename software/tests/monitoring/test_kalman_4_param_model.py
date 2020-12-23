@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 
 from digital_twin.data_processing.data_processing import load_data
+from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.model_functions import run_experiment_four_parameter_model
 from digital_twin.monitoring.kalman_filter_4p import KalmanFilter4P
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
@@ -31,10 +32,7 @@ class TestKalmanFilter(CLIModeTest):
 
         std_dev = 0.00001
 
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
+        params = four_param_model_params
         C_air_num = params[0]
         G_box_num = params[1]
         C_heater_num = params[2]

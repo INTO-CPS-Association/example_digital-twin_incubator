@@ -4,6 +4,7 @@ from oomodelling import ModelSolver
 
 import matplotlib.pyplot as plt
 
+from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.four_parameters_model.system_model4 import SystemModel4Parameters
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
 from tests.cli_mode_test import CLIModeTest
@@ -13,14 +14,10 @@ import pandas as pd
 class CosimulationTests(CLIModeTest):
 
     def test_run_cosim_4param_model(self):
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
-        C_air_num = params[0]
-        G_box_num = params[1]
-        C_heater_num = params[2]
-        G_heater_num = params[3]
+        C_air_num = four_param_model_params[0]
+        G_box_num = four_param_model_params[1]
+        C_heater_num = four_param_model_params[2]
+        G_heater_num = four_param_model_params[3]
 
         plt.figure()
 
@@ -45,14 +42,10 @@ class CosimulationTests(CLIModeTest):
             plt.show()
 
     def test_fine_tune_controller(self):
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
-        C_air_num = params[0]
-        G_box_num = params[1]
-        C_heater_num = params[2]
-        G_heater_num = params[3]
+        C_air_num = four_param_model_params[0]
+        G_box_num = four_param_model_params[1]
+        C_heater_num = four_param_model_params[2]
+        G_heater_num = four_param_model_params[3]
 
         m = SystemModel4Parameters(C_air=C_air_num,
                                    G_box=G_box_num,

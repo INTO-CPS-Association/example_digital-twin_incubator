@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import sympy as sp
 
 from digital_twin.data_processing.data_processing import load_data
+from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.model_functions import construct_residual, run_experiment_four_parameter_model, \
     run_experiment_two_parameter_model
 from tests.cli_mode_test import CLIModeTest
@@ -24,10 +25,7 @@ class FourParameterModelTests(CLIModeTest):
             # "../datasets/calibration_fan_12v/random_on_off_sequences_1",
             # "../datasets/calibration_fan_12v/random_on_off_sequences_2"
         ]
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
+        params = four_param_model_params
 
         tf = 1500 if self.ide_mode() else 30
 
@@ -37,10 +35,7 @@ class FourParameterModelTests(CLIModeTest):
         print(leastsq(residual, params, maxfev=NEvals))
 
     def test_run_experiment_four_parameter_model(self):
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
+        params = four_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
                          desired_timeframe=(-math.inf, math.inf))
@@ -76,10 +71,7 @@ class FourParameterModelTests(CLIModeTest):
         """
         If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
         """
-        params = [145.69782402,  # C_air
-                  0.79154106,  # G_box
-                  227.76228512,  # C_heater
-                  1.92343277]  # G_heater
+        params = four_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",
                          desired_timeframe=(-math.inf, 2000))
