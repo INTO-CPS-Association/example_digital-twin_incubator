@@ -1,18 +1,13 @@
 import logging
-import sys
 import time
 
 import pika
-import json
-import datetime
 from gpiozero import LED
-from pika import BlockingConnection
-from physical_twin import temperature_sensor
 
 # Import parameters and shared stuff
-# sys.path.append("../communication/shared")
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import *
+from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
 
 
 def _convert_str_to_bool(body):
@@ -34,8 +29,11 @@ class IncubatorDriver:
                  vhost=PIKA_VHOST,
                  exchange_name=PIKA_EXCHANGE,
                  exchange_type=PIKA_EXCHANGE_TYPE,
-                 heater_pin=12,
-                 fan_pin=13,
+                 heater=Heater(12),
+                 fan=Fan(13),
+                 t1=TemperatureSensor("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave"),
+                 t2=TemperatureSensor("/sys/bus/w1/devices/10-0008039b25c1/w1_slave"),
+                 t3=TemperatureSensor("/sys/bus/w1/devices/10-0008039a977a/w1_slave"),
                  simulate_actuation=True
                  ):
 
@@ -53,11 +51,9 @@ class IncubatorDriver:
         self.channel = None
 
         # IO
-        self.heater = LED(heater_pin)
-        self.fan = LED(fan_pin)
-        self.temperature_sensor = ("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave",
-                                   "/sys/bus/w1/devices/10-0008039b25c1/w1_slave",
-                                   "/sys/bus/w1/devices/10-0008039a977a/w1_slave")
+        self.heater = heater
+        self.fan = fan
+        self.temperature_sensor = (t1, t2, t3)
 
         # Safety
         self.simulate_actuation = simulate_actuation
@@ -71,7 +67,6 @@ class IncubatorDriver:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        # TODO: Make these routing keys global between client and server
         self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
                            routing_key=ROUTING_KEY_FAN)
         self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
@@ -152,7 +147,7 @@ class IncubatorDriver:
         readings = []*n_sensors
         timestamps = []*n_sensors
         for i in range(n_sensors):
-            readings.append(temperature_sensor.read_sensor(self.temperature_sensor[i]))
+            readings.append(self.temperature_sensor[i].read())
             timestamps.append(time.time())
 
         message = {
@@ -168,7 +163,7 @@ class IncubatorDriver:
         message["elapsed"] = time.time() - start
 
         self.channel.basic_publish(
-            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=str(message).encode(ENCODING))#    json.dumps(message))
+            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=str(message).encode(ENCODING))
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 

@@ -1,5 +1,4 @@
 from oomodelling import Model
-import time
 
 
 class ControllerModel4(Model):
