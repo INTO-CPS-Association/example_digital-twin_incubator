@@ -1,0 +1,16 @@
+@startuml
+boundary ExternalTrigger as trig
+control AnomalyDetector as det
+database DataAccess as db
+trig ->> det: start(stateEstimator)
+det --> db: subscribeToUpdatesFrom(stateEstimator)
+det --> db: subscribeToUpdatesFrom(system)
+loop every (sample_se, sample_sys)
+  db ->> det: sample_se
+  db ->> det: sample_sys
+  det -> det: compare
+  opt anomaly_detected
+    det ->> db: record_anomaly()
+  end
+end
+@enduml

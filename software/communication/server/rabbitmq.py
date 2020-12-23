@@ -1,5 +1,4 @@
 import pika
-import json
 import logging
 import time
 
@@ -31,10 +30,6 @@ class Rabbitmq:
         self.connection = None
         self.channel = None
         self.queue_name = []
-        # self.routing_key = None
-        self.method = None
-        self.properties = None
-        self.body = None
         self.logger = logging.getLogger("RabbitMQ Class")
 
     def __del__(self):
@@ -51,24 +46,15 @@ class Rabbitmq:
         self.connect_to_server()
 
     def connect_to_server(self):
-        # self.queue_name = queue_name
-        # self.routing_key = routing_key
         self.connection = pika.BlockingConnection(self.parameters)
         self.logger.info("Connected.")
-        # print("connected")
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-        # self.declare_queue(queue_name=self.queue_name,
-        #                    routing_key=self.routing_key)
-
     def send_message(self, routing_key, message=''):
-        # self.routing_key = routing_key
-        # self.declare_queue(queue_name=queue_name, routing_key=routing_key)
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
-                                   body=str(message).encode(ENCODING)#  json.dumps(message)
-                                   # bytes(message, ENCODING)
+                                   body=str(message).encode(ENCODING)
                                    )
         self.logger.debug(f"Message sent to {routing_key}.")
         self.logger.debug(message)
@@ -76,16 +62,12 @@ class Rabbitmq:
 
     def get_message(self, queue_name, binding_key):
         self.logger.debug("Creating a new queue.")
-        # print("creating a new queue")
         self.declare_queue(queue_name=queue_name, routing_key=binding_key)
-        (self.method, self.properties, self.body) = self.channel.basic_get(queue=queue_name,
-                                                                           auto_ack=True)
+        (method, properties, body) = self.channel.basic_get(queue=queue_name, auto_ack=True)
 
-        self.logger.debug(f"Received message is {self.body} {self.method} {self.properties}")
-        #print("body is", self.body, self.method, self.properties)
-        #print(eval(self.body))
-        if self.body is not None:
-            return eval(self.body)
+        self.logger.debug(f"Received message is {body} {method} {properties}")
+        if body is not None:
+            return eval(body)
         else:
             return None
 
@@ -127,11 +109,9 @@ if __name__ == '__main__':
     sender.send_message(routing_key="test", message="321")
 
     time.sleep(0.01)  # in case too fast that the message has not been delivered.
-    receiver.get_message(queue_name="test_queue", binding_key="test")
-    print("received message is", receiver.body)
 
-    receiver.get_message(queue_name="test_queue", binding_key="test")
-    print("received message is", receiver.body)
+    msg = receiver.get_message(queue_name="test_queue", binding_key="test")
+    print("received message is", msg)
 
     # test_send.channel.queue_purge('test_queue')
 
