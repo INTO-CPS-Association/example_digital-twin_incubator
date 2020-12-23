@@ -16,18 +16,19 @@ class IncubatorDriver:
     FAN_CTRL_QUEUE = "fan_control"
     logger = logging.getLogger("Incubator")
 
-    def __init__(self, ip_raspberry=RASPBERRY_IP,
+    def __init__(self,
+                 heater,
+                 fan,
+                 t1,
+                 t2,
+                 t3,
+                 ip_raspberry=RASPBERRY_IP,
                  port=RASPBERRY_PORT,
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
                  vhost=PIKA_VHOST,
                  exchange_name=PIKA_EXCHANGE,
                  exchange_type=PIKA_EXCHANGE_TYPE,
-                 heater=Heater(12),
-                 fan=Fan(13),
-                 t1=TemperatureSensor("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave"),
-                 t2=TemperatureSensor("/sys/bus/w1/devices/10-0008039b25c1/w1_slave"),
-                 t3=TemperatureSensor("/sys/bus/w1/devices/10-0008039a977a/w1_slave"),
                  simulate_actuation=True
                  ):
 
@@ -138,8 +139,8 @@ class IncubatorDriver:
 
     def read_upload_state(self, start, exec_interval):
         n_sensors = len(self.temperature_sensor)
-        readings = []*n_sensors
-        timestamps = []*n_sensors
+        readings = [] * n_sensors
+        timestamps = [] * n_sensors
         for i in range(n_sensors):
             readings.append(self.temperature_sensor[i].read())
             timestamps.append(time.time())
@@ -151,8 +152,8 @@ class IncubatorDriver:
             "fan_on": self.fan.is_lit
         }
         for i in range(n_sensors):
-            message[f"t{i+1}"] = readings[i]
-            message[f"time_t{i+1}"] = timestamps[i]
+            message[f"t{i + 1}"] = readings[i]
+            message[f"time_t{i + 1}"] = timestamps[i]
 
         message["elapsed"] = time.time() - start
 
@@ -168,18 +169,23 @@ class IncubatorDriver:
         self.logger.debug(f"  body={body}")
 
     def _try_read_heat_control(self):
-        (method, properties, body) = incubator.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
+        (method, properties, body) = self.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
         self._log_message(self.HEAT_CTRL_QUEUE, method, properties, body)
         return convert_str_to_bool(body)
 
     def _try_read_fan_control(self):
-        (method, properties, body) = incubator.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
+        (method, properties, body) = self.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
         self._log_message(self.FAN_CTRL_QUEUE, method, properties, body)
         return convert_str_to_bool(body)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    incubator = IncubatorDriver(simulate_actuation=False)
+    incubator = IncubatorDriver(heater=Heater(12),
+                                fan=Fan(13),
+                                t1=TemperatureSensor("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave"),
+                                t2=TemperatureSensor("/sys/bus/w1/devices/10-0008039b25c1/w1_slave"),
+                                t3=TemperatureSensor("/sys/bus/w1/devices/10-0008039a977a/w1_slave"),
+                                simulate_actuation=False)
     incubator.setup()
     incubator.control_loop()
