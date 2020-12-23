@@ -42,6 +42,8 @@ class SampledRealTimeIncubator(Model):
 
         self.simulation_start_time = 0.0
 
+        self._l = logging.getLogger("SampledRealTimeIncubator")
+
         self.save()
 
     def discrete_step(self):
@@ -59,11 +61,13 @@ class SampledRealTimeIncubator(Model):
         self.comm.send_message(routing_key=MOCK_TEMP_T2, message=t2)
         self.comm.send_message(routing_key=MOCK_TEMP_T3, message=t3)
 
+        self._l.info(f"heater_on={heater_on}, t1={heater_on}, t2={t2}, t3={t3}")
+
         return super().discrete_step()
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.WARN)
+    logging.basicConfig(level=logging.INFO)
 
     C_air_num = four_param_model_params[0]
     G_box_num = four_param_model_params[1]

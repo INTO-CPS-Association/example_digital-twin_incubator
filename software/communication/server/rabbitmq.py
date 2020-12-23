@@ -58,10 +58,8 @@ class Rabbitmq:
                                    )
         self.logger.debug(f"Message sent to {routing_key}.")
         self.logger.debug(message)
-        self.logger.info("Message Sent.")
 
     def get_message(self, queue_name):
-        self.logger.debug("Creating a new queue.")
         (method, properties, body) = self.channel.basic_get(queue=queue_name, auto_ack=True)
 
         self.logger.debug(f"Received message is {body} {method} {properties}")
@@ -88,11 +86,11 @@ class Rabbitmq:
             self.channel.queue_delete(queue=name)
 
     def close(self):
-        print("Deleting created queues by Rabbitmq class")
+        self.logger.info("Deleting created queues by Rabbitmq class")
         self.queues_delete()
-        print("Closing channel in rabbitmq")
+        self.logger.info("Closing channel in rabbitmq")
         self.channel.close()
-        print("Closing connection in rabbitmq")
+        self.logger.info("Closing connection in rabbitmq")
         self.connection.close()
 
 

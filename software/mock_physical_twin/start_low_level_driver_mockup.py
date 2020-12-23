@@ -49,7 +49,7 @@ class TemperatureSensorMock:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     incubator = IncubatorDriver(ip_raspberry="localhost",
                                 heater=HeaterMock(),
                                 fan=LedMock(),

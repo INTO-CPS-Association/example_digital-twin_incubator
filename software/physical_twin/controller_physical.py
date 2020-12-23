@@ -34,7 +34,6 @@ class ControllerPhysical():
         self.body_json = None
 
         print("Before running actually, please make sure that the low_level_deriver_server is running")
-        print("And using command (sudo rabbitmqctl list_queues) to check the (heater_control) queue and (fan_control) queue exist.")
 
     def _message_decode(self):
         if self.message is not None:
