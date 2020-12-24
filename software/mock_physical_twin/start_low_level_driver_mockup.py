@@ -19,7 +19,7 @@ class LedMock:
 class HeaterMock(LedMock):
     def __init__(self, ip_rabbitmq="localhost"):
         super(HeaterMock, self).__init__()
-        self.comm = Rabbitmq(ip_raspberry=ip_rabbitmq)
+        self.comm = Rabbitmq(ip=ip_rabbitmq)
         self.comm.connect_to_server()
 
         self.state_on = False
@@ -35,7 +35,7 @@ class HeaterMock(LedMock):
 
 class TemperatureSensorMock:
     def __init__(self, temp_key, ip_rabbitmq="localhost"):
-        self.comm = Rabbitmq(ip_raspberry=ip_rabbitmq)
+        self.comm = Rabbitmq(ip=ip_rabbitmq)
         self.key = temp_key
         self.comm.connect_to_server()
         self.comm.declare_queue(queue_name=self.key, routing_key=self.key)

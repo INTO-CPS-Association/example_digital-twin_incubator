@@ -36,7 +36,7 @@ class ControllerPhysical():
         self.current_state = "CoolingDown"
         self.next_time = -1.0
 
-        self.rabbitmq = Rabbitmq(ip_raspberry=rabbitmq_ip)
+        self.rabbitmq = Rabbitmq(ip=rabbitmq_ip)
         self.state_queue_name = 'state'
         self.message = None
 

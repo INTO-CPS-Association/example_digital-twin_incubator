@@ -27,7 +27,7 @@ class IncubatorDriver:
                  ):
 
         # Connection info
-        self.rabbitmq = Rabbitmq(ip_raspberry=ip_raspberry)
+        self.rabbitmq = Rabbitmq(ip=ip_raspberry)
 
         # IO
         self.heater = heater

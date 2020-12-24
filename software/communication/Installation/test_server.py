@@ -6,12 +6,11 @@ from communication.server.rabbitmq import Rabbitmq
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
 
-    receiver = Rabbitmq(ip_raspberry="localhost")
+    receiver = Rabbitmq(ip="localhost")
     receiver.connect_to_server()
     receiver.declare_queue(queue_name='test_queue', routing_key="test")
 
-
-    sender = Rabbitmq(ip_raspberry="localhost")
+    sender = Rabbitmq(ip="localhost")
     sender.connect_to_server()
     sender.send_message(routing_key="test", message={"text": "321"})
 

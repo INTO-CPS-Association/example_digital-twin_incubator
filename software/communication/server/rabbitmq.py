@@ -10,7 +10,7 @@ except:
 
 
 class Rabbitmq:
-    def __init__(self, ip_raspberry=RASPBERRY_IP,
+    def __init__(self, ip=RASPBERRY_IP,
                  port=RASPBERRY_PORT,
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
@@ -23,7 +23,7 @@ class Rabbitmq:
         self.exchange_type = exchange_type
 
         self.credentials = pika.PlainCredentials(username, password)
-        self.parameters = pika.ConnectionParameters(ip_raspberry,
+        self.parameters = pika.ConnectionParameters(ip,
                                                     port,
                                                     vhost,
                                                     self.credentials)
@@ -97,11 +97,11 @@ class Rabbitmq:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
 
-    receiver = Rabbitmq(ip_raspberry="localhost")
+    receiver = Rabbitmq(ip="localhost")
     receiver.connect_to_server()
     receiver.declare_queue(queue_name='test_queue', routing_key="test")
 
-    sender = Rabbitmq(ip_raspberry="localhost")
+    sender = Rabbitmq(ip="localhost")
     sender.connect_to_server()
     sender.send_message(routing_key="test", message="321")
 
