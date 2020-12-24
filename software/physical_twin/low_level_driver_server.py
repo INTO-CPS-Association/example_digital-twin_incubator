@@ -1,4 +1,3 @@
-import json
 import logging
 import time
 
@@ -6,9 +5,9 @@ import pika
 from gpiozero import LED
 
 # Import parameters and shared stuff
+from communication.server.rabbitmq import Rabbitmq
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import *
-from communication.shared.protocol import convert_str_to_bool
 from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
 
 
@@ -24,27 +23,11 @@ class IncubatorDriver:
                  t2,
                  t3,
                  ip_raspberry=RASPBERRY_IP,
-                 port=RASPBERRY_PORT,
-                 username=PIKA_USERNAME,
-                 password=PIKA_PASSWORD,
-                 vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE,
                  simulate_actuation=True
                  ):
 
         # Connection info
-        self.vhost = vhost
-        self.exchange_name = exchange_name
-        self.exchange_type = exchange_type
-
-        credentials = pika.PlainCredentials(username, password)
-        self.parameters = pika.ConnectionParameters(ip_raspberry,
-                                                    port,
-                                                    vhost,
-                                                    credentials)
-        self.connection = None
-        self.channel = None
+        self.rabbitmq = Rabbitmq(ip_raspberry=ip_raspberry)
 
         # IO
         self.heater = heater
@@ -58,34 +41,21 @@ class IncubatorDriver:
         self.actuators_off()
 
     def setup(self):
-        self.connection = pika.BlockingConnection(self.parameters)
+        self.rabbitmq.connect_to_server()
         self.logger.info("Connected.")
-        self.channel = self.connection.channel()
-        self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
-
-        self.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
-                           routing_key=ROUTING_KEY_FAN)
-        self.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
-                           routing_key=ROUTING_KEY_HEATER)
+        self.rabbitmq.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
+                                    routing_key=ROUTING_KEY_FAN)
+        self.rabbitmq.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
+                                    routing_key=ROUTING_KEY_HEATER)
 
     def cleanup(self):
         self.logger.debug("Cleaning up.")
         self.actuators_off()
-        self.channel.close()
-        self.connection.close()
+        self.rabbitmq.close()
 
     def actuators_off(self):
         self.fan.off()
         self.heater.off()
-
-    def declare_queue(self, queue_name, routing_key):
-        self.channel.queue_declare(queue_name, exclusive=True)
-        self.channel.queue_bind(
-            exchange=self.exchange_name,
-            queue=queue_name,
-            routing_key=routing_key
-        )
-        self.logger.info(f"Bound {routing_key}--> {queue_name}")
 
     def control_loop(self, exec_interval=3, strict_interval=True):
         try:
@@ -158,33 +128,20 @@ class IncubatorDriver:
 
         message["elapsed"] = time.time() - start
 
-        msg_encoded_bytes = encode_json(message)
-
-        self.channel.basic_publish(
-            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=msg_encoded_bytes)
+        self.rabbitmq.send_message(ROUTING_KEY_STATE, message)
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 
-    def _log_message(self, queue_name, method, properties, body):
-        self.logger.debug(f"Message received in queue {queue_name}.")
-        self.logger.debug(f"  method={method}")
-        self.logger.debug(f"  properties={properties}")
-        self.logger.debug(f"  body={body}")
-
     def _try_read_heat_control(self):
-        (method, properties, body) = self.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
-        if body is not None:
-            msg = decode_json(body)
-            self._log_message(self.HEAT_CTRL_QUEUE, method, properties, msg)
+        msg = self.rabbitmq.get_message(self.HEAT_CTRL_QUEUE)
+        if msg is not None:
             return msg["heater"]
         else:
             return None
 
     def _try_read_fan_control(self):
-        (method, properties, body) = self.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
-        if body is not None:
-            msg = decode_json(body)
-            self._log_message(self.FAN_CTRL_QUEUE, method, properties, msg)
+        msg = self.rabbitmq.get_message(self.FAN_CTRL_QUEUE)
+        if msg is not None:
             return msg["fan"]
         else:
             return None
