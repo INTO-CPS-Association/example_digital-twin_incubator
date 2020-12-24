@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     sender = Rabbitmq(ip_raspberry="localhost")
     sender.connect_to_server()
-    sender.send_message(routing_key="test", message="321")
+    sender.send_message(routing_key="test", message={"text": "321"})
 
     time.sleep(0.01)  # in case too fast that the message has not been delivered.
 

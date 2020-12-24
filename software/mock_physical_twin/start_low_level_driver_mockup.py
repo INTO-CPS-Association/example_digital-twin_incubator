@@ -26,11 +26,11 @@ class HeaterMock(LedMock):
 
     def off(self):
         super(HeaterMock, self).off()
-        self.comm.send_message(MOCK_HEATER_ON, 'False')
+        self.comm.send_message(MOCK_HEATER_ON, {"heater": False})
 
     def on(self):
-        super(HeaterMock, self).off()
-        self.comm.send_message(MOCK_HEATER_ON, 'True')
+        super(HeaterMock, self).on()
+        self.comm.send_message(MOCK_HEATER_ON, {"heater": True})
 
 
 class TemperatureSensorMock:

@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+from time import time
 
 from oomodelling import Model
 
@@ -42,7 +44,7 @@ class SampledRealTimeIncubator(Model):
 
         self.simulation_start_time = 0.0
 
-        self._l = logging.getLogger("SampledRealTimeIncubator")
+        print("{:13}{:15}{:10}{:10}{:10}".format("time","heater_on", "t1", "t2", "t3"))
 
         self.save()
 
@@ -50,7 +52,7 @@ class SampledRealTimeIncubator(Model):
         # Read heater setting from rabbitmq, and store it.
         heater_on = self.comm.get_message(queue_name=MOCK_HEATER_ON)
         if heater_on is not None:
-            self.cached_heater_on = heater_on
+            self.cached_heater_on = heater_on["heater"]
 
         # Read plant temperature and upload it to rabbitmq.
         t1 = self.plant.in_room_temperature()
@@ -61,13 +63,14 @@ class SampledRealTimeIncubator(Model):
         self.comm.send_message(routing_key=MOCK_TEMP_T2, message=t2)
         self.comm.send_message(routing_key=MOCK_TEMP_T3, message=t3)
 
-        self._l.info(f"heater_on={heater_on}, t1={heater_on}, t2={t2}, t3={t3}")
-
+        print("{:%H:%M:%S}     {:15}{:<10.2f}{:<10.2f}{:<10.2f}".format(datetime.fromtimestamp(time()), str(self.cached_heater_on), t1, t2, t3), flush=True)
         return super().discrete_step()
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
+    # logging.getLogger("RTModelSolver").setLevel(logging.DEBUG)
+    # logging.getLogger("RabbitMQClass").setLevel(logging.DEBUG)
 
     C_air_num = four_param_model_params[0]
     G_box_num = four_param_model_params[1]

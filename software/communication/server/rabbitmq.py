@@ -30,7 +30,7 @@ class Rabbitmq:
         self.connection = None
         self.channel = None
         self.queue_name = []
-        self.logger = logging.getLogger("RabbitMQ Class")
+        self.logger = logging.getLogger("RabbitMQClass")
 
     def __del__(self):
         self.logger.debug("Deleting queues, close channel and connection")
@@ -51,10 +51,10 @@ class Rabbitmq:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-    def send_message(self, routing_key, message=''):
+    def send_message(self, routing_key, message):
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
-                                   body=str(message).encode(ENCODING)
+                                   body=encode_json(message)
                                    )
         self.logger.debug(f"Message sent to {routing_key}.")
         self.logger.debug(message)
@@ -64,7 +64,7 @@ class Rabbitmq:
 
         self.logger.debug(f"Received message is {body} {method} {properties}")
         if body is not None:
-            return eval(body)
+            return decode_json(body)
         else:
             return None
 

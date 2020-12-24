@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -157,8 +158,10 @@ class IncubatorDriver:
 
         message["elapsed"] = time.time() - start
 
+        msg_encoded_bytes = encode_json(message)
+
         self.channel.basic_publish(
-            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=str(message).encode(ENCODING))
+            exchange=PIKA_EXCHANGE, routing_key=ROUTING_KEY_STATE, body=msg_encoded_bytes)
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 
@@ -170,13 +173,21 @@ class IncubatorDriver:
 
     def _try_read_heat_control(self):
         (method, properties, body) = self.channel.basic_get(self.HEAT_CTRL_QUEUE, auto_ack=True)
-        self._log_message(self.HEAT_CTRL_QUEUE, method, properties, body)
-        return convert_str_to_bool(body)
+        if body is not None:
+            msg = decode_json(body)
+            self._log_message(self.HEAT_CTRL_QUEUE, method, properties, msg)
+            return msg["heater"]
+        else:
+            return None
 
     def _try_read_fan_control(self):
         (method, properties, body) = self.channel.basic_get(self.FAN_CTRL_QUEUE, auto_ack=True)
-        self._log_message(self.FAN_CTRL_QUEUE, method, properties, body)
-        return convert_str_to_bool(body)
+        if body is not None:
+            msg = decode_json(body)
+            self._log_message(self.FAN_CTRL_QUEUE, method, properties, msg)
+            return msg["fan"]
+        else:
+            return None
 
 
 if __name__ == '__main__':
