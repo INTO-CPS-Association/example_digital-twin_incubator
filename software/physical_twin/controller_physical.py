@@ -2,12 +2,8 @@ import time
 import sys
 from datetime import datetime
 
-try:
-    from communication.shared.connection_parameters import *
-    from communication.shared.protocol import *
-    from communication.server.rabbitmq import Rabbitmq
-except:
-    raise
+from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json
+from communication.shared.connection_parameters import RASPBERRY_IP
 
 LINE_PRINT_FORMAT = {
     "time": "{:20}",
@@ -19,7 +15,6 @@ LINE_PRINT_FORMAT = {
     "box_air_temperature": "{:<15.2f}",
     "state": "{:6}"
 }
-
 
 class ControllerPhysical():
     def __init__(self, rabbitmq_ip=RASPBERRY_IP, desired_temperature=35.0, lower_bound=5, heating_time=20,
@@ -38,7 +33,6 @@ class ControllerPhysical():
 
         self.rabbitmq = Rabbitmq(ip=rabbitmq_ip)
         self.state_queue_name = 'state'
-        self.message = None
 
         self.header_written = False
 
@@ -56,20 +50,7 @@ class ControllerPhysical():
         self._set_fan_on(False)
         print("Closing Heater")
         self._set_heater_on(False)
-
-    # this can be further used to self-adaption
-    def change_controller_parameters(self, desired_temperature_=35.0, lower_bound=5, heating_time=0.2, heating_gap=0.3):
-        self.temperature_desired = desired_temperature_
-        self.lower_bound = lower_bound
-        self.heating_time = heating_time
-        self.heating_gap = heating_gap
-        print(f"Controller parameters have been changed to"
-              f"\ntemperature_desired:{self.temperature_desired}"
-              f"\nlower_bound:{self.lower_bound}"
-              f"\nheating_time:{self.heating_time}"
-              f"\nheating_gap:{self.heating_gap}"
-              )
-
+    
     def _set_heater_on(self, on):
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message={"heater": on})
 
