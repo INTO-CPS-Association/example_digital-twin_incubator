@@ -50,7 +50,7 @@ class ControllerPhysical():
         self._set_fan_on(False)
         print("Closing Heater")
         self._set_heater_on(False)
-    
+
     def _set_heater_on(self, on):
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message={"heater": on})
 
