@@ -30,6 +30,7 @@ To start the influxdb server, run:
    [Activate virtual environment]
    python -m digital_twin.data_access.influxdbserver.test_server
    ```
+3. See the data produced by the script by logging in to http://localhost:8086/ and opening the test dashboard.
 3. Stop and remove the server: `docker-compose down -v`
 
 More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
@@ -54,7 +55,8 @@ But it is left here in case we loose the file [influxdb.zip](./influxdb.zip).
     organization: incubator
     bucket: incubator 
     ```
-
+4. Run the [test_server.py](./test_server.py) script to start pushing random data onto the db.
+5. Create dashboards by importing the json files in [dashboards](./dashboards) in the management page http://localhost:8086/
 
 # Common Errors
 
