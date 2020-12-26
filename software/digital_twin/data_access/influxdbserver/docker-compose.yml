@@ -1,0 +1,12 @@
+version: '3.0'
+
+services:
+  influxdb:
+    container_name: influxdb-server
+    build : ./
+    restart: always
+    ports:
+      - 8086:8086
+      - 8088:8088
+    volumes:
+      - "./influxdb/:/var/lib/influxdb/"

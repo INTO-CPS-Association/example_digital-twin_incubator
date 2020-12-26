@@ -8,3 +8,5 @@ venv/
 /electronics/doc/doc.log
 /electronics/doc/doc.synctex.gz
 *.pyc
+/software/digital_twin/data_access/influxdbserver/influxdb
+*.log
