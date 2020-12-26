@@ -1,16 +1,36 @@
+# First time configuration of influxdb server
+
+Run the following if this is the first time you're starting the influxdb server:
+1. Unzip [influxdb.zip](./influxdb.zip) into a new directory called [influxdb](./influxdb).
+   The directory tree should look like: 
+   ```powershell
+   │   config.yaml
+   │   docker-compose.yml
+   │   Dockerfile
+   │   influxdb.zip
+   │   README.md
+   │   test_server.py
+   └───influxdb
+       │   influxd.bolt
+       │
+       └───engine
+           └───data
+   ```
+2. Make sure docker is configured to share the database folder [influxdb](./influxdb).
+   See the [manual](https://docs.docker.com/docker-for-windows/).
+3. Start the influxdb server (see instructions below).
+
 # Start influxdb server
 
 To start the influxdb server, run:
-1. Make sure docker is configured to share the database folder [influxdb](./influxdb).
-   See the [manual](https://docs.docker.com/docker-for-windows/).
-2. Start influxdb: `docker-compose up --detach --build`
-3. Run script to test db connection
+1. Start influxdb: `docker-compose up --detach --build`
+2. Run script to test db connection
    ```
    cd [RepoRoot]\software
    [Activate virtual environment]
    python -m digital_twin.data_access.influxdbserver.test_server
    ```
-4. Stop and remove the server: `docker-compose down -v`
+3. Stop and remove the server: `docker-compose down -v`
 
 More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
 
@@ -23,6 +43,7 @@ More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
 # Initial Setup of Database
 
 This has been done once, and there's no need to repeat it.
+But it is left here in case we loose the file [influxdb.zip](./influxdb.zip).
 
 1. Open http://localhost:8086/
 2. Press Get-Started
