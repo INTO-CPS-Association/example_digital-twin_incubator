@@ -53,7 +53,9 @@ if __name__ == '__main__':
                         handlers=[
                             logging.FileHandler("ll_driver.log"),
                             logging.StreamHandler()
-                        ]
+                        ],
+                        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S'
                         )
     incubator = IncubatorDriver(ip_raspberry="localhost",
                                 heater=HeaterMock(),

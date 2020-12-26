@@ -3,7 +3,6 @@ import math
 from time import time, sleep
 
 from oomodelling import Model
-from oomodelling.ModelSolver import StepRK45
 from scipy.integrate import RK45
 
 
