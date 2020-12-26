@@ -19,18 +19,21 @@ class LedMock:
 class HeaterMock(LedMock):
     def __init__(self, ip_rabbitmq="localhost"):
         super(HeaterMock, self).__init__()
-        self.comm = Rabbitmq(ip=ip_rabbitmq)
-        self.comm.connect_to_server()
+        self.ip = ip_rabbitmq
 
         self.state_on = False
 
     def off(self):
         super(HeaterMock, self).off()
-        self.comm.send_message(MOCK_HEATER_ON, {"heater": False})
+        # Open a new connections everytime because this method is not called very often.
+        with Rabbitmq(ip=self.ip) as con:
+            con.send_message(MOCK_HEATER_ON, {"heater": False})
 
     def on(self):
         super(HeaterMock, self).on()
-        self.comm.send_message(MOCK_HEATER_ON, {"heater": True})
+        # Open a new connections everytime because this method is not called very often.
+        with Rabbitmq(ip=self.ip) as con:
+            con.send_message(MOCK_HEATER_ON, {"heater": True})
 
 
 class TemperatureSensorMock:
@@ -49,12 +52,13 @@ class TemperatureSensorMock:
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG,
+    # noinspection PyArgumentList
+    logging.basicConfig(level=logging.WARN,
                         handlers=[
                             logging.FileHandler("ll_driver.log"),
                             logging.StreamHandler()
                         ],
-                        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+                        format='%(asctime)s.%(msecs)03d %(name)s %(levelname)s %(module)s - %(funcName)s: %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S'
                         )
     incubator = IncubatorDriver(ip_raspberry="localhost",

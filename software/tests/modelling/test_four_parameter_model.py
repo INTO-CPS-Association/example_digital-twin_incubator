@@ -68,9 +68,7 @@ class FourParameterModelTests(CLIModeTest):
             plt.show()
 
     def test_run_experiment_compare_models(self):
-        """
-        If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
-        """
+        # If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
         params = four_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data = load_data("../datasets/calibration_fan_24v/semi_random_movement.csv",

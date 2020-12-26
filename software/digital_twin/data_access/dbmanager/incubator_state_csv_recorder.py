@@ -10,7 +10,7 @@ from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE
 from communication.shared.protocol import decode_json
 
 
-class IncubatorDataRecorder():
+class IncubatorDataRecorderCSV():
     def __init__(self, csv_file_path, csv_file_prefix, rollover_limit):
         self._l = logging.getLogger("IncubatorDataRecorder")
         self.csv_file_path = csv_file_path

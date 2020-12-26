@@ -44,6 +44,7 @@ class Rabbitmq:
 
     def __enter__(self):
         self.connect_to_server()
+        return self
 
     def connect_to_server(self):
         self.connection = pika.BlockingConnection(self.parameters)

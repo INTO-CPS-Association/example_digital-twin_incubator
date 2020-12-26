@@ -68,12 +68,12 @@ class SampledRealTimeIncubator(Model):
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.WARN,
                         handlers=[
                             logging.FileHandler("plant_simulator.log"),
                             logging.StreamHandler()
                         ],
-                        format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
+                        format='%(asctime)s.%(msecs)03d %(name)s %(levelname)s %(module)s - %(funcName)s: %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S'
                         )
     # logging.getLogger("RTModelSolver").setLevel(logging.DEBUG)
