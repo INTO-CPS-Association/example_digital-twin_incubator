@@ -1,7 +1,6 @@
 import logging
 
-from digital_twin.data_access.data_recorder import IncubatorDataRecorder
-from physical_twin.controller_physical import ControllerPhysical
+from digital_twin.data_access.dbmanager.incubator_state_csv_recorder import IncubatorDataRecorder
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

@@ -59,7 +59,6 @@ class ControllerPhysical():
 
     def setup(self):
         self.rabbitmq.connect_to_server()
-        self.rabbitmq.declare_queue(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE)
         self.safe_protocol()
         self._set_fan_on(True)
 
@@ -131,11 +130,8 @@ class ControllerPhysical():
     def start_control(self):
         try:
             self.setup()
-            self.rabbitmq.channel.basic_consume(queue=self.state_queue_name,
-                                                on_message_callback=self.control_loop_callback,
-                                                auto_ack=True
-                                                )
-            self.rabbitmq.channel.start_consuming()
+            self.rabbitmq.subscribe(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE, on_message_callback=self.control_loop_callback)
+            self.rabbitmq.start_consuming()
         except:
             print("Cleaning Process")
             self.cleanup()

@@ -93,6 +93,15 @@ class Rabbitmq:
         self.logger.info("Closing connection in rabbitmq")
         self.connection.close()
 
+    def subscribe(self, queue_name, routing_key, on_message_callback):
+        self.declare_queue(queue_name=queue_name, routing_key=routing_key)
+        self.channel.basic_consume(queue=queue_name,
+                                   on_message_callback=on_message_callback,
+                                   auto_ack=True
+                                   )
+
+    def start_consuming(self):
+        self.channel.start_consuming()
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
