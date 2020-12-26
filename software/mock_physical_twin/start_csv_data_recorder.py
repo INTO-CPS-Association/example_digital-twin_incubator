@@ -3,6 +3,7 @@ import logging
 from digital_twin.data_access.dbmanager.incubator_state_csv_recorder import IncubatorDataRecorderCSV
 
 if __name__ == '__main__':
+    # noinspection PyArgumentList
     logging.basicConfig(level=logging.WARN,
                         handlers=[
                             logging.FileHandler("csv_data_recorder.log"),

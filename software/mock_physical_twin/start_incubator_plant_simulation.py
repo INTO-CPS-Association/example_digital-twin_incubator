@@ -68,6 +68,7 @@ class SampledRealTimeIncubator(Model):
 
 
 if __name__ == '__main__':
+    # noinspection PyArgumentList
     logging.basicConfig(level=logging.WARN,
                         handlers=[
                             logging.FileHandler("plant_simulator.log"),

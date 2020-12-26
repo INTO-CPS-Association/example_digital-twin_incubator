@@ -20,15 +20,15 @@
      "data": [
       {
        "type": "cell",
-       "id": "06d3f4d0eb2cb000"
+       "id": "06d3fd34ecb51000"
       },
       {
        "type": "cell",
-       "id": "06d3f8bae2449000"
+       "id": "06d3fd34edb51000"
       },
       {
        "type": "cell",
-       "id": "06d3f9bdb5c49000"
+       "id": "06d3fd34ee751000"
       }
      ]
     },
@@ -39,7 +39,7 @@
   },
   "included": [
    {
-    "id": "06d3f4d0eb2cb000",
+    "id": "06d3fd34ecb51000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -51,13 +51,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d3f4d0eb2cb000"
+       "id": "06d3fd34ecb51000"
       }
      }
     }
    },
    {
-    "id": "06d3f8bae2449000",
+    "id": "06d3fd34edb51000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -69,13 +69,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d3f8bae2449000"
+       "id": "06d3fd34edb51000"
       }
      }
     }
    },
    {
-    "id": "06d3f9bdb5c49000",
+    "id": "06d3fd34ee751000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -87,14 +87,14 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d3f9bdb5c49000"
+       "id": "06d3fd34ee751000"
       }
      }
     }
    },
    {
     "type": "view",
-    "id": "06d3f4d0eb2cb000",
+    "id": "06d3fd34ecb51000",
     "attributes": {
      "name": "Temperature",
      "properties": {
@@ -199,7 +199,7 @@
    },
    {
     "type": "view",
-    "id": "06d3f8bae2449000",
+    "id": "06d3fd34edb51000",
     "attributes": {
      "name": "Actuators",
      "properties": {
@@ -247,16 +247,16 @@
          "",
          ""
         ],
-        "label": "",
+        "label": "Boolean",
         "prefix": "",
         "suffix": "",
-        "base": "10",
+        "base": "2",
         "scale": "linear"
        }
       },
       "type": "xy",
       "legend": {},
-      "geom": "line",
+      "geom": "step",
       "colors": [
        {
         "id": "f12ffba3-b2c3-42e9-8038-c88e579bd1af",
@@ -304,7 +304,7 @@
    },
    {
     "type": "view",
-    "id": "06d3f9bdb5c49000",
+    "id": "06d3fd34ee751000",
     "attributes": {
      "name": "Controller Elapsed",
      "properties": {

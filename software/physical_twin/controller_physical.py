@@ -1,6 +1,7 @@
 import time
 import sys
 from datetime import datetime
+import logging
 
 from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json
 from communication.shared.connection_parameters import RASPBERRY_IP
@@ -16,6 +17,7 @@ LINE_PRINT_FORMAT = {
     "state": "{:6}"
 }
 
+
 class ControllerPhysical():
     def __init__(self, rabbitmq_ip=RASPBERRY_IP, desired_temperature=35.0, lower_bound=5, heating_time=20,
                  heating_gap=30):
@@ -23,6 +25,8 @@ class ControllerPhysical():
         self.lower_bound = lower_bound
         self.heating_time = heating_time
         self.heating_gap = heating_gap
+
+        self._l = logging.getLogger("ControllerPhysical")
 
         self.box_air_temperature = None
         self.room_temperature = None
@@ -36,8 +40,6 @@ class ControllerPhysical():
 
         self.header_written = False
 
-        print("Before running actually, please make sure that the low_level_deriver_server is running")
-
     def _record_message(self, message):
         sensor1_reading = message['t1']
         sensor2_reading = message['t2']
@@ -46,9 +48,9 @@ class ControllerPhysical():
         self.room_temperature = sensor1_reading
 
     def safe_protocol(self):
-        print("Closing Fan")
+        self._l.debug("Stopping Fan")
         self._set_fan_on(False)
-        print("Closing Heater")
+        self._l.debug("Stopping Heater")
         self._set_heater_on(False)
 
     def _set_heater_on(self, on):
@@ -60,16 +62,17 @@ class ControllerPhysical():
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.safe_protocol()
+        self._l.debug("Starting Fan")
         self._set_fan_on(True)
 
     def ctrl_step(self):
         if self.box_air_temperature >= 58:
-            print("Temperature exceeds 58, Cleaning up")
+            self._l.error("Temperature exceeds 58, Cleaning up.")
             self.cleanup()
             sys.exit(0)
 
         if self.current_state == "CoolingDown":
-            # print("current state is: CoolingDown")
+            self._l.debug("current state is: CoolingDown")
             self.heater_ctrl = False
             if self.box_air_temperature <= self.temperature_desired - self.lower_bound:
                 self.current_state = "Heating"
@@ -77,7 +80,7 @@ class ControllerPhysical():
                 self.next_time = time.time() + self.heating_time
                 return
         if self.current_state == "Heating":
-            # print("current state is: Heating")
+            self._l.debug("current state is: Heating")
             self.heater_ctrl = True
             if 0 < self.next_time <= time.time():
                 self.current_state = "Waiting"
@@ -85,7 +88,7 @@ class ControllerPhysical():
                 self.next_time = time.time() + self.heating_gap
             return
         if self.current_state == "Waiting":
-            # print("current state is: Waiting")
+            self._l.debug("current state is: Waiting")
             self.heater_ctrl = False
             if 0 < self.next_time <= time.time():
                 if self.box_air_temperature <= self.temperature_desired:
@@ -133,7 +136,7 @@ class ControllerPhysical():
             self.rabbitmq.subscribe(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE, on_message_callback=self.control_loop_callback)
             self.rabbitmq.start_consuming()
         except:
-            print("Cleaning Process")
+            self._l.warning("Cleaning Process")
             self.cleanup()
             raise
 

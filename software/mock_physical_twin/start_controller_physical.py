@@ -3,7 +3,8 @@ import logging
 from physical_twin.controller_physical import ControllerPhysical
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.WARN,
+    # noinspection PyArgumentList
+    logging.basicConfig(level=logging.DEBUG,
                         handlers=[
                             logging.FileHandler("ctrl.log"),
                             logging.StreamHandler()
