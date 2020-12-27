@@ -5,7 +5,7 @@ entity LSESolver as lse
 entity Simulator as sim
 database DataAccess as db
 database ModelManager as mod
-trig ->> cal: start(startDate, endDate, model, N)
+trig ->> cal: calibrate(startDate, endDate, simulator, N)
 cal ->> lse: startOptimization(params_0)
 loop N times 
   lse -> cal: getResidual(params_i)

@@ -70,14 +70,16 @@ class Rabbitmq:
             return None
 
     def declare_queue(self, queue_name, routing_key):
-        self.channel.queue_declare(queue_name)
+        result = self.channel.queue_declare(queue_name)
+        created_queue_name = result.method.queue
         self.channel.queue_bind(
             exchange=self.exchange_name,
-            queue=queue_name,
+            queue=created_queue_name,
             routing_key=routing_key
         )
-        self.queue_name.append(queue_name)
-        self.logger.info(f"Bound {routing_key}--> {queue_name}")
+        self.queue_name.append(created_queue_name)
+        self.logger.info(f"Bound {routing_key}--> {created_queue_name}")
+        return created_queue_name
 
     def queues_delete(self):
         self.queue_name = list(set(self.queue_name))

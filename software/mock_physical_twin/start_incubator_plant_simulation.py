@@ -38,7 +38,7 @@ class SampledRealTimeIncubator(Model):
 
         self.comm = comm
         self.comm.connect_to_server()
-        self.comm.declare_queue(queue_name=MOCK_HEATER_ON, routing_key=MOCK_HEATER_ON)
+        self.queue_name = self.comm.declare_queue(queue_name="", routing_key=MOCK_HEATER_ON)
 
         self.temperature_difference = temperature_difference
 
@@ -50,7 +50,7 @@ class SampledRealTimeIncubator(Model):
 
     def discrete_step(self):
         # Read heater setting from rabbitmq, and store it.
-        heater_on = self.comm.get_message(queue_name=MOCK_HEATER_ON)
+        heater_on = self.comm.get_message(queue_name=self.queue_name)
         if heater_on is not None:
             self.cached_heater_on = heater_on["heater"]
 
