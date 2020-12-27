@@ -54,11 +54,10 @@ class IncubatorDataRecorderCSV():
 
     def start_recording(self, rabbitmq_ip):
         rabbitmq = Rabbitmq(ip=rabbitmq_ip)
-        state_queue_name = 'state'
         rabbitmq.connect_to_server()
 
         try:
-            rabbitmq.subscribe(queue_name=state_queue_name, routing_key=ROUTING_KEY_STATE,
+            rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
                                on_message_callback=self.read_state)
 
             rabbitmq.start_consuming()

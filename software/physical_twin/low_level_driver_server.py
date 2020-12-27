@@ -43,10 +43,8 @@ class IncubatorDriver:
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.logger.info("Connected.")
-        self.fan_queue_name = self.rabbitmq.declare_queue(queue_name="",
-                                                          routing_key=ROUTING_KEY_FAN)
-        self.heater_queue_name = self.rabbitmq.declare_queue(queue_name="",
-                                                             routing_key=ROUTING_KEY_HEATER)
+        self.fan_queue_name = self.rabbitmq.declare_local_queue(routing_key=ROUTING_KEY_FAN)
+        self.heater_queue_name = self.rabbitmq.declare_local_queue(routing_key=ROUTING_KEY_HEATER)
 
     def cleanup(self):
         self.logger.debug("Cleaning up.")

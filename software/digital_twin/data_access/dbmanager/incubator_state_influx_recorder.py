@@ -39,7 +39,7 @@ class IncubatorDataRecorderInflux():
         self.influxdb_bucket = influxdb_bucket
 
         try:
-            rabbitmq.subscribe(queue_name="record", routing_key=ROUTING_KEY_RECORDER,
+            rabbitmq.subscribe(routing_key=ROUTING_KEY_RECORDER,
                                on_message_callback=self.read_record_request)
 
             rabbitmq.start_consuming()

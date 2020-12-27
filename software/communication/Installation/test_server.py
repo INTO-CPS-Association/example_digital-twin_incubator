@@ -8,7 +8,7 @@ if __name__ == '__main__':
 
     receiver = Rabbitmq(ip="localhost")
     receiver.connect_to_server()
-    receiver.declare_queue(queue_name='test_queue', routing_key="test")
+    qname = receiver.declare_local_queue(routing_key="test")
 
     sender = Rabbitmq(ip="localhost")
     sender.connect_to_server()
@@ -16,6 +16,6 @@ if __name__ == '__main__':
 
     time.sleep(0.01)  # in case too fast that the message has not been delivered.
 
-    msg = receiver.get_message(queue_name="test_queue")
+    msg = receiver.get_message(queue_name=qname)
     print("received message is", msg)
 

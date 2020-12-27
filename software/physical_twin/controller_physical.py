@@ -155,8 +155,7 @@ class ControllerPhysical():
     def start_control(self):
         try:
             self.setup()
-            self.rabbitmq.subscribe(queue_name="",
-                                    routing_key=ROUTING_KEY_STATE,
+            self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
                                     on_message_callback=self.control_loop_callback)
             self.rabbitmq.start_consuming()
         except:

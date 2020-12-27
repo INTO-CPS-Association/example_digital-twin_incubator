@@ -1,12 +1,8 @@
 import pika
 import logging
-import time
 
-try:
-    from communication.shared.connection_parameters import *
-    from communication.shared.protocol import *
-except:
-    raise
+from communication.shared.connection_parameters import *
+from communication.shared.protocol import *
 
 
 class Rabbitmq:
@@ -69,8 +65,10 @@ class Rabbitmq:
         else:
             return None
 
-    def declare_queue(self, queue_name, routing_key):
-        result = self.channel.queue_declare(queue_name)
+    def declare_local_queue(self, routing_key):
+        # Creates a local queue.
+        # Rabbitmq server will clean it if the connection drops.
+        result = self.channel.queue_declare(queue="", exclusive=True)
         created_queue_name = result.method.queue
         self.channel.queue_bind(
             exchange=self.exchange_name,
@@ -96,8 +94,8 @@ class Rabbitmq:
         self.logger.info("Closing connection in rabbitmq")
         self.connection.close()
 
-    def subscribe(self, queue_name, routing_key, on_message_callback):
-        created_queue_name = self.declare_queue(queue_name=queue_name, routing_key=routing_key)
+    def subscribe(self, routing_key, on_message_callback):
+        created_queue_name = self.declare_local_queue(routing_key=routing_key)
         self.channel.basic_consume(queue=created_queue_name,
                                    on_message_callback=on_message_callback,
                                    auto_ack=True)
@@ -106,23 +104,3 @@ class Rabbitmq:
     def start_consuming(self):
         self.channel.start_consuming()
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.ERROR)
-
-    receiver = Rabbitmq(ip="localhost")
-    receiver.connect_to_server()
-    receiver.declare_queue(queue_name='test_queue', routing_key="test")
-
-    sender = Rabbitmq(ip="localhost")
-    sender.connect_to_server()
-    sender.send_message(routing_key="test", message="321")
-
-    time.sleep(0.01)  # in case too fast that the message has not been delivered.
-
-    msg = receiver.get_message(queue_name="test_queue")
-    print("received message is", msg)
-
-    # test_send.channel.queue_purge('test_queue')
-
-    # test_send.close()
-    # test_receive.close()

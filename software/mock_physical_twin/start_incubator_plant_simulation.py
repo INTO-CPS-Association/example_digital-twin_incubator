@@ -38,7 +38,7 @@ class SampledRealTimeIncubator(Model):
 
         self.comm = comm
         self.comm.connect_to_server()
-        self.queue_name = self.comm.declare_queue(queue_name="", routing_key=MOCK_HEATER_ON)
+        self.queue_name = self.comm.declare_local_queue(routing_key=MOCK_HEATER_ON)
 
         self.temperature_difference = temperature_difference
 
