@@ -3,7 +3,8 @@ import sys
 from datetime import datetime
 import logging
 
-from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json
+from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
+    from_ns_to_s, ROUTING_KEY_CONTROLLER
 from communication.shared.connection_parameters import RASPBERRY_IP
 
 LINE_PRINT_FORMAT = {
@@ -21,7 +22,7 @@ LINE_PRINT_FORMAT = {
 class ControllerPhysical():
     def __init__(self, rabbitmq_ip=RASPBERRY_IP, desired_temperature=35.0, lower_bound=5, heating_time=20,
                  heating_gap=30):
-        self.temperature_desired = desired_temperature
+        self.desired_temperature = desired_temperature
         self.lower_bound = lower_bound
         self.heating_time = heating_time
         self.heating_gap = heating_gap
@@ -41,10 +42,8 @@ class ControllerPhysical():
         self.header_written = False
 
     def _record_message(self, message):
-        sensor1_reading = message['t1']
-        sensor2_reading = message['t2']
-        sensor3_reading = message['t3']
-        self.box_air_temperature = (sensor2_reading + sensor3_reading) / 2
+        sensor1_reading = message['fields']['t1']
+        self.box_air_temperature = message['fields']['average_temperature']
         self.room_temperature = sensor1_reading
 
     def safe_protocol(self):
@@ -74,7 +73,7 @@ class ControllerPhysical():
         if self.current_state == "CoolingDown":
             self._l.debug("current state is: CoolingDown")
             self.heater_ctrl = False
-            if self.box_air_temperature <= self.temperature_desired - self.lower_bound:
+            if self.box_air_temperature <= self.desired_temperature - self.lower_bound:
                 self.current_state = "Heating"
                 self.heater_ctrl = True
                 self.next_time = time.time() + self.heating_time
@@ -91,7 +90,7 @@ class ControllerPhysical():
             self._l.debug("current state is: Waiting")
             self.heater_ctrl = False
             if 0 < self.next_time <= time.time():
-                if self.box_air_temperature <= self.temperature_desired:
+                if self.box_air_temperature <= self.desired_temperature:
                     self.current_state = "Heating"
                     self.heater_ctrl = True
                     self.next_time = time.time() + self.heating_time
@@ -113,10 +112,31 @@ class ControllerPhysical():
             self.header_written = True
 
         print("{:%d/%m %H:%M}  {:<20.2f}{:<9.2f}{:11}{:8}{:<7.2f}{:<21.2f}{:6}".format(
-            datetime.fromtimestamp(message["time"]), message["execution_interval"], message["elapsed"],
-            str(message["heater_on"]), str(message["fan_on"]), message["t1"],
+            datetime.fromtimestamp(from_ns_to_s(message["time"])), message["fields"]["execution_interval"], message["fields"]["elapsed"],
+            str(self.heater_ctrl), str(message["fields"]["fan_on"]), message["fields"]["t1"],
             self.box_air_temperature, self.current_state
         ))
+
+    def upload_state(self, data):
+        ctrl_data = {
+            "measurement": "controller",
+            "time": time.time_ns(),
+            "tags": {
+                "source": "controller"
+            },
+            "fields": {
+                "plant_time": data["time"],
+                "heater_on": self.heater_ctrl,
+                "fan_on": data["fields"]["fan_on"],
+                "current_state": self.current_state,
+                "next_time": self.next_time,
+                "temperature_desired": self.desired_temperature,
+                "lower_bound": self.lower_bound,
+                "heating_time": self.heating_time,
+                "heating_gap": self.heating_gap,
+            }
+        }
+        self.rabbitmq.send_message(routing_key=ROUTING_KEY_CONTROLLER, message=ctrl_data)
 
     def control_loop_callback(self, ch, method, properties, body):
 
@@ -127,18 +147,24 @@ class ControllerPhysical():
 
         self.print_terminal(message)
 
+        self.upload_state(message)
+
         assert self.heater_ctrl is not None
         self._set_heater_on(self.heater_ctrl)
 
     def start_control(self):
         try:
             self.setup()
-            self.rabbitmq.subscribe(queue_name=self.state_queue_name, routing_key=ROUTING_KEY_STATE, on_message_callback=self.control_loop_callback)
+            self.rabbitmq.subscribe(queue_name=self.state_queue_name,
+                                    routing_key=ROUTING_KEY_STATE,
+                                    on_message_callback=self.control_loop_callback)
             self.rabbitmq.start_consuming()
         except:
-            self._l.warning("Cleaning Process")
+            self._l.warning("Stopping controller")
             self.cleanup()
             raise
+
+
 
 
 if __name__ == '__main__':

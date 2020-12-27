@@ -1,7 +1,6 @@
 import logging
 import time
 
-import pika
 from gpiozero import LED
 
 # Import parameters and shared stuff
@@ -114,19 +113,29 @@ class IncubatorDriver:
         timestamps = [] * n_sensors
         for i in range(n_sensors):
             readings.append(self.temperature_sensor[i].read())
-            timestamps.append(time.time())
+            timestamps.append(time.time_ns())
 
+        timestamp = time.time_ns()
         message = {
-            "time": time.time(),
-            "execution_interval": exec_interval,
-            "heater_on": self.heater.is_lit,
-            "fan_on": self.fan.is_lit
-        }
-        for i in range(n_sensors):
-            message[f"t{i + 1}"] = readings[i]
-            message[f"time_t{i + 1}"] = timestamps[i]
-
-        message["elapsed"] = time.time() - start
+                    "measurement": "low_level_driver",
+                    "time": timestamp,
+                    "tags": {
+                        "source": "low_level_driver"
+                    },
+                    "fields": {
+                        "t1": readings[0],
+                        "time_t1": timestamps[0],
+                        "t2": readings[1],
+                        "time_t2": timestamps[1],
+                        "t3": readings[2],
+                        "time_t3": timestamps[2],
+                        "average_temperature": (readings[1] + readings[2]) / 2,
+                        "heater_on": self.heater.is_lit,
+                        "fan_on": self.fan.is_lit,
+                        "execution_interval": exec_interval,
+                        "elapsed": time.time() - start
+                    }
+                }
 
         self.rabbitmq.send_message(ROUTING_KEY_STATE, message)
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")

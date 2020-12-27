@@ -83,31 +83,12 @@ class FourParameterModelTests(CLIModeTest):
 
         fig, (ax1) = plt.subplots(1, 1)
 
-        # ax1.plot(data["time"], data["t1"], label="t1")
-        # ax1.plot(data["time"], data["t2"], label="t2")
-        # ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(results_2p.signals["time"], results_2p.signals["T"], label="~T(2)")
         ax1.plot(results_4p.signals["time"], results_4p.signals["T"], label="~T(4)")
         ax1.plot(results_4p.signals["time"], results_4p.signals["in_room_temperature"], label="~roomT")
         ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
         ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
         ax1.legend()
-
-        # ax2.plot(results_4p.signals["time"], results_4p.signals["T_heater"], label="~T_heater")
-        # ax2.legend()
-        #
-        # ax3.plot(data["time"], data["heater_on"], label="heater_on")
-        # ax3.plot(data["time"], data["fan_on"], label="fan_on")
-        # ax3.plot(results_4p.signals["time"], results_4p.signals["in_heater_on"], label="~heater_on")
-        # ax3.legend()
-        #
-        # ax4.plot(data["time"], data["power_in"], label="power_in")
-        # ax4.plot(results_4p.signals["time"], results_4p.signals["power_in"], label="~power_in")
-        # ax4.legend()
-
-        # ax5.plot(data["time"], data["energy_in"], label="energy_in")
-        # ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
-        # ax5.legend()
 
         if self.ide_mode():
             plt.show()

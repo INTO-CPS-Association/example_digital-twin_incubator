@@ -42,11 +42,11 @@ class IncubatorDataRecorderCSV():
 
         if not self.header_written:
             self._l.debug("Writing header.")
-            header = list(body_json.keys())
+            header = list(body_json["fields"].keys())
             self.csv_writer.writerow(header)
             self.header_written = True
 
-        values = list(body_json.values())
+        values = list(body_json["fields"].values())
         self.csv_writer.writerow(values)
         self.current_file.flush()
         self.number_records += 1

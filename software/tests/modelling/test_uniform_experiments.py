@@ -49,16 +49,9 @@ class UniformExperimentTests(CLIModeTest):
         ax3.plot(data["time"], data["elapsed"], label="elapsed")
         ax3.legend()
 
-        # ax4.plot(data["time"], data["power_in"], label="power_in")
-        # ax4.legend()
-
         ax5.plot(data["time"], data["std_dev_temperature"], label="std_dev_temperature")
         ax5.plot(data["time"], data["max_dev_temperature"], label="max_dev_temperature")
         ax5.legend()
-
-        # ax6.plot(data["time"], data["energy_in"], label="energy_in")
-        # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
-        # ax6.legend()
 
         if self.ide_mode():
             plt.show()
@@ -100,16 +93,9 @@ class UniformExperimentTests(CLIModeTest):
         ax3.plot(data["time"], data["elapsed"], label="elapsed")
         ax3.legend()
 
-        # ax4.plot(data["time"], data["power_in"], label="power_in")
-        # ax4.legend()
-
         ax5.plot(data["time"], data["std_dev_temperature"], label="std_dev_temperature")
         ax5.plot(data["time"], data["max_dev_temperature"], label="max_dev_temperature")
         ax5.legend()
-
-        # ax6.plot(data["time"], data["energy_in"], label="energy_in")
-        # ax6.plot(data["time"], data["potential_energy"], label="potential_energy")
-        # ax6.legend()
 
         if self.ide_mode():
             plt.show()
