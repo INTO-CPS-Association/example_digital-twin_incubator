@@ -41,11 +41,11 @@ class TemperatureSensorMock:
         self.comm = Rabbitmq(ip=ip_rabbitmq)
         self.key = temp_key
         self.comm.connect_to_server()
-        self.comm.declare_queue(queue_name=self.key, routing_key=self.key)
+        self.queue_name = self.comm.declare_queue(queue_name="", routing_key=self.key)
         self.cached_temp = 20.0
 
     def read(self):
-        reading = self.comm.get_message(queue_name=self.key)
+        reading = self.comm.get_message(queue_name=self.queue_name)
         if reading is not None:
             self.cached_temp = reading
         return self.cached_temp

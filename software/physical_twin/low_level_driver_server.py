@@ -11,8 +11,6 @@ from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
 
 
 class IncubatorDriver:
-    HEAT_CTRL_QUEUE = "heater_control"
-    FAN_CTRL_QUEUE = "fan_control"
     logger = logging.getLogger("Incubator")
 
     def __init__(self,
@@ -28,6 +26,9 @@ class IncubatorDriver:
         # Connection info
         self.rabbitmq = Rabbitmq(ip=ip_raspberry)
 
+        self.heater_queue_name = ""
+        self.fan_queue_name = ""
+
         # IO
         self.heater = heater
         self.fan = fan
@@ -42,10 +43,10 @@ class IncubatorDriver:
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.logger.info("Connected.")
-        self.rabbitmq.declare_queue(queue_name=self.FAN_CTRL_QUEUE,
-                                    routing_key=ROUTING_KEY_FAN)
-        self.rabbitmq.declare_queue(queue_name=self.HEAT_CTRL_QUEUE,
-                                    routing_key=ROUTING_KEY_HEATER)
+        self.fan_queue_name = self.rabbitmq.declare_queue(queue_name="",
+                                                          routing_key=ROUTING_KEY_FAN)
+        self.heater_queue_name = self.rabbitmq.declare_queue(queue_name="",
+                                                             routing_key=ROUTING_KEY_HEATER)
 
     def cleanup(self):
         self.logger.debug("Cleaning up.")
@@ -117,39 +118,39 @@ class IncubatorDriver:
 
         timestamp = time.time_ns()
         message = {
-                    "measurement": "low_level_driver",
-                    "time": timestamp,
-                    "tags": {
-                        "source": "low_level_driver"
-                    },
-                    "fields": {
-                        "t1": readings[0],
-                        "time_t1": timestamps[0],
-                        "t2": readings[1],
-                        "time_t2": timestamps[1],
-                        "t3": readings[2],
-                        "time_t3": timestamps[2],
-                        "average_temperature": (readings[1] + readings[2]) / 2,
-                        "heater_on": self.heater.is_lit,
-                        "fan_on": self.fan.is_lit,
-                        "execution_interval": exec_interval,
-                        "elapsed": time.time() - start
-                    }
-                }
+            "measurement": "low_level_driver",
+            "time": timestamp,
+            "tags": {
+                "source": "low_level_driver"
+            },
+            "fields": {
+                "t1": readings[0],
+                "time_t1": timestamps[0],
+                "t2": readings[1],
+                "time_t2": timestamps[1],
+                "t3": readings[2],
+                "time_t3": timestamps[2],
+                "average_temperature": (readings[1] + readings[2]) / 2,
+                "heater_on": self.heater.is_lit,
+                "fan_on": self.fan.is_lit,
+                "execution_interval": exec_interval,
+                "elapsed": time.time() - start
+            }
+        }
 
         self.rabbitmq.send_message(ROUTING_KEY_STATE, message)
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
 
     def _try_read_heat_control(self):
-        msg = self.rabbitmq.get_message(self.HEAT_CTRL_QUEUE)
+        msg = self.rabbitmq.get_message(self.heater_queue_name)
         if msg is not None:
             return msg["heater"]
         else:
             return None
 
     def _try_read_fan_control(self):
-        msg = self.rabbitmq.get_message(self.FAN_CTRL_QUEUE)
+        msg = self.rabbitmq.get_message(self.fan_queue_name)
         if msg is not None:
             return msg["fan"]
         else:

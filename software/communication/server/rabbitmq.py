@@ -97,11 +97,11 @@ class Rabbitmq:
         self.connection.close()
 
     def subscribe(self, queue_name, routing_key, on_message_callback):
-        self.declare_queue(queue_name=queue_name, routing_key=routing_key)
-        self.channel.basic_consume(queue=queue_name,
+        created_queue_name = self.declare_queue(queue_name=queue_name, routing_key=routing_key)
+        self.channel.basic_consume(queue=created_queue_name,
                                    on_message_callback=on_message_callback,
-                                   auto_ack=True
-                                   )
+                                   auto_ack=True)
+        return created_queue_name
 
     def start_consuming(self):
         self.channel.start_consuming()

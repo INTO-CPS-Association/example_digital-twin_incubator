@@ -37,7 +37,6 @@ class ControllerPhysical():
         self.next_time = -1.0
 
         self.rabbitmq = Rabbitmq(ip=rabbitmq_ip)
-        self.state_queue_name = 'state'
 
         self.header_written = False
 
@@ -112,7 +111,8 @@ class ControllerPhysical():
             self.header_written = True
 
         print("{:%d/%m %H:%M}  {:<20.2f}{:<9.2f}{:11}{:8}{:<7.2f}{:<21.2f}{:6}".format(
-            datetime.fromtimestamp(from_ns_to_s(message["time"])), message["fields"]["execution_interval"], message["fields"]["elapsed"],
+            datetime.fromtimestamp(from_ns_to_s(message["time"])), message["fields"]["execution_interval"],
+            message["fields"]["elapsed"],
             str(self.heater_ctrl), str(message["fields"]["fan_on"]), message["fields"]["t1"],
             self.box_air_temperature, self.current_state
         ))
@@ -155,7 +155,7 @@ class ControllerPhysical():
     def start_control(self):
         try:
             self.setup()
-            self.rabbitmq.subscribe(queue_name=self.state_queue_name,
+            self.rabbitmq.subscribe(queue_name="",
                                     routing_key=ROUTING_KEY_STATE,
                                     on_message_callback=self.control_loop_callback)
             self.rabbitmq.start_consuming()
