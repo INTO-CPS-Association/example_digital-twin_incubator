@@ -97,7 +97,7 @@ class ControllerPhysical():
                 else:
                     self.current_state = "CoolingDown"
                     self.heater_ctrl = False
-                    self.next_time = -1
+                    self.next_time = -1.0
             return
 
     def cleanup(self):
