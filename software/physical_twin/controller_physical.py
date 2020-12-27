@@ -165,8 +165,6 @@ class ControllerPhysical():
             raise
 
 
-
-
 if __name__ == '__main__':
     desired_temperature = float(input("Please input desired temperature: "))
     controller = ControllerPhysical(desired_temperature=desired_temperature)
