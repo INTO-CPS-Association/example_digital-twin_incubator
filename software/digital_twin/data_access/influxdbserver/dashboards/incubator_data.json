@@ -20,15 +20,35 @@
      "data": [
       {
        "type": "cell",
-       "id": "06d4e72163b31000"
+       "id": "06d4eaa1e7305000"
       },
       {
        "type": "cell",
-       "id": "06d4e87556b31000"
+       "id": "06d4eaa1e8705000"
       },
       {
        "type": "cell",
-       "id": "06d4e8fb6c331000"
+       "id": "06d4eaa1e9705000"
+      },
+      {
+       "type": "cell",
+       "id": "06d4ebdc1eb45000"
+      },
+      {
+       "type": "cell",
+       "id": "06d4ebed19f45000"
+      },
+      {
+       "type": "cell",
+       "id": "06d4ec26b2345000"
+      },
+      {
+       "type": "cell",
+       "id": "06d4ec68d0745000"
+      },
+      {
+       "type": "cell",
+       "id": "06d4ec8d52345000"
       }
      ]
     },
@@ -39,7 +59,7 @@
   },
   "included": [
    {
-    "id": "06d4e72163b31000",
+    "id": "06d4eaa1e7305000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -51,13 +71,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4e72163b31000"
+       "id": "06d4eaa1e7305000"
       }
      }
     }
    },
    {
-    "id": "06d4e87556b31000",
+    "id": "06d4eaa1e8705000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -69,13 +89,85 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4e87556b31000"
+       "id": "06d4eaa1e8705000"
       }
      }
     }
    },
    {
-    "id": "06d4e8fb6c331000",
+    "id": "06d4eaa1e9705000",
+    "type": "cell",
+    "attributes": {
+     "x": 7,
+     "y": 0,
+     "w": 2,
+     "h": 2
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06d4eaa1e9705000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06d4ebdc1eb45000",
+    "type": "cell",
+    "attributes": {
+     "x": 5,
+     "y": 2,
+     "w": 2,
+     "h": 1
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06d4ebdc1eb45000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06d4ebed19f45000",
+    "type": "cell",
+    "attributes": {
+     "x": 5,
+     "y": 3,
+     "w": 2,
+     "h": 1
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06d4ebed19f45000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06d4ec26b2345000",
+    "type": "cell",
+    "attributes": {
+     "x": 5,
+     "y": 1,
+     "w": 2,
+     "h": 1
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06d4ec26b2345000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06d4ec68d0745000",
     "type": "cell",
     "attributes": {
      "x": 5,
@@ -87,14 +179,32 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4e8fb6c331000"
+       "id": "06d4ec68d0745000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06d4ec8d52345000",
+    "type": "cell",
+    "attributes": {
+     "x": 7,
+     "y": 2,
+     "w": 2,
+     "h": 2
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06d4ec8d52345000"
       }
      }
     }
    },
    {
     "type": "view",
-    "id": "06d4e72163b31000",
+    "id": "06d4eaa1e7305000",
     "attributes": {
      "name": "Temperature",
      "properties": {
@@ -199,7 +309,7 @@
    },
    {
     "type": "view",
-    "id": "06d4e87556b31000",
+    "id": "06d4eaa1e8705000",
     "attributes": {
      "name": "Actuators",
      "properties": {
@@ -304,7 +414,7 @@
    },
    {
     "type": "view",
-    "id": "06d4e8fb6c331000",
+    "id": "06d4eaa1e9705000",
     "attributes": {
      "name": "Controller State",
      "properties": {
@@ -339,6 +449,286 @@
       "prefix": "",
       "tickPrefix": "",
       "suffix": "",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06d4ebdc1eb45000",
+    "attributes": {
+     "name": "HeatingGap",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"heating_gap\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": "s",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06d4ebed19f45000",
+    "attributes": {
+     "name": "HeatingTime",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"heating_time\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": "s",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06d4ec26b2345000",
+    "attributes": {
+     "name": "LowerBound",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"lower_bound\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": " °C",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06d4ec68d0745000",
+    "attributes": {
+     "name": "DesiredTemperature",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"temperature_desired\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": " °C",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06d4ec8d52345000",
+    "attributes": {
+     "name": "Timer",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"next_time\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> last()\n  |> map(fn: (r) => ({ \n       r with _value: \n         if r._value > 0.0 then\n            r._value - float(v: uint(v: now())) / 1000000000.0\n         else \n            0.0\n      }))\n  ",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": "s",
       "tickSuffix": "",
       "colors": [
        {
