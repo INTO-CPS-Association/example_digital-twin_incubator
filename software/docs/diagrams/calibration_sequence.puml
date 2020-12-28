@@ -1,33 +1,16 @@
 @startuml Calibration
-boundary ExternalTrigger as trig
+boundary Client as client
 control Calibrator as cal
-entity LSESolver as lse
 entity Simulator as sim
-database DataAccess as db
-database ModelManager as mod
-trig ->> cal: calibrate(startDate, endDate, simulator, N)
-cal ->> lse: startOptimization(params_0)
-loop N times
-  lse -> cal: getResidual(params_i)
-  cal -> db: getHistoricalData(startDate, endDate)
+database InfluxDB as db
+client ->> cal: calibrate(start_date, end_date, simulator, n)
+loop n times
+  cal -> db: get_trajectories(start_date, end_date)
   return data
-  cal -> sim: runSimulation(data, model, params_i)
-    sim -> mod: instantiateModel(model, params_i)
-    return model_i
-    sim -> sim: run(data, model_i)
-    note right
-    interface of model similar to FMI Interface, 
-    so that it is not transmitted over the network?
-    Or do we find a way to transmit the 
-    model equations to the simulator?
-    We can also have multiple kinds 
-    of simulators that operate differenly.
-    end note
+  cal -> sim: run(data, model, params_i)
   sim --> cal: results
-  cal -> cal: calcResidual()
-  cal --> lse: residual
-  lse -> lse: updateParams()
+  cal -> cal: residual := calc(results)
+  cal -> cal: params_{i+1} := update(params_i, residual)
 end
-lse ->> cal: params
-cal ->> mod: recordNewParams(params, model)
+cal ->> client: params
 @enduml

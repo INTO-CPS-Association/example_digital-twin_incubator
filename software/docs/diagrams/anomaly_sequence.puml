@@ -1,16 +1,14 @@
-@startuml
-boundary ExternalTrigger as trig
+@startuml AnomalyDetector
+boundary Client as client
 control AnomalyDetector as det
-database DataAccess as db
-trig ->> det: start(stateEstimator)
-det --> db: subscribeToUpdatesFrom(stateEstimator)
-det --> db: subscribeToUpdatesFrom(system)
-loop every (sample_se, sample_sys)
-  db ->> det: sample_se
-  db ->> det: sample_sys
-  det -> det: compare
+boundary RabbitMQ as mq
+client ->> det: start(estimator_routing_key)
+det ->> mq: subscribe(route_key=estimator_routing_key)
+loop forever
+  mq ->> det: callback(msg)
+  det -> det: compare_samples(msg)
   opt anomaly_detected
-    det ->> db: record_anomaly()
+    det ->> mq: send_message(route_key=ROUTING_KEY_ANOMALY, anomaly)
   end
 end
 @enduml

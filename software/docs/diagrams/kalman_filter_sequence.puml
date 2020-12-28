@@ -1,18 +1,18 @@
 @startuml KalmanFilter
-boundary RabbitMQServer as comm
-boundary ExternalTrigger as trig
+boundary Client as client
 control KalmanFilter as kf
-database DataAccess as db
-database ModelManager as mod
-trig ->> kf: start(model)
-kf --> comm: subscribe()
-kf -> mod: getParams(model)
+boundary RabbitMQ as mq
+entity Simulator as mod
+database InfluxDB as db
+client ->> kf: start(simulator)
+kf ->> mq: subscribe(route_key=ROUTING_KEY_STATE)
+kf -> db: get_most_recent_params(simulator)
 return params
-kf -> mod: instantiateModel(model, params)
-return model_i
-loop every sample_j
-  comm ->> kf: sample
-  kf -> kf: data_{j+1} := kalmanStep(model_i, sample_j)
-  kf ->> db: recordSample(model_i, data_{j+1})
+kf -> mod: get_state_space_form(simulator, params)
+return model
+loop forever
+  mq ->> kf: callback(sample_j)
+  kf -> kf: data_{j+1} := kalman_step(model, sample_j)
+  kf ->> db: record(model, data_{j+1})
 end
 @enduml
