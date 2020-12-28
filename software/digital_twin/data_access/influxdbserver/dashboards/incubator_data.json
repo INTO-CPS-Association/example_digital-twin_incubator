@@ -211,7 +211,7 @@
       "shape": "chronograf-v2",
       "queries": [
        {
-        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"low_level_driver\")\n  |> filter(fn: (r) => r[\"_field\"] == \"average_temperature\" or r[\"_field\"] == \"t1\" or r[\"_field\"] == \"t2\" or r[\"_field\"] == \"t3\")\n  |> filter(fn: (r) => r[\"source\"] == \"low_level_driver\")",
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"low_level_driver\" or r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"average_temperature\" or r[\"_field\"] == \"t1\" or r[\"_field\"] == \"t2\" or r[\"_field\"] == \"t3\" or r[\"_field\"] == \"temperature_desired\")",
         "editMode": "advanced",
         "name": "",
         "builderConfig": {

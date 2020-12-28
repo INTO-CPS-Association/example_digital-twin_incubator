@@ -2,17 +2,18 @@
 boundary Client as client
 control KalmanFilter as kf
 boundary RabbitMQ as mq
-entity Simulator as mod
+entity Simulator as sim
 database InfluxDB as db
-client ->> kf: start(simulator)
+client ->> kf: start(simulator, record)
 kf ->> mq: subscribe(route_key=ROUTING_KEY_STATE)
-kf -> db: get_most_recent_params(simulator)
-return params
-kf -> mod: get_state_space_form(simulator, params)
-return model
+kf -> sim: get_state_space_form(simulator)
+sim -> sim: get_most_recent_params()
+sim --> kf: model
 loop forever
   mq ->> kf: callback(sample_j)
   kf -> kf: data_{j+1} := kalman_step(model, sample_j)
-  kf ->> db: record(model, data_{j+1})
+  opt record
+    kf ->> db: record(model, data_{j+1})
+  end
 end
 @enduml
