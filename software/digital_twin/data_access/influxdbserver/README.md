@@ -18,6 +18,8 @@ Run the following if this is the first time you're starting the influxdb server:
    ```
 2. Make sure docker is configured to share the database folder [influxdb](./influxdb).
    See the [manual](https://docs.docker.com/docker-for-windows/).
+   
+   Tips: Icon of the Docker-> right click-> settings-> resource -> File sharing-> "Add the influxdb folder you just unzipped."
 3. Start the influxdb server (see instructions below).
 
 # Start influxdb server
