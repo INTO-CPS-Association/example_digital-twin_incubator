@@ -1,4 +1,4 @@
-@startuml
+@startuml KalmanFilter
 boundary RabbitMQServer as comm
 boundary ExternalTrigger as trig
 control KalmanFilter as kf

@@ -1,4 +1,4 @@
-@startuml
+@startuml Calibration
 boundary ExternalTrigger as trig
 control Calibrator as cal
 entity LSESolver as lse
@@ -7,7 +7,7 @@ database DataAccess as db
 database ModelManager as mod
 trig ->> cal: calibrate(startDate, endDate, simulator, N)
 cal ->> lse: startOptimization(params_0)
-loop N times 
+loop N times
   lse -> cal: getResidual(params_i)
   cal -> db: getHistoricalData(startDate, endDate)
   return data

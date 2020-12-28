@@ -1,0 +1,12 @@
+@startuml Controller
+control ControllerPhysical as ctrl
+entity RabbitMQ as mq
+ctrl ->> mq: subscribe(route_key=ROUTING_KEY_STATE)
+loop forever
+  mq ->> ctrl: control_loop_callback(msg)
+  ctrl -> ctrl: heater_cmd := ctrl_step(msg)
+  ctrl -> ctrl: statem := build_state_message()
+  ctrl ->> mq: send_message(route_key=ROUTING_KEY_CONTROLLER, statem)
+  ctrl ->> mq: send_message(route_key=ROUTING_KEY_HEATER, heater_cmd)
+end
+@enduml
