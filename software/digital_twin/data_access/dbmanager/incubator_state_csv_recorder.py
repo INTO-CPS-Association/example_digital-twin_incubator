@@ -23,9 +23,8 @@ class IncubatorDataRecorderCSV():
         self.current_file = None
         self.csv_writer = None
 
-    def read_state(self, ch, method, properties, body):
+    def read_state(self, ch, method, properties, body_json):
         self._l.debug("New msg:")
-        body_json = decode_json(body)
         self._l.debug(body_json)
 
         if self.current_file_name is None or self.number_records >= self.rollover_limit:

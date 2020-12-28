@@ -5,7 +5,7 @@ from oomodelling import ModelSolver
 import matplotlib.pyplot as plt
 
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from digital_twin.models.plant_models.four_parameters_model.system_model4 import SystemModel4Parameters
+from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
 from tests.cli_mode_test import CLIModeTest
 import pandas as pd

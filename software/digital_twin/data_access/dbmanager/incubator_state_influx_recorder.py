@@ -17,11 +17,10 @@ class IncubatorDataRecorderInflux():
         self.influx_db_org = None
         self.influxdb_bucket = None
 
-    def read_record_request(self, ch, method, properties, body):
+    def read_record_request(self, ch, method, properties, body_json):
         self._l.debug("New record msg:")
-        data = decode_json(body)
-        self._l.debug(data)
-        self.write_api.write(self.influxdb_bucket, self.influx_db_org, data)
+        self._l.debug(body_json)
+        self.write_api.write(self.influxdb_bucket, self.influx_db_org, body_json)
 
     def start_recording(self, rabbitmq_ip="localhost",
                         influx_url="http://localhost:8086",

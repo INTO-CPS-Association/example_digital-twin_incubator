@@ -138,16 +138,14 @@ class ControllerPhysical():
         }
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_CONTROLLER, message=ctrl_data)
 
-    def control_loop_callback(self, ch, method, properties, body):
-
-        message = decode_json(body)
-        self._record_message(message)
+    def control_loop_callback(self, ch, method, properties, body_json):
+        self._record_message(body_json)
 
         self.ctrl_step()
 
-        self.print_terminal(message)
+        self.print_terminal(body_json)
 
-        self.upload_state(message)
+        self.upload_state(body_json)
 
         assert self.heater_ctrl is not None
         self._set_heater_on(self.heater_ctrl)
