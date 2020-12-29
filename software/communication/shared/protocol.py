@@ -26,3 +26,7 @@ def decode_json(bytes):
 
 def from_ns_to_s(time_ns):
     return time_ns / 1e9
+
+
+def from_s_to_ns(time_s):
+    return int(time_s * 1e9)

@@ -6,14 +6,15 @@ from time import sleep
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
+from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # You can generate a Token from the "Tokens Tab" in the UI
-    token = "-g7q1xIvZqY8BA82zC7uMmJS1zeTj61SQjDCY40DkY6IpPBpvna2YoQPdSeENiekgVLMd91xA95smSkhhbtO7Q=="
-    org = "incubator"
-    bucket = "incubator"
+    token = INFLUXDB_TOKEN
+    org = INFLUXDB_ORG
+    bucket = INFLUXDB_BUCKET
 
     client = InfluxDBClient(url="http://localhost:8086", token=token)
 

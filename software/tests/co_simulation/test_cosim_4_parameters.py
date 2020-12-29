@@ -4,6 +4,7 @@ from oomodelling import ModelSolver
 
 import matplotlib.pyplot as plt
 
+from digital_twin.models.physical_twin_models.physical_twin_simulator4 import PhysicalTwinSimulator4Params
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
@@ -65,6 +66,15 @@ class CosimulationTests(CLIModeTest):
 
         if self.ide_mode():
             show_plotly(fig)
+
+    def test_run_physical_twin_simulator(self):
+        simulator = PhysicalTwinSimulator4Params()
+
+        results_model = simulator.run_simulation(0.0, 10.0)
+        results_db = simulator.convert_results(results_model)
+
+        if self.ide_mode():
+            print(results_db)
 
 if __name__ == '__main__':
     unittest.main()

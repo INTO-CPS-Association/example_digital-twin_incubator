@@ -100,7 +100,8 @@ class RPCServer:
             return
         args = body_json[ARGS_ATTRIBUTE]
 
-        #Get method signature and compare it with args provided
+        # Get method signature and compare it with args provided
+        # This ensures that methods are called with the arguments in their signature.
         signature = inspect.signature(method_op)
         for arg_name in signature.parameters:
             if arg_name not in args:
@@ -109,7 +110,7 @@ class RPCServer:
                 reply({"error": f"Message received does not specify argument {arg_name} in attribute {ARGS_ATTRIBUTE}."})
                 return
 
-        # Call method
+        # Call method with named arguments provided.
         reply_msg = method_op(**args)
         self._l.debug(f"Sending reply msg:\n{reply_msg}")
         reply(reply_msg)

@@ -7,7 +7,8 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
 from communication.server.rabbitmq import Rabbitmq
-from communication.shared.protocol import decode_json, ROUTING_KEY_RECORDER
+from communication.shared.protocol import ROUTING_KEY_RECORDER
+from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
 
 
 class IncubatorDataRecorderInflux():
@@ -24,9 +25,9 @@ class IncubatorDataRecorderInflux():
 
     def start_recording(self, rabbitmq_ip="localhost",
                         influx_url="http://localhost:8086",
-                        influx_token="-g7q1xIvZqY8BA82zC7uMmJS1zeTj61SQjDCY40DkY6IpPBpvna2YoQPdSeENiekgVLMd91xA95smSkhhbtO7Q==",
-                        influxdb_org="incubator",
-                        influxdb_bucket="incubator"
+                        influx_token=INFLUXDB_TOKEN,
+                        influxdb_org=INFLUXDB_ORG,
+                        influxdb_bucket=INFLUXDB_BUCKET
                         ):
         rabbitmq = Rabbitmq(ip=rabbitmq_ip)
         rabbitmq.connect_to_server()
