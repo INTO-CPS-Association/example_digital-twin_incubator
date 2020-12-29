@@ -18,11 +18,11 @@ class Rabbitmq:
         self.exchange_name = exchange_name
         self.exchange_type = exchange_type
 
-        self.credentials = pika.PlainCredentials(username, password)
+        credentials = pika.PlainCredentials(username, password)
         self.parameters = pika.ConnectionParameters(ip,
                                                     port,
                                                     vhost,
-                                                    self.credentials)
+                                                    credentials)
         self.connection = None
         self.channel = None
         self.queue_name = []
