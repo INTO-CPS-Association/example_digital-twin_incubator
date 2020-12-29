@@ -1,8 +1,5 @@
-import logging
-
 from communication.server.rabbitmq import Rabbitmq
-from mock_physical_twin.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
-from physical_twin.low_level_driver_server import IncubatorDriver
+from mock_plant.mock_connection import MOCK_HEATER_ON
 
 
 class LedMock:
@@ -50,23 +47,3 @@ class TemperatureSensorMock:
             self.cached_temp = reading
         return self.cached_temp
 
-
-if __name__ == '__main__':
-    # noinspection PyArgumentList
-    logging.basicConfig(level=logging.WARN,
-                        handlers=[
-                            logging.FileHandler("ll_driver.log"),
-                            logging.StreamHandler()
-                        ],
-                        format='%(asctime)s.%(msecs)03d %(name)s %(levelname)s %(module)s - %(funcName)s: %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S'
-                        )
-    incubator = IncubatorDriver(ip_raspberry="localhost",
-                                heater=HeaterMock(),
-                                fan=LedMock(),
-                                t1=TemperatureSensorMock(MOCK_TEMP_T1),
-                                t2=TemperatureSensorMock(MOCK_TEMP_T2),
-                                t3=TemperatureSensorMock(MOCK_TEMP_T3),
-                                simulate_actuation=False)
-    incubator.setup()
-    incubator.control_loop()
