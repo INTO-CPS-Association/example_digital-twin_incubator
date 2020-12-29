@@ -23,10 +23,4 @@ class PhysicalTwinSimulator4Params(RPCServer):
                          exchange_type=exchange_type)
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
 
-    def on_echo(self, request_msg):
-        """
-        Example method that is invoked by RPCServer when a message arrives with the method=echo
-        """
-        return request_msg
-
     

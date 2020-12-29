@@ -93,3 +93,9 @@ class RPCServer:
         reply_msg = method_op(body_json)
         self._l.debug(f"Sending reply msg:\n{reply_msg}")
         reply(reply_msg)
+
+    def on_echo(self, request_msg):
+        """
+        Example method that is invoked by RPCServer when a message arrives with the method=echo
+        """
+        return request_msg
