@@ -16,12 +16,14 @@ if __name__ == '__main__':
     org = INFLUXDB_ORG
     bucket = INFLUXDB_BUCKET
 
-    client = InfluxDBClient(url="http://localhost:8086", token=token)
+    client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
 
     # Get write-api
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
-    while True:
+    n = 1
+
+    while n>0:
         # Create a datapoint
         point = Point("test-data")\
             .tag("source", "test-script")\
@@ -34,6 +36,17 @@ if __name__ == '__main__':
         print(point)
 
         sleep(1)
+        n -= 1
+
+    query_api = client.query_api()
+    results = query_api.query_data_frame(f"""
+    from(bucket: "{bucket}")
+      |> range(start: -10h, stop: now())
+      |> filter(fn: (r) => r["_measurement"] == "test-data")
+      |> filter(fn: (r) => r["_field"] == "test-field")
+    """)
+
+    print(results[["_time","_value"]])
 
 
 
