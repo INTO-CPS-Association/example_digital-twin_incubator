@@ -2,10 +2,10 @@ from oomodelling import Model
 
 
 class ControllerModel4(Model):
-    def __init__(self, desired_temperature=45.0, lower_bound=10, heating_time=0.2, heating_gap=0.3):
+    def __init__(self, temperature_desired=45.0, lower_bound=10, heating_time=0.2, heating_gap=0.3):
         super().__init__()
 
-        self.T_desired = self.parameter(desired_temperature)
+        self.T_desired = self.parameter(temperature_desired)
 
         self.lower_bound = self.parameter(lower_bound)
 

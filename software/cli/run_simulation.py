@@ -36,7 +36,7 @@ if __name__ == '__main__':
                                                                               "lower_bound": 1.0,
                                                                               "heating_time": 10.0,
                                                                               "heating_gap": 30.0,
-                                                                              "desired_temperature": 35.0,
+                                                                              "temperature_desired": 35.0,
                                                                               "controller_comm_step": 3.0,
                                                                               "initial_box_temperature": 10.0,
                                                                               "initial_heat_temperature": 10.0,

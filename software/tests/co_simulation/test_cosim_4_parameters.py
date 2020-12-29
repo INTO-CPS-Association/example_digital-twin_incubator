@@ -24,10 +24,10 @@ class CosimulationTests(CLIModeTest):
 
         def show_trace(heating_time):
             m = SystemModel4Parameters(C_air=C_air_num,
-                                  G_box=G_box_num,
-                                  C_heater=C_heater_num,
-                                  G_heater=G_heater_num, heating_time=heating_time, heating_gap=2.0,
-                                  desired_temperature=35, initial_box_temperature=22)
+                                       G_box=G_box_num,
+                                       C_heater=C_heater_num,
+                                       G_heater=G_heater_num, heating_time=heating_time, heating_gap=2.0,
+                                       temperature_desired=35, initial_box_temperature=22)
             ModelSolver().simulate(m, 0.0, 3000, 3.0)
 
             plt.plot(m.signals['time'], m.plant.signals['T'], label=f"Trial_{heating_time}")
@@ -52,7 +52,7 @@ class CosimulationTests(CLIModeTest):
                                    G_box=G_box_num,
                                    C_heater=C_heater_num,
                                    G_heater=G_heater_num, heating_time=20.0, heating_gap=30.0,
-                                   desired_temperature=35, initial_box_temperature=22)
+                                   temperature_desired=35, initial_box_temperature=22)
         ModelSolver().simulate(m, 0.0, 3000, 3.0)
 
         # Convert cosim data into a dataframe
@@ -80,10 +80,16 @@ class CosimulationTests(CLIModeTest):
                                        C_heater,
                                        G_heater)
         ModelSolver().simulate(model, 0.0, 10.0, 3.0)
-        results_db = simulator.convert_results(model)
+        results_db = simulator.convert_results(model, C_air,
+                                               G_box,
+                                               C_heater,
+                                               G_heater,
+                                               0.0, 10.0, 10.0, 35.0,
+                                               3.0)
 
         if self.ide_mode():
             print(results_db)
+
 
 if __name__ == '__main__':
     unittest.main()

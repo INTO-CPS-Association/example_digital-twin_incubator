@@ -10,12 +10,12 @@ class SystemModel4Parameters(Model):
                  C_heater,
                  G_heater,
                  lower_bound=10, heating_time=20.0, heating_gap=30.0,
-                 desired_temperature=35,
+                 temperature_desired=35,
                  initial_box_temperature=35,
                  initial_heat_temperature=35):
         super().__init__()
 
-        self.ctrl = ControllerModel4(desired_temperature=desired_temperature, heating_time=heating_time, heating_gap=heating_gap,
+        self.ctrl = ControllerModel4(temperature_desired=temperature_desired, heating_time=heating_time, heating_gap=heating_gap,
                                      lower_bound=lower_bound)
         self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,
                                                  initial_heat_temperature=initial_heat_temperature,

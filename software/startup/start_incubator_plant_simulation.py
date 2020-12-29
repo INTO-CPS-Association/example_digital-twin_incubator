@@ -19,12 +19,12 @@ class SampledRealTimeIncubator(Model):
                  C_heater,
                  G_heater,
                  lower_bound=10, heating_time=0.2, heating_gap=2.0,
-                 desired_temperature=35,
+                 temperature_desired=35,
                  initial_box_temperature=21,
                  comm=Rabbitmq(ip="localhost"), temperature_difference=6):
         super().__init__()
 
-        self.ctrl = ControllerModel4(desired_temperature=desired_temperature, heating_time=heating_time,
+        self.ctrl = ControllerModel4(temperature_desired=temperature_desired, heating_time=heating_time,
                                      heating_gap=heating_gap,
                                      lower_bound=lower_bound)
         self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,

@@ -20,9 +20,9 @@ LINE_PRINT_FORMAT = {
 
 
 class ControllerPhysical():
-    def __init__(self, rabbitmq_ip=RASPBERRY_IP, desired_temperature=35.0, lower_bound=5, heating_time=20,
+    def __init__(self, rabbitmq_ip=RASPBERRY_IP, temperature_desired=35.0, lower_bound=5, heating_time=20,
                  heating_gap=30):
-        self.desired_temperature = desired_temperature
+        self.temperature_desired = temperature_desired
         self.lower_bound = lower_bound
         self.heating_time = heating_time
         self.heating_gap = heating_gap
@@ -72,7 +72,7 @@ class ControllerPhysical():
         if self.current_state == "CoolingDown":
             self._l.debug("current state is: CoolingDown")
             self.heater_ctrl = False
-            if self.box_air_temperature <= self.desired_temperature - self.lower_bound:
+            if self.box_air_temperature <= self.temperature_desired - self.lower_bound:
                 self.current_state = "Heating"
                 self.heater_ctrl = True
                 self.next_time = time.time() + self.heating_time
@@ -89,7 +89,7 @@ class ControllerPhysical():
             self._l.debug("current state is: Waiting")
             self.heater_ctrl = False
             if 0 < self.next_time <= time.time():
-                if self.box_air_temperature <= self.desired_temperature:
+                if self.box_air_temperature <= self.temperature_desired:
                     self.current_state = "Heating"
                     self.heater_ctrl = True
                     self.next_time = time.time() + self.heating_time
@@ -130,7 +130,7 @@ class ControllerPhysical():
                 "fan_on": data["fields"]["fan_on"],
                 "current_state": self.current_state,
                 "next_time": self.next_time,
-                "temperature_desired": self.desired_temperature,
+                "temperature_desired": self.temperature_desired,
                 "lower_bound": self.lower_bound,
                 "heating_time": self.heating_time,
                 "heating_gap": self.heating_gap,
@@ -163,6 +163,6 @@ class ControllerPhysical():
 
 
 if __name__ == '__main__':
-    desired_temperature = float(input("Please input desired temperature: "))
-    controller = ControllerPhysical(desired_temperature=desired_temperature)
+    temperature_desired = float(input("Please input desired temperature: "))
+    controller = ControllerPhysical(temperature_desired=temperature_desired)
     controller.start_control()

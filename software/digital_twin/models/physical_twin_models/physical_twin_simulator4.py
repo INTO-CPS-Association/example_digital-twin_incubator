@@ -47,7 +47,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                           G_box,
                           C_heater,
                           G_heater,
-                          lower_bound, heating_time, heating_gap, desired_temperature,
+                          lower_bound, heating_time, heating_gap, temperature_desired,
                           controller_comm_step,
                           initial_box_temperature,
                           initial_heat_temperature,
@@ -58,12 +58,13 @@ class PhysicalTwinSimulator4Params(RPCServer):
 
         # TODO: Access database to get the data needed.
 
+
         # Start simulation
         model = SystemModel4Parameters(C_air,
                                        G_box,
                                        C_heater,
                                        G_heater,
-                                       lower_bound, heating_time, heating_gap, desired_temperature,
+                                       lower_bound, heating_time, heating_gap, temperature_desired,
                                        initial_box_temperature,
                                        initial_heat_temperature)
         ModelSolver().simulate(model, start_date_s, end_date_s, controller_comm_step)
@@ -74,7 +75,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                                           G_box,
                                           C_heater,
                                           G_heater,
-                                          lower_bound, heating_time, heating_gap, desired_temperature,
+                                          lower_bound, heating_time, heating_gap, temperature_desired,
                                           controller_comm_step)
 
         # Record results into db if specified
@@ -89,7 +90,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                         G_box,
                         C_heater,
                         G_heater,
-                        lower_bound, heating_time, heating_gap, desired_temperature,
+                        lower_bound, heating_time, heating_gap, temperature_desired,
                         controller_comm_step):
         results_db = []
         time = results_model.signals["time"]
@@ -113,7 +114,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                 "lower_bound": lower_bound,
                 "heating_time": heating_time,
                 "heating_gap": heating_gap,
-                "desired_temperature": desired_temperature,
+                "temperature_desired": temperature_desired,
                 "controller_comm_step": controller_comm_step
             }
         }

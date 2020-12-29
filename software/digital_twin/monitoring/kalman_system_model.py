@@ -14,7 +14,7 @@ class KalmanSystemModel(Model):
                  G_heater):
         super().__init__()
 
-        self.ctrl = ControllerModel4(desired_temperature=35, heating_time=0.1, heating_gap=1.0)
+        self.ctrl = ControllerModel4(temperature_desired=35, heating_time=0.1, heating_gap=1.0)
         self.plant = FourParameterIncubatorPlant(C_air=C_air,
                                                  G_box=G_box,
                                                  C_heater=C_heater,
