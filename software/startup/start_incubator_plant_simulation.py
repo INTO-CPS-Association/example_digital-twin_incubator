@@ -8,8 +8,8 @@ from communication.server.rabbitmq import Rabbitmq
 from digital_twin.models.controller_models.controller_model4 import ControllerModel4
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from mock_physical_twin.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
-from mock_physical_twin.real_time_model_solver import RTModelSolver
+from startup.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
+from startup.real_time_model_solver import RTModelSolver
 
 
 class SampledRealTimeIncubator(Model):

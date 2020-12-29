@@ -1,7 +1,7 @@
 import logging
 
 from communication.server.rabbitmq import Rabbitmq
-from mock_physical_twin.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
+from startup.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
 from physical_twin.low_level_driver_server import IncubatorDriver
 
 
