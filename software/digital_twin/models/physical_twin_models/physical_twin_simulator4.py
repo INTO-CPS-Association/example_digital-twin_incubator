@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime
 
+from influxdb_client import InfluxDBClient
+from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
 from communication.server.rpc_server import RPCServer
@@ -34,8 +36,8 @@ class PhysicalTwinSimulator4Params(RPCServer):
                          exchange_type=exchange_type)
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
         self._influx_url = influx_url
-        self._influx_token = influx_token,
-        self._influxdb_org = influxdb_org,
+        self._influx_token = influx_token
+        self._influxdb_org = influxdb_org
         self._influxdb_bucket = influxdb_bucket
 
     def start_serving(self):
@@ -49,7 +51,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
         # TODO: Access database to get the data needed.
 
         # TODO: Access database to get controller parameters
-
+        
         # TODO: Access database to get most recent simulation parameters.
 
         # Start simulation
@@ -58,7 +60,11 @@ class PhysicalTwinSimulator4Params(RPCServer):
         # Convert results into format that is closer to the data in the database
         results_db = self.convert_results(results_model)
 
-        # Send results back, or record them into the database.
+        # Record results into db if specified
+        if record:
+            self.write_to_db(results_db)
+
+        # Send results back.
         return results_db
 
     def run_simulation(self, start_date_s, end_date_s, step=3.0):
@@ -98,3 +104,11 @@ class PhysicalTwinSimulator4Params(RPCServer):
             results_db.append(point)
 
         return results_db
+
+    def write_to_db(self, results_db):
+        self._l.debug(f"Writting {len(results_db)} samples to database.")
+        self._l.debug(f"Database information: url={self._influx_url}; token={self._influx_token}.")
+        client = InfluxDBClient(url=self._influx_url, token=self._influx_token)
+        write_api = client.write_api(write_options=SYNCHRONOUS)
+        write_api.write(self._influxdb_bucket, self._influxdb_org, results_db)
+        self._l.debug(f"Written {len(results_db)} samples to database.")
