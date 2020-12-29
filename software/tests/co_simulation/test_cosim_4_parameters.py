@@ -70,8 +70,17 @@ class CosimulationTests(CLIModeTest):
     def test_run_physical_twin_simulator(self):
         simulator = PhysicalTwinSimulator4Params()
 
-        results_model = simulator.run_simulation(0.0, 10.0)
-        results_db = simulator.convert_results(results_model)
+        C_air = four_param_model_params[0]
+        G_box = four_param_model_params[1]
+        C_heater = four_param_model_params[2]
+        G_heater = four_param_model_params[3]
+
+        model = SystemModel4Parameters(C_air,
+                                       G_box,
+                                       C_heater,
+                                       G_heater)
+        ModelSolver().simulate(model, 0.0, 10.0, 3.0)
+        results_db = simulator.convert_results(model)
 
         if self.ide_mode():
             print(results_db)
