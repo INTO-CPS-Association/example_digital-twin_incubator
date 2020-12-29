@@ -1,3 +1,5 @@
+import inspect
+
 import pika
 import logging
 
@@ -5,6 +7,7 @@ from communication.shared.connection_parameters import *
 from communication.shared.protocol import decode_json, encode_json
 
 METHOD_ATTRIBUTE = "method"
+ARGS_ATTRIBUTE = "args"
 
 
 class RPCServer:
@@ -80,7 +83,7 @@ class RPCServer:
             reply({"error": f"Attribute {METHOD_ATTRIBUTE} must be specified."})
             return
 
-        server_method = body_json["method"]
+        server_method = body_json[METHOD_ATTRIBUTE]
 
         # Check if method exists in subclasses
         method_op = getattr(self, f"on_{server_method}", None)
@@ -89,13 +92,30 @@ class RPCServer:
             reply({"error": f"Method specified does not exist: {server_method}."})
             return
 
+        # Check if args are provided
+        if ARGS_ATTRIBUTE not in body_json:
+            self._l.warning(
+                f"Message received does not have arguments in attribute {ARGS_ATTRIBUTE}. Message:\n{body_json}")
+            reply({"error": f"Message received does not have arguments in attribute {ARGS_ATTRIBUTE}."})
+            return
+        args = body_json[ARGS_ATTRIBUTE]
+
+        #Get method signature and compare it with args provided
+        signature = inspect.signature(method_op)
+        for arg_name in signature.parameters:
+            if arg_name not in args:
+                self._l.warning(
+                    f"Message received does not specify argument {arg_name} in attribute {ARGS_ATTRIBUTE}. Message:\n{body_json}")
+                reply({"error": f"Message received does not specify argument {arg_name} in attribute {ARGS_ATTRIBUTE}."})
+                return
+
         # Call method
-        reply_msg = method_op(body_json)
+        reply_msg = method_op(**args)
         self._l.debug(f"Sending reply msg:\n{reply_msg}")
         reply(reply_msg)
 
-    def on_echo(self, request_msg):
+    def on_echo(self, msg):
         """
         Example method that is invoked by RPCServer when a message arrives with the method=echo
         """
-        return request_msg
+        return msg

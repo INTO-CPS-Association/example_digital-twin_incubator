@@ -4,7 +4,7 @@ import pika
 import logging
 
 from communication.server.rabbitmq import Rabbitmq
-from communication.server.rpc_server import METHOD_ATTRIBUTE
+from communication.server.rpc_server import METHOD_ATTRIBUTE, ARGS_ATTRIBUTE
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import decode_json
 
@@ -41,8 +41,8 @@ class RPCClient(Rabbitmq):
     def invoke_method(self, routing_key, method_to_invoke, arguments):
         corr_id = str(uuid.uuid4())
         assert METHOD_ATTRIBUTE not in arguments
-        arguments[METHOD_ATTRIBUTE] = method_to_invoke
-        self.send_message(routing_key=routing_key, message=arguments,
+        msg = {METHOD_ATTRIBUTE: method_to_invoke, ARGS_ATTRIBUTE: arguments}
+        self.send_message(routing_key=routing_key, message=msg,
                           properties=pika.BasicProperties(
                               reply_to=self.reply_queue,
                               correlation_id=corr_id,

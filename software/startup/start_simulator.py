@@ -8,4 +8,4 @@ if __name__ == '__main__':
     config_logging("simulator.log", level=logging.WARN)
     simulator = PhysicalTwinSimulator4Params(ip="localhost")
 
-    simulator.start_serving(routing_key=ROUTING_KEY_PTSIMULATOR4, queue_name=ROUTING_KEY_PTSIMULATOR4)
+    simulator.start_serving()

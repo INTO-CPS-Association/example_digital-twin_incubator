@@ -2,6 +2,7 @@ import logging
 
 from communication.server.rpc_server import RPCServer
 from communication.shared.connection_parameters import *
+from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4
 
 
 class PhysicalTwinSimulator4Params(RPCServer):
@@ -22,5 +23,9 @@ class PhysicalTwinSimulator4Params(RPCServer):
                          exchange_name=exchange_name,
                          exchange_type=exchange_type)
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
-
     
+    def start_serving(self):
+        super(PhysicalTwinSimulator4Params, self).start_serving(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
+    
+    def on_run_historical(self, args):
+        start_date = args["start_date"]
