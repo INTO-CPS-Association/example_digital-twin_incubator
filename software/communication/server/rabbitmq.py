@@ -48,10 +48,11 @@ class Rabbitmq:
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
-    def send_message(self, routing_key, message):
+    def send_message(self, routing_key, message, properties=None):
         self.channel.basic_publish(exchange=self.exchange_name,
                                    routing_key=routing_key,
-                                   body=encode_json(message)
+                                   body=encode_json(message),
+                                   properties=properties
                                    )
         self._l.debug(f"Message sent to {routing_key}.")
         self._l.debug(message)
@@ -68,7 +69,7 @@ class Rabbitmq:
     def declare_local_queue(self, routing_key):
         # Creates a local queue.
         # Rabbitmq server will clean it if the connection drops.
-        result = self.channel.queue_declare(queue="", exclusive=True)
+        result = self.channel.queue_declare(queue="", exclusive=True, auto_delete=True)
         created_queue_name = result.method.queue
         self.channel.queue_bind(
             exchange=self.exchange_name,

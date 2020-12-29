@@ -7,7 +7,7 @@ from communication.shared.protocol import decode_json, encode_json
 METHOD_ATTRIBUTE = "method"
 
 
-class RCPServer:
+class RPCServer:
     """
     Implements some basic operations to make it easier to implement remote procedure call as in
     https://www.rabbitmq.com/tutorials/tutorial-six-python.html
@@ -38,8 +38,14 @@ class RCPServer:
     def start_serving(self, routing_key, queue_name):
         connection = pika.BlockingConnection(self.parameters)
         channel = connection.channel()
+        channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
         channel.queue_declare(queue=queue_name)
         channel.basic_qos(prefetch_count=1)
+        channel.queue_bind(
+            exchange=self.exchange_name,
+            queue=queue_name,
+            routing_key=routing_key
+        )
         channel.basic_consume(queue=queue_name, on_message_callback=self.serve)
         self._l.debug(f"Listening for msgs in queue {queue_name} bound to topic {routing_key}")
         channel.start_consuming()
@@ -74,13 +80,13 @@ class RCPServer:
             reply({"error": f"Attribute {METHOD_ATTRIBUTE} must be specified."})
             return
 
-        method = body_json["method"]
+        server_method = body_json["method"]
 
         # Check if method exists in subclasses
-        method_op = getattr(self, f"on_{method}", None)
-        if method_op is not None:
-            self._l.warning(f"Method specified does not exist: {method_op}. Message:\n{body_json}")
-            reply({"error": f"Method specified does not exist: {method_op}."})
+        method_op = getattr(self, f"on_{server_method}", None)
+        if method_op is None:
+            self._l.warning(f"Method specified does not exist: {server_method}. Message:\n{body_json}")
+            reply({"error": f"Method specified does not exist: {server_method}."})
             return
 
         # Call method

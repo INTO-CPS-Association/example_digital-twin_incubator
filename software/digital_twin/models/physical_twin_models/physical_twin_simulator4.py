@@ -1,10 +1,10 @@
 import logging
 
-from communication.server.rpc_server import RCPServer
+from communication.server.rpc_server import RPCServer
 from communication.shared.connection_parameters import *
 
 
-class PhysicalTwinSimulator4Params(RCPServer):
+class PhysicalTwinSimulator4Params(RPCServer):
 
     def __init__(self, ip=RASPBERRY_IP,
                  port=RASPBERRY_PORT,
@@ -28,3 +28,5 @@ class PhysicalTwinSimulator4Params(RCPServer):
         Example method that is invoked by RPCServer when a message arrives with the method=echo
         """
         return request_msg
+
+    
