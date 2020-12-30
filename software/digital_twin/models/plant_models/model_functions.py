@@ -19,10 +19,9 @@ def find_closest_idx(t, start_idx, time_range):
     maxIdx = len(time_range)
 
     # Search backward
-    while time_range[idx] > t:
+    while time_range[idx] > t and idx > 0:
         idx = idx - 1
 
-    assert idx >= 0
     assert time_range[idx] <= t, f"{t}, {start_idx}, {idx}"
 
     # Search forward

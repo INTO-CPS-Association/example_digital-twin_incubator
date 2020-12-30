@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime, timedelta
 
 from communication.server.rpc_client import RPCClient
@@ -21,6 +22,7 @@ if __name__ == '__main__':
     start_date = end_date - timedelta(minutes=10)
 
     end_date_ns = from_s_to_ns(end_date.timestamp())
+    print(end_date_ns)
     start_date_ns = from_s_to_ns(start_date.timestamp())
 
     config_logging(level=logging.WARN)
@@ -33,12 +35,12 @@ if __name__ == '__main__':
                                                                               "G_box": G_box,
                                                                               "C_heater": C_heater,
                                                                               "G_heater": G_heater,
-                                                                              "lower_bound": 1.0,
-                                                                              "heating_time": 10.0,
+                                                                              "lower_bound": 5.0,
+                                                                              "heating_time": 20.0,
                                                                               "heating_gap": 30.0,
                                                                               "temperature_desired": 35.0,
                                                                               "controller_comm_step": 3.0,
-                                                                              "initial_box_temperature": 10.0,
-                                                                              "initial_heat_temperature": 10.0,
+                                                                              "initial_box_temperature": 21.0,
+                                                                              "initial_heat_temperature": 21.0,
                                                                               "record": True})
     print(reply)

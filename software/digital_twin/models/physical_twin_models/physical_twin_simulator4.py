@@ -1,6 +1,6 @@
 import logging
-from datetime import datetime
 
+import numpy as np
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
@@ -10,6 +10,7 @@ from communication.shared.connection_parameters import *
 from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s, from_s_to_ns
 from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
 from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
+from digital_twin.models.plant_models.model_functions import create_lookup_table
 
 
 class PhysicalTwinSimulator4Params(RPCServer):
@@ -52,12 +53,42 @@ class PhysicalTwinSimulator4Params(RPCServer):
                           initial_box_temperature,
                           initial_heat_temperature,
                           record):
+        # Access database to get the data needed.
+        self._l.debug(f"Database information: url={self._influx_url}; token={self._influx_token}.")
+        client = InfluxDBClient(url=self._influx_url, token=self._influx_token, org=self._influxdb_org)
+        room_temp_results = client.query_api().query_data_frame(f"""
+            from(bucket: "{self._influxdb_bucket}")
+              |> range(start: time(v: {start_date}), stop: time(v: {end_date}))
+              |> filter(fn: (r) => r["_measurement"] == "low_level_driver")
+              |> filter(fn: (r) => r["_field"] == "t1")
+              |> filter(fn: (r) => r["source"] == "low_level_driver")
+            """)
+
+        # Check if there are results
+        if room_temp_results.empty:
+            error_msg = f"No room temperature data exists in the period specified " \
+                        f"by start_date={start_date} and end_date={end_date}."
+            self._l.warning(error_msg)
+            return {"error": error_msg}
+
         # convert start and end dates to seconds
+        # This is needed because the simulation runs in seconds.
         start_date_s = from_ns_to_s(start_date)
         end_date_s = from_ns_to_s(end_date)
 
-        # TODO: Access database to get the data needed.
+        # Convert results into format that simulation model can take
+        time_seconds = room_temp_results.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy()
+        room_temperature = room_temp_results["_value"].to_numpy()
 
+        # The following is true because of the query we made at the db
+        assert time_seconds[0] >= start_date_s
+
+        # Ensure that the start_date is in the lookup table.
+        # We need to do this because the data in the database may not exist at exactly the start date.
+        # So we need to interpolate it from the data that exists.
+        time_seconds = np.insert(time_seconds, 0, start_date_s)
+        room_temperature = np.insert(room_temperature, 0, room_temperature[0])
+        in_room_temperature_table = create_lookup_table(time_seconds, room_temperature)
 
         # Start simulation
         model = SystemModel4Parameters(C_air,
@@ -67,6 +98,10 @@ class PhysicalTwinSimulator4Params(RPCServer):
                                        lower_bound, heating_time, heating_gap, temperature_desired,
                                        initial_box_temperature,
                                        initial_heat_temperature)
+
+        # Wire the lookup table to the model
+        model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
+
         ModelSolver().simulate(model, start_date_s, end_date_s, controller_comm_step)
 
         # Convert results into format that is closer to the data in the database
@@ -80,7 +115,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
 
         # Record results into db if specified
         if record:
-            self.write_to_db(results_db)
+            self.write_to_db(results_db, client)
 
         # Send results back.
         return results_db
@@ -138,10 +173,8 @@ class PhysicalTwinSimulator4Params(RPCServer):
 
         return results_db
 
-    def write_to_db(self, results_db):
+    def write_to_db(self, results_db, client):
         self._l.debug(f"Writting {len(results_db)} samples to database.")
-        self._l.debug(f"Database information: url={self._influx_url}; token={self._influx_token}.")
-        client = InfluxDBClient(url=self._influx_url, token=self._influx_token)
         write_api = client.write_api(write_options=SYNCHRONOUS)
         write_api.write(self._influxdb_bucket, self._influxdb_org, results_db)
         self._l.debug(f"Written {len(results_db)} samples to database.")

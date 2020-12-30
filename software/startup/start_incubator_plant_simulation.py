@@ -8,6 +8,7 @@ from communication.server.rabbitmq import Rabbitmq
 from digital_twin.models.controller_models.controller_model4 import ControllerModel4
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
+from digital_twin.models.plant_models.room_temperature_model import room_temperature
 from startup.logging_config import config_logging
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
 from mock_plant.real_time_model_solver import RTModelSolver
@@ -37,13 +38,14 @@ class SampledRealTimeIncubator(Model):
 
         self.plant.in_heater_on = self.heater_on
 
+        self.room_temperature = self.var(lambda: room_temperature(self.time()))
+        self.plant.in_room_temperature = self.room_temperature
+
         self.comm = comm
         self.comm.connect_to_server()
         self.queue_name = self.comm.declare_local_queue(routing_key=MOCK_HEATER_ON)
 
         self.temperature_difference = temperature_difference
-
-        self.simulation_start_time = 0.0
 
         print("{:13}{:15}{:10}{:10}{:10}".format("time","heater_on", "t1", "t2", "t3"))
 
