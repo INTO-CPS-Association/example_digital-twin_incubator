@@ -7,7 +7,6 @@ import os
 from datetime import datetime
 
 from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE
-from communication.shared.protocol import decode_json
 
 
 class IncubatorDataRecorderCSV():

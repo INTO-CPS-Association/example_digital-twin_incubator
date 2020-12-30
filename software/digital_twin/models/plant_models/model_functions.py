@@ -103,14 +103,14 @@ def construct_residual(experiments, run_exp=None, desired_timeframe=(-math.inf, 
 
             T_indexes = numpy.where(state_names == 'T')
             assert len(T_indexes) == 1
-            approx_Troom = state_over_time[T_indexes[0], :][0]
-            Troom = data["average_temperature"].to_numpy()
-            assert len(approx_Troom) == len(Troom), f"Inconsistent troom arrays. One has {len(approx_Troom)} elements " \
-                                                    f"and the other one has {len(Troom)}. " \
-                                                    f"Their shapes are {approx_Troom.shape} and {Troom.shape}"
-            assert approx_Troom.shape == Troom.shape, f"Inconsistent troom arrays. One has shape {approx_Troom.shape} elements " \
-                                                      f"and the other one has {Troom.shape}."
-            res = Troom - approx_Troom
+            approx_T = state_over_time[T_indexes[0], :][0]
+            T = data["average_temperature"].to_numpy()
+            assert len(approx_T) == len(T), f"Inconsistent temperature arrays. One has {len(approx_T)} elements " \
+                                                    f"and the other one has {len(T)}. " \
+                                                    f"Their shapes are {approx_T.shape} and {T.shape}"
+            assert approx_T.shape == T.shape, f"Inconsistent temperature arrays. One has shape {approx_T.shape} elements " \
+                                                      f"and the other one has {T.shape}."
+            res = T - approx_T
             cost = sum(res ** 2)
             l.info(f"Parameters {params} -> Cost: {cost}")
             return res

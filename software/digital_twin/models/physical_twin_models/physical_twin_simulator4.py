@@ -9,11 +9,15 @@ from communication.server.rpc_server import RPCServer
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s, from_s_to_ns
 from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
+from digital_twin.data_access.dbmanager.incubator_data_query import IncubatorDataQuery
 from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from digital_twin.models.plant_models.model_functions import create_lookup_table
 
 
 class PhysicalTwinSimulator4Params(RPCServer):
+    """
+    Can run simulations of the physical twin. This includes controller and plant.
+    """
 
     def __init__(self, ip=RASPBERRY_IP,
                  port=RASPBERRY_PORT,
@@ -35,10 +39,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                          exchange_name=exchange_name,
                          exchange_type=exchange_type)
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
-        self._influx_url = influx_url
-        self._influx_token = influx_token
-        self._influxdb_org = influxdb_org
-        self._influxdb_bucket = influxdb_bucket
+        self.db = IncubatorDataQuery(url=influx_url, token=influx_token, org=influxdb_org, bucket=influxdb_bucket)
 
     def start_serving(self):
         super(PhysicalTwinSimulator4Params, self).start_serving(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
@@ -54,15 +55,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                           initial_heat_temperature,
                           record):
         # Access database to get the data needed.
-        self._l.debug(f"Database information: url={self._influx_url}; token={self._influx_token}.")
-        client = InfluxDBClient(url=self._influx_url, token=self._influx_token, org=self._influxdb_org)
-        room_temp_results = client.query_api().query_data_frame(f"""
-            from(bucket: "{self._influxdb_bucket}")
-              |> range(start: time(v: {start_date}), stop: time(v: {end_date}))
-              |> filter(fn: (r) => r["_measurement"] == "low_level_driver")
-              |> filter(fn: (r) => r["_field"] == "t1")
-              |> filter(fn: (r) => r["source"] == "low_level_driver")
-            """)
+        room_temp_results = self.db.query(start_date, end_date, "low_level_driver", "t1")
 
         # Check if there are results
         if room_temp_results.empty:
@@ -90,7 +83,6 @@ class PhysicalTwinSimulator4Params(RPCServer):
         room_temperature = np.insert(room_temperature, 0, room_temperature[0])
         in_room_temperature_table = create_lookup_table(time_seconds, room_temperature)
 
-        # Start simulation
         model = SystemModel4Parameters(C_air,
                                        G_box,
                                        C_heater,
@@ -102,6 +94,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
         # Wire the lookup table to the model
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
 
+        # Start simulation
         ModelSolver().simulate(model, start_date_s, end_date_s, controller_comm_step)
 
         # Convert results into format that is closer to the data in the database
