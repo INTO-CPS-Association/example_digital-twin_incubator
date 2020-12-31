@@ -35,14 +35,17 @@ class IncubatorDataQuery:
             self._client = None
             self._query = None
 
-    def query(self, start_date, end_date, measurement, field):
+    def query(self, start_date_ns, end_date_ns, measurement, field):
         self.connect()
-        result = self._query.query_data_frame(f"""
+        self._l.debug("Query: ")
+        query_to_be = f"""
             from(bucket: "{self._influxdb_bucket}")
-              |> range(start: time(v: {start_date}), stop: time(v: {end_date}))
+              |> range(start: time(v: {start_date_ns}), stop: time(v: {end_date_ns}))
               |> filter(fn: (r) => r["_measurement"] == "{measurement}")
               |> filter(fn: (r) => r["_field"] == "{field}")
-            """)
+            """
+        self._l.debug(query_to_be)
+        result = self._query.query_data_frame(query_to_be)
         assert isinstance(result, pandas.DataFrame), "Result is a dataframe"
         self._l.debug(f"New query for {measurement}'s {field}: {len(result)} samples retrieved.")
         return result

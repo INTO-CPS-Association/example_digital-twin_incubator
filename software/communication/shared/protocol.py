@@ -7,6 +7,7 @@ ROUTING_KEY_HEATER = "incubator.hardware.gpio.heater.on"
 ROUTING_KEY_FAN = "incubator.hardware.gpio.fan.on"
 ROUTING_KEY_PTSIMULATOR4 = "incubator.simulator.physicaltwin.4params"
 ROUTING_KEY_PLANTSIMULATOR4 = "incubator.simulator.plant.4params"
+ROUTING_KEY_PLANTCALIBRATOR4 = "incubator.calibrator.plant.4params"
 ENCODING = "ascii"
 
 
