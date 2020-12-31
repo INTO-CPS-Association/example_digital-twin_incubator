@@ -71,7 +71,8 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
 
     if heater_T_data is not None:
         for trace in heater_T_data:
-            fig.add_trace(go.Scatter(x=heater_T_data[trace]["time"], y=heater_T_data[trace]["T_heater"], name=f"T_heater({trace})"), row=next_row, col=1)
+            fig.add_trace(go.Scatter(x=heater_T_data[trace]["time"], y=heater_T_data[trace]["T_heater"],
+                                     name=f"T_heater({trace})"), row=next_row, col=1)
         next_row += 1
 
     fig.update_layout()

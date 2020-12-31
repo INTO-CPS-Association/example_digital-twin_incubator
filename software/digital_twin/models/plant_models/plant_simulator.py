@@ -34,7 +34,7 @@ class PlantSimulator4Params(RPCServer):
                          vhost=vhost,
                          exchange_name=exchange_name,
                          exchange_type=exchange_type)
-        self._l = logging.getLogger("PhysicalTwinSimulator4Params")
+        self._l = logging.getLogger("PlantSimulator4Params")
 
     def start_serving(self):
         super(PlantSimulator4Params, self).start_serving(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
@@ -83,27 +83,33 @@ class PlantSimulator4Params(RPCServer):
 
         self._l.debug(f"Simulating model from time {start_t} to {end_t} with a maximum step size of {max_step_size}, "
                       f"and a total of {len(timespan_seconds)} samples.")
-        sol = ModelSolver().simulate(model, start_t, end_t, max_step_size,
-                                     t_eval=timespan_seconds)
+        try:
+            sol = ModelSolver().simulate(model, start_t, end_t, max_step_size,
+                                         t_eval=timespan_seconds)
 
-        self._l.debug(f"Converting solution to influxdb data format.")
-        state_names = model.state_names()
-        state_over_time = sol.y
-        self._l.debug(f"Solution has {len(state_over_time[0])} samples.")
+            self._l.debug(f"Converting solution to influxdb data format.")
+            state_names = model.state_names()
+            state_over_time = sol.y
+            self._l.debug(f"Solution has {len(state_over_time[0])} samples.")
 
-        def get_signal(state):
-            index = np.where(state_names == state)
-            assert len(index) == 1
-            signal = state_over_time[index[0], :][0]
-            return signal.tolist()
+            def get_signal(state):
+                index = np.where(state_names == state)
+                assert len(index) == 1
+                signal = state_over_time[index[0], :][0]
+                return signal.tolist()
 
-        T_solution = get_signal("T")
-        T_heater_solution = get_signal("T_heater")
+            T_solution = get_signal("T")
+            T_heater_solution = get_signal("T_heater")
 
-        results = {
-            "T":  T_solution,
-            "T_heater": T_heater_solution
-        }
+            results = {
+                "T":  T_solution,
+                "T_heater": T_heater_solution
+            }
+            self._l.debug(f"Sending results back.")
 
-        self._l.debug(f"Sending results back.")
+        except ValueError as error:
+            msg = f"Exception while running simulation: {error}."
+            self._l.error(msg)
+            results = {"error": msg}
+
         return results
