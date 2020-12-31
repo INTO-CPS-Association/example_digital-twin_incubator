@@ -32,7 +32,6 @@ def plot_incubator_data(data):
     ax5.legend()
 
 
-
 def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
                           overlay_heater=True, show_actuators=False, show_sensor_temperatures=False):
     nRows = 2
@@ -61,11 +60,7 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
             if "T" in compare_to[res]:
                 fig.add_trace(go.Scatter(x=compare_to[res]["time"], y=compare_to[res]["T"], name=f"avg_temp({res})"), row=1, col=1)
 
-    # Rolling average
-    mean = data["t1"].rolling(10).mean()
-
     fig.add_trace(go.Scatter(x=data["time"], y=data["t1"], name="room"), row=2, col=1)
-    fig.add_trace(go.Scatter(x=data["time"], y=mean, name="room_avg"), row=2, col=1)
 
     next_row = 3
 

@@ -31,7 +31,7 @@ class RPCServer:
         self.vhost = vhost
         self.exchange_name = exchange_name
         self.exchange_type = exchange_type
-
+        self.ip = ip
         self.parameters = pika.ConnectionParameters(ip,
                                                     port,
                                                     vhost,
