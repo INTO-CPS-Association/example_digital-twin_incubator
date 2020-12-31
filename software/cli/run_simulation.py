@@ -13,7 +13,7 @@ if __name__ == '__main__':
     G_heater = four_param_model_params[3]
 
     end_date = datetime.now()
-    start_date = end_date - timedelta(hours=5)
+    start_date = end_date - timedelta(minutes=10)
 
     end_date_ns = from_s_to_ns(end_date.timestamp())
     start_date_ns = from_s_to_ns(start_date.timestamp())

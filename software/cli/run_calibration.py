@@ -37,7 +37,7 @@ if __name__ == '__main__':
                                      "calibration_id": "2020-12-31 09:40:00",
                                      "start_date_ns": start_date_ns,
                                      "end_date_ns": end_date_ns,
-                                     "Nevals": 150,
+                                     "Nevals": 10,
                                      "commit": False,
                                      "record_progress": False,
                                      "initial_guess": {

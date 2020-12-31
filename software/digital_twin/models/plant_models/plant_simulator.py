@@ -47,7 +47,7 @@ class PlantSimulator4Params(RPCServer):
     def start_serving(self):
         super(PlantSimulator4Params, self).start_serving(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
 
-    def on_run(self, tags,
+    def run(self, tags,
                timespan_seconds,
                C_air,
                G_box,

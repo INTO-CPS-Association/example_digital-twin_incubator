@@ -48,7 +48,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
     def start_serving(self):
         super(PhysicalTwinSimulator4Params, self).start_serving(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
 
-    def on_run_historical(self, start_date, end_date,
+    def run_historical(self, start_date, end_date,
                           C_air,
                           G_box,
                           C_heater,

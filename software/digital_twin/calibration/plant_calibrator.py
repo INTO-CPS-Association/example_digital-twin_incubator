@@ -48,7 +48,7 @@ class PlantCalibrator4Params(RPCServer):
     def start_serving(self):
         super(PlantCalibrator4Params, self).start_serving(ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTCALIBRATOR4)
 
-    def on_run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
+    def run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
                            initial_guess):
         self._l.debug("Accessing database to get the data needed.")
         # This might look inefficient, but querying for all fields at the same time returns a list of dataframes

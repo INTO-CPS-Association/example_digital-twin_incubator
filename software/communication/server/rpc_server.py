@@ -86,7 +86,7 @@ class RPCServer:
         server_method = body_json[METHOD_ATTRIBUTE]
 
         # Check if method exists in subclasses
-        method_op = getattr(self, f"on_{server_method}", None)
+        method_op = getattr(self, server_method, None)
         if method_op is None:
             self._l.warning(f"Method specified does not exist: {server_method}. Message:\n{body_json}")
             reply({"error": f"Method specified does not exist: {server_method}."})
@@ -115,7 +115,7 @@ class RPCServer:
         self._l.debug(f"Sending reply msg:\n{reply_msg}")
         reply(reply_msg)
 
-    def on_echo(self, msg):
+    def echo(self, msg):
         """
         Example method that is invoked by RPCServer when a message arrives with the method=echo
         """
