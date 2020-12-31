@@ -1,15 +1,18 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
-import dateutil
 import pytz
+from influxdb_client import InfluxDBClient
 
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import ROUTING_KEY_PLANTSIMULATOR4, from_s_to_ns
-from digital_twin.data_access.dbmanager.incubator_data_query import IncubatorDataQuery
+from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_BUCKET, \
+    INFLUXDB_ORG
+from digital_twin.data_access.dbmanager.incubator_data_query import query
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
 from startup.logging_config import config_logging
+
 
 def run_plant_simulation(params, start_date, end_date):
     C_air = params[0]
@@ -21,11 +24,13 @@ def run_plant_simulation(params, start_date, end_date):
     end_date_ns = from_s_to_ns(end_date.timestamp())
     start_date_ns = from_s_to_ns(start_date.timestamp())
 
-    with IncubatorDataQuery() as db:
-        room_temp_data = db.query(start_date_ns, end_date_ns, "low_level_driver", "t1")
-        average_temperature_data = db.query(start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
-        heater_data = db.query(start_date_ns, end_date_ns, "low_level_driver", "heater_on")
-        fan_data = db.query(start_date_ns, end_date_ns, "low_level_driver", "fan_on")
+    db = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
+    query_api = db.query_api()
+    room_temp_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "t1")
+    average_temperature_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver",
+                                     "average_temperature")
+    heater_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "heater_on")
+    fan_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "fan_on")
 
     time_seconds = room_temp_data.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy().tolist()
     room_temperature = room_temp_data["_value"].to_numpy().tolist()
@@ -36,15 +41,21 @@ def run_plant_simulation(params, start_date, end_date):
     client = RPCClient(ip="localhost")
     client.connect_to_server()
 
-    sim = client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run", {"timespan_seconds": time_seconds,
-                                                                    "C_air": C_air,
-                                                                    "G_box": G_box,
-                                                                    "C_heater": C_heater,
-                                                                    "G_heater": G_heater,
-                                                                    "initial_box_temperature": average_temperature[0],
-                                                                    "initial_heat_temperature": initial_heat_temperature,
-                                                                    "room_temperature": room_temperature,
-                                                                    "heater_on": heater_on})
+    sim = client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run", {
+        "tags": {
+            "experiment": "cli_run_plant_simulation",
+        },
+        "timespan_seconds": time_seconds,
+        "C_air": C_air,
+        "G_box": G_box,
+        "C_heater": C_heater,
+        "G_heater": G_heater,
+        "initial_box_temperature": average_temperature[0],
+        "initial_heat_temperature": initial_heat_temperature,
+        "room_temperature": room_temperature,
+        "heater_on": heater_on,
+        "record": True
+    })
 
     data = {"time": time_seconds,
             "heater_on": heater_on,
@@ -56,13 +67,13 @@ def run_plant_simulation(params, start_date, end_date):
                                 compare_to={
                                     "T(4)": {
                                         "time": time_seconds,
-                                        "T": sim["T"],
+                                        "T": sim["average_temperature"],
                                     }
                                 },
-                                heater_T_data = {
+                                heater_T_data={
                                     "T(4)": {
                                         "time": time_seconds,
-                                        "T_heater": sim["T_heater"],
+                                        "T_heater": sim["heater_temperature"],
                                     }
                                 },
                                 show_actuators=True
@@ -76,5 +87,5 @@ if __name__ == '__main__':
     start_date = datetime.fromisoformat("2020-12-31 09:40:00").astimezone(pytz.utc)
     end_date = datetime.fromisoformat("2020-12-31 09:50:00").astimezone(pytz.utc)
 
-    params = [145.69782402, 0.79154106, 227.76228512,   1.92343277,  45.0]
+    params = four_param_model_params + [45.0]
     run_plant_simulation(params, start_date, end_date)

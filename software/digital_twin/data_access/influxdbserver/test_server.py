@@ -6,7 +6,8 @@ from time import sleep
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
+from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, \
+    INFLUXDB_URL
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     org = INFLUXDB_ORG
     bucket = INFLUXDB_BUCKET
 
-    client = InfluxDBClient(url="http://localhost:8086", token=token, org=org)
+    client = InfluxDBClient(url=INFLUXDB_URL, token=token, org=org)
 
     # Get write-api
     write_api = client.write_api(write_options=SYNCHRONOUS)

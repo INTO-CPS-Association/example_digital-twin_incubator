@@ -1,19 +1,17 @@
 import logging
 
+from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
-from oomodelling import ModelSolver
-from scipy.optimize import leastsq, least_squares
+from scipy.optimize import least_squares
 
 from communication.server.rpc_client import RPCClient
 from communication.server.rpc_server import RPCServer
 from communication.shared.connection_parameters import *
-from communication.shared.protocol import from_s_to_ns, \
-    ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTCALIBRATOR4
-from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET
-from digital_twin.data_access.dbmanager.incubator_data_query import IncubatorDataQuery
+from communication.shared.protocol import ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTCALIBRATOR4
+from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, \
+    INFLUXDB_URL
+from digital_twin.data_access.dbmanager.incubator_data_query import query
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from digital_twin.models.plant_models.model_functions import create_lookup_table
 import numpy as np
 
 
@@ -29,7 +27,7 @@ class PlantCalibrator4Params(RPCServer):
                  vhost=PIKA_VHOST,
                  exchange_name=PIKA_EXCHANGE,
                  exchange_type=PIKA_EXCHANGE_TYPE,
-                 influx_url="http://localhost:8086",
+                 influx_url=INFLUXDB_URL,
                  influx_token=INFLUXDB_TOKEN,
                  influxdb_org=INFLUXDB_ORG,
                  influxdb_bucket=INFLUXDB_BUCKET
@@ -42,19 +40,28 @@ class PlantCalibrator4Params(RPCServer):
                          exchange_name=exchange_name,
                          exchange_type=exchange_type)
         self._l = logging.getLogger("PlantCalibrator")
-        self.db = IncubatorDataQuery(url=influx_url, token=influx_token, org=influxdb_org, bucket=influxdb_bucket)
+        self.client = InfluxDBClient(url=influx_url, token=influx_token, org=influxdb_org)
+        self._influxdb_bucket = influxdb_bucket
+        self._influxdb_org = influxdb_org
+        self.nevals = 0
 
     def start_serving(self):
         super(PlantCalibrator4Params, self).start_serving(ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTCALIBRATOR4)
 
-    def on_run_calibration(self, start_date_ns, end_date_ns, Nevals):
+    def on_run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
+                           initial_guess):
         self._l.debug("Accessing database to get the data needed.")
         # This might look inefficient, but querying for all fields at the same time returns a list of dataframes
         # And that list does not follow the same order of the fields asked.
         # So this solution is less efficient, but more predictable.
-        room_temp_data = self.db.query(start_date_ns, end_date_ns, "low_level_driver", "t1")
-        heater_data = self.db.query(start_date_ns, end_date_ns, "low_level_driver", "heater_on")
-        average_temperature_data = self.db.query(start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
+        query_api = self.client.query_api()
+        room_temp_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+        heater_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver",
+                            "heater_on")
+        average_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
+                                         "low_level_driver", "average_temperature")
+
+        self._l.debug("Accessing database to get the most recent parameters.")
 
         self._l.debug("Ensuring that we have a consistent set of samples.")
         if not (len(room_temp_data) == len(heater_data) == len(average_temperature_data)):
@@ -79,7 +86,9 @@ class PlantCalibrator4Params(RPCServer):
         average_temperature = average_temperature_data["_value"].to_numpy()
         heater_on = heater_data["_value"].to_numpy().tolist()
 
-        with RPCClient(ip=self.ip) as client:
+        with RPCClient(ip=self.ip) as rpc_client:
+            self.nevals = 0
+
             def residual(params):
                 self._l.debug(f"Computing residual for parameters {params}.")
                 C_air = params[0]
@@ -87,25 +96,38 @@ class PlantCalibrator4Params(RPCServer):
                 C_heater = params[2]
                 G_heater = params[3]
                 initial_heat_temperature = params[4]
-
-                results = client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run", {"timespan_seconds": time_seconds,
-                                                                                    "C_air": C_air,
-                                                                                    "G_box": G_box,
-                                                                                    "C_heater": C_heater,
-                                                                                    "G_heater": G_heater,
-                                                                                    "initial_box_temperature": average_temperature[0],
-                                                                                    "initial_heat_temperature": initial_heat_temperature,
-                                                                                    "room_temperature": room_temperature,
-                                                                                    "heater_on": heater_on})
-                assert "T" in results, results
-                average_temp_approx = np.array(results["T"])
+                results = rpc_client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run",
+                                                   {
+                                                       "tags": {
+                                                           "calibration": calibration_id,
+                                                           "attempt": self.nevals
+                                                       },
+                                                       "timespan_seconds": time_seconds,
+                                                       "C_air": C_air,
+                                                       "G_box": G_box,
+                                                       "C_heater": C_heater,
+                                                       "G_heater": G_heater,
+                                                       "initial_box_temperature": average_temperature[0],
+                                                       "initial_heat_temperature": initial_heat_temperature,
+                                                       "room_temperature": room_temperature,
+                                                       "heater_on": heater_on,
+                                                       "record": record_progress})
+                assert "average_temperature" in results, results
+                average_temp_approx = np.array(results["average_temperature"])
                 res = average_temperature - average_temp_approx
-                self._l.debug(f"Approximate cost: {sum(res**2)}.")
+                self._l.debug(f"Approximate cost: {sum(res ** 2)}.")
+                self.nevals += 1
                 return res
 
-            initial_guess = four_param_model_params + [average_temperature[0]]
+            initial_guess_array = [
+                initial_guess["C_air"],
+                initial_guess["G_box"],
+                initial_guess["C_heater"],
+                initial_guess["G_heater"],
+                initial_guess["initial_heat_temperature"]
+            ]
 
-            opt_res = least_squares(residual, initial_guess, bounds=(0.0, np.inf), max_nfev=Nevals)
+            opt_res = least_squares(residual, initial_guess_array, bounds=(0.0, np.inf), max_nfev=Nevals)
 
         self._l.debug(f"Extracting results from leastsq: {opt_res}")
 
@@ -124,6 +146,21 @@ class PlantCalibrator4Params(RPCServer):
             "cost": opt_res.cost,
             "nfev": opt_res.nfev
         }
+
+        if commit:
+            self._l.debug(f"Sending results to database.")
+            point = {
+                "measurement": "plant_calibrator",
+                "time": start_date_ns,
+                "tags": {
+                    "source": "plant_calibrator",
+                    "experiment": calibration_id,
+                    "variability": "parameter"
+                },
+                "fields": msg
+            }
+            write_api = self.client.write_api(write_options=SYNCHRONOUS)
+            write_api.write(self._influxdb_bucket, self._influxdb_org, point)
 
         self._l.debug(f"Sending results back.")
         return msg
