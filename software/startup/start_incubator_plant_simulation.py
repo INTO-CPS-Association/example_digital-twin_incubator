@@ -5,7 +5,6 @@ from time import time
 from oomodelling import Model
 
 from communication.server.rabbitmq import Rabbitmq
-from digital_twin.models.controller_models.controller_model4 import ControllerModel4
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
@@ -14,21 +13,17 @@ from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T
 from mock_plant.real_time_model_solver import RTModelSolver
 
 
-class SampledRealTimeIncubator(Model):
+class SampledRealTimePlantModel(Model):
     def __init__(self, C_air,
                  G_box,
                  C_heater,
                  G_heater,
-                 lower_bound=10, heating_time=0.2, heating_gap=2.0,
-                 temperature_desired=35,
-                 initial_box_temperature=21,
+                 initial_temperature=21,
                  comm=Rabbitmq(ip="localhost"), temperature_difference=6):
         super().__init__()
 
-        self.ctrl = ControllerModel4(temperature_desired=temperature_desired, heating_time=heating_time,
-                                     heating_gap=heating_gap,
-                                     lower_bound=lower_bound)
-        self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,
+        self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_temperature,
+                                                 initial_heat_temperature=initial_temperature,
                                                  C_air=C_air,
                                                  G_box=G_box,
                                                  C_heater=C_heater,
@@ -79,10 +74,10 @@ if __name__ == '__main__':
     G_box_num = four_param_model_params[1]
     C_heater_num = four_param_model_params[2]
     G_heater_num = four_param_model_params[3]
-    model = SampledRealTimeIncubator(C_air=C_air_num,
-                                     G_box=G_box_num,
-                                     C_heater=C_heater_num,
-                                     G_heater=G_heater_num)
+    model = SampledRealTimePlantModel(C_air=C_air_num,
+                                      G_box=G_box_num,
+                                      C_heater=C_heater_num,
+                                      G_heater=G_heater_num)
 
     solver = RTModelSolver()
     solver.start_simulation(model, h=3.0)

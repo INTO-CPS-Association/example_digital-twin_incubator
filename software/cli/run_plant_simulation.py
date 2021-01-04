@@ -14,12 +14,11 @@ from digital_twin.visualization.data_plotting import plotly_incubator_data, show
 from startup.logging_config import config_logging
 
 
-def run_plant_simulation(params, start_date, end_date):
+def run_plant_simulation(params, start_date, end_date, initial_heat_temperature, record):
     C_air = params[0]
     G_box = params[1]
     C_heater = params[2]
     G_heater = params[3]
-    initial_heat_temperature = params[4]
 
     end_date_ns = from_s_to_ns(end_date.timestamp())
     start_date_ns = from_s_to_ns(start_date.timestamp())
@@ -54,7 +53,7 @@ def run_plant_simulation(params, start_date, end_date):
         "initial_heat_temperature": initial_heat_temperature,
         "room_temperature": room_temperature,
         "heater_on": heater_on,
-        "record": True
+        "record": record
     })
 
     data = {"time": time_seconds,
@@ -84,8 +83,8 @@ def run_plant_simulation(params, start_date, end_date):
 if __name__ == '__main__':
     config_logging(level=logging.DEBUG)
 
-    start_date = datetime.fromisoformat("2020-12-31 09:40:00").astimezone(pytz.utc)
-    end_date = datetime.fromisoformat("2020-12-31 09:50:00").astimezone(pytz.utc)
+    start_date = datetime.fromisoformat("2021-01-04 09:56:36").astimezone(pytz.utc)
+    end_date = datetime.fromisoformat("2021-01-04 10:11:36").astimezone(pytz.utc)
 
-    params = four_param_model_params + [45.0]
-    run_plant_simulation(params, start_date, end_date)
+    params = four_param_model_params
+    run_plant_simulation(params, start_date, end_date, initial_heat_temperature=21.0, record=False)

@@ -11,7 +11,6 @@ from communication.shared.protocol import ROUTING_KEY_PLANTSIMULATOR4, ROUTING_K
 from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, \
     INFLUXDB_URL
 from digital_twin.data_access.dbmanager.incubator_data_query import query
-from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 import numpy as np
 
 
@@ -49,7 +48,7 @@ class PlantCalibrator4Params(RPCServer):
         super(PlantCalibrator4Params, self).start_serving(ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTCALIBRATOR4)
 
     def run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
-                           initial_guess):
+                        initial_heat_temperature, initial_guess):
         self._l.debug("Accessing database to get the data needed.")
         # This might look inefficient, but querying for all fields at the same time returns a list of dataframes
         # And that list does not follow the same order of the fields asked.
@@ -95,7 +94,6 @@ class PlantCalibrator4Params(RPCServer):
                 G_box = params[1]
                 C_heater = params[2]
                 G_heater = params[3]
-                initial_heat_temperature = params[4]
                 results = rpc_client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run",
                                                    {
                                                        "tags": {
@@ -111,7 +109,8 @@ class PlantCalibrator4Params(RPCServer):
                                                        "initial_heat_temperature": initial_heat_temperature,
                                                        "room_temperature": room_temperature,
                                                        "heater_on": heater_on,
-                                                       "record": record_progress})
+                                                       "record": record_progress
+                                                   })
                 assert "average_temperature" in results, results
                 average_temp_approx = np.array(results["average_temperature"])
                 res = average_temperature - average_temp_approx
@@ -123,8 +122,7 @@ class PlantCalibrator4Params(RPCServer):
                 initial_guess["C_air"],
                 initial_guess["G_box"],
                 initial_guess["C_heater"],
-                initial_guess["G_heater"],
-                initial_guess["initial_heat_temperature"]
+                initial_guess["G_heater"]
             ]
 
             opt_res = least_squares(residual, initial_guess_array, bounds=(0.0, np.inf), max_nfev=Nevals)
@@ -135,14 +133,12 @@ class PlantCalibrator4Params(RPCServer):
         G_box = opt_res.x[1]
         C_heater = opt_res.x[2]
         G_heater = opt_res.x[3]
-        initial_heat_temperature = opt_res.x[4]
 
         msg = {
             "C_air": C_air,
             "G_box": G_box,
             "C_heater": C_heater,
             "G_heater": G_heater,
-            "initial_heat_temperature": initial_heat_temperature,
             "cost": opt_res.cost,
             "nfev": opt_res.nfev
         }
