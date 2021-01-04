@@ -1,6 +1,8 @@
 import logging
 from datetime import datetime, timedelta
 
+import pytz
+
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_s_to_ns
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
@@ -12,8 +14,8 @@ if __name__ == '__main__':
     C_heater = four_param_model_params[2]
     G_heater = four_param_model_params[3]
 
-    end_date = datetime.now()
-    start_date = end_date - timedelta(minutes=10)
+    start_date = datetime.fromisoformat("2021-01-04 09:56:36").astimezone(pytz.utc)
+    end_date = datetime.fromisoformat("2021-01-04 10:11:36").astimezone(pytz.utc)
 
     end_date_ns = from_s_to_ns(end_date.timestamp())
     start_date_ns = from_s_to_ns(start_date.timestamp())
@@ -31,7 +33,7 @@ if __name__ == '__main__':
                                                                               "lower_bound": 5.0,
                                                                               "heating_time": 20.0,
                                                                               "heating_gap": 30.0,
-                                                                              "temperature_desired": 35.0,
+                                                                              "temperature_desired": 25.0,
                                                                               "controller_comm_step": 3.0,
                                                                               "initial_box_temperature": 21.0,
                                                                               "initial_heat_temperature": 21.0,

@@ -36,8 +36,8 @@ if __name__ == '__main__':
                                      "start_date_ns": start_date_ns,
                                      "end_date_ns": end_date_ns,
                                      "Nevals": 100,
-                                     "commit": True,
-                                     "record_progress": True,
+                                     "commit": False,
+                                     "record_progress": False,
                                      "initial_heat_temperature": initial_heat_temperature,
                                      "initial_guess": {
                                          "C_air": C_air,

@@ -15,8 +15,8 @@ echo "Press enter after both rabbitmq server and influxdb starts."
 Pause
 
 Start-Process powershell {
-    $Host.UI.RawUI.WindowTitle = "'Plant Simulator'";
-    python -m startup.start_incubator_plant_simulation;
+    $Host.UI.RawUI.WindowTitle = "'Plant Mock'";
+    python -m startup.start_incubator_realtime_mockup;
     pause
 }
 
@@ -43,4 +43,3 @@ Start-Process powershell {
     python -m startup.start_influx_data_recorder;
     pause
 }
-

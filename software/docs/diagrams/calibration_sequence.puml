@@ -4,9 +4,9 @@ control Calibrator as cal
 entity PlantSimulator as sim
 database InfluxDB as db
 client ->> cal: calibrate(start_date, end_date, simulator, n, record_params)
+cal -> db: get_cached_trajectories(start_date, end_date)
+return plant_inputs, plant_results
 loop n times
-  cal -> db: get_cached_trajectories(start_date, end_date)
-  return plant_inputs, plant_results
   cal -> sim: run(start_date, end_date, plant_inputs, params_i)
   sim -> sim: run_simulation(room_t_data, params_i)
   sim --> cal: results
