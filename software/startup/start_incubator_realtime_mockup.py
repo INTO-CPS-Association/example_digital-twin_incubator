@@ -66,7 +66,7 @@ class SampledRealTimePlantModel(Model):
 
 
 if __name__ == '__main__':
-    config_logging("plant_simulator.log", level=logging.WARN)
+    config_logging("incubator_realtime_mockup.log", level=logging.WARN)
     # logging.getLogger("RTModelSolver").setLevel(logging.DEBUG)
     # logging.getLogger("RabbitMQClass").setLevel(logging.DEBUG)
 
