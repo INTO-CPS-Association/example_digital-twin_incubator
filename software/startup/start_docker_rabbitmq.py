@@ -1,28 +1,30 @@
 import docker_service_starter as ds
 import requests
-containerName = "rabbitmq-server"
-logFileName = "rabbitmq.log"
-dockerComposeDirectoryPath = "../communication/installation"
-sleepTimeBetweenAttempts = 1
-maxAttempts = 10
-def test_connection_function():
-    try:
-        r = requests.get("http://localhost:15672/api/overview", auth=('incubator', 'incubator'))
-        if r.status_code == 200:
-            print("RabbitMQ ready:\n " + r.text)
-            return True
-    except requests.exceptions.ConnectionError as x:
-        print("RabbitMQ not ready - Exception: " + x.__class__.__name__)
-    return False
 
-ds.killContainer(containerName)
-ds.start(logFileName,
-           dockerComposeDirectoryPath,
-           test_connection_function, sleepTimeBetweenAttempts, maxAttempts)
-ds.killContainer(containerName)
+if __name__ == '__main__':
+    containerName = "rabbitmq-server"
+    logFileName = "rabbitmq.log"
+    dockerComposeDirectoryPath = "../communication/installation"
+    sleepTimeBetweenAttempts = 1
+    maxAttempts = 10
 
 
+    def test_connection_function():
+        try:
+            r = requests.get("http://localhost:15672/api/overview", auth=('incubator', 'incubator'))
+            if r.status_code == 200:
+                print("RabbitMQ ready:\n " + r.text)
+                return True
+        except requests.exceptions.ConnectionError as x:
+            print("RabbitMQ not ready - Exception: " + x.__class__.__name__)
+        return False
 
+
+    ds.killContainer(containerName)
+    ds.start(logFileName,
+             dockerComposeDirectoryPath,
+             test_connection_function, sleepTimeBetweenAttempts, maxAttempts)
+    ds.killContainer(containerName)
 
 # import subprocess
 # import docker

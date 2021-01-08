@@ -19,7 +19,7 @@ LINE_PRINT_FORMAT = {
 }
 
 
-class ControllerPhysical():
+class ControllerPhysical:
     def __init__(self, rabbitmq_ip=RASPBERRY_IP, temperature_desired=35.0, lower_bound=5, heating_time=20,
                  heating_gap=30):
         self.temperature_desired = temperature_desired

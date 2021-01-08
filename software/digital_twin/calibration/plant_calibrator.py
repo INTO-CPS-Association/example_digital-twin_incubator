@@ -29,8 +29,7 @@ class PlantCalibrator4Params(RPCServer):
                  influx_url=INFLUXDB_URL,
                  influx_token=INFLUXDB_TOKEN,
                  influxdb_org=INFLUXDB_ORG,
-                 influxdb_bucket=INFLUXDB_BUCKET
-                 ):
+                 influxdb_bucket=INFLUXDB_BUCKET):
         super().__init__(ip=ip,
                          port=port,
                          username=username,
