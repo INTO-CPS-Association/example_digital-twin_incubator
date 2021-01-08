@@ -49,15 +49,16 @@ class PhysicalTwinSimulator4Params(RPCServer):
         super(PhysicalTwinSimulator4Params, self).start_serving(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
 
     def run_historical(self, start_date, end_date,
-                          C_air,
-                          G_box,
-                          C_heater,
-                          G_heater,
-                          lower_bound, heating_time, heating_gap, temperature_desired,
-                          controller_comm_step,
-                          initial_box_temperature,
-                          initial_heat_temperature,
-                          record):
+                       C_air,
+                       G_box,
+                       C_heater,
+                       G_heater,
+                       lower_bound, heating_time, heating_gap, temperature_desired,
+                       controller_comm_step,
+                       initial_box_temperature,
+                       initial_heat_temperature,
+                       record,
+                       reply_fun):
         # Access database to get the data needed.
         query_api = self.client.query_api()
         room_temp_results = query(query_api, self._influxdb_bucket, start_date, end_date, "low_level_driver", "t1")
@@ -135,7 +136,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
             self.write_to_db(results_db, self.client)
 
         # Send results back.
-        return results_db
+        reply_fun(results_db)
 
     def write_to_db(self, results_db, client):
         self._l.debug(f"Writing {len(results_db)} samples to database.")

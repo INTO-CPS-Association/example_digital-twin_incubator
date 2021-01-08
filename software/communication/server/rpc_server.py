@@ -71,6 +71,7 @@ class RPCServer:
 
         # Create short function to reply
         def reply(msg):
+            self._l.debug(f"Sending reply msg:\n{msg}")
             ch.basic_publish(exchange='',
                             routing_key=routing_key_reply,
                             properties=pika.BasicProperties(correlation_id=request_id),
@@ -103,20 +104,28 @@ class RPCServer:
         # Get method signature and compare it with args provided
         # This ensures that methods are called with the arguments in their signature.
         signature = inspect.signature(method_op)
+        if "reply_fun" not in signature.parameters:
+            error_msg = f"Method {method_op} must declare a parameter 'reply_fun' that must be invoked to reply to an invokation."
+            self._l.warning(error_msg)
+            reply({"error": error_msg})
+            return
         for arg_name in signature.parameters:
-            if arg_name not in args:
+            if arg_name != "reply_fun" and arg_name not in args:
                 self._l.warning(
                     f"Message received does not specify argument {arg_name} in attribute {ARGS_ATTRIBUTE}. Message:\n{body_json}")
                 reply({"error": f"Message received does not specify argument {arg_name} in attribute {ARGS_ATTRIBUTE}."})
                 return
 
         # Call method with named arguments provided.
-        reply_msg = method_op(**args)
-        self._l.debug(f"Sending reply msg:\n{reply_msg}")
-        reply(reply_msg)
+        method_op(**args, reply_fun=reply)
 
-    def echo(self, msg):
+    def echo(self, msg, reply_fun):
         """
         Example method that is invoked by RPCServer when a message arrives with the method=echo
         """
-        return msg
+
+        """
+        This send the reply message back.
+        Instead of returning, this solution allows child classes to, e.g., reply and start listening for other messages.
+        """
+        reply_fun(msg)

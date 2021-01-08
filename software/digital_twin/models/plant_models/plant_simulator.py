@@ -57,7 +57,8 @@ class PlantSimulator4Params(RPCServer):
             initial_heat_temperature,
             room_temperature,
             heater_on,
-            record):
+            record,
+            reply_fun):
 
         self._l.debug("Ensuring that we have a consistent set of samples.")
         if not (len(room_temperature) == len(heater_on) == len(timespan_seconds)):
@@ -146,4 +147,4 @@ class PlantSimulator4Params(RPCServer):
             self._l.error(msg)
             results = {"error": msg}
 
-        return results
+        reply_fun(results)
