@@ -8,7 +8,7 @@ from communication.shared.protocol import from_s_to_ns
 from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, \
     INFLUXDB_URL
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
-from startup.logging_config import config_logging
+from startup.utils.logging_config import config_logging
 import numpy as np
 
 if __name__ == '__main__':

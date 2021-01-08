@@ -6,10 +6,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
 from communication.server.rpc_server import RPCServer
-from communication.shared.connection_parameters import *
-from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s, from_s_to_ns
-from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_TOKEN, INFLUXDB_ORG, INFLUXDB_BUCKET, \
-    INFLUXDB_URL
+from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
@@ -21,32 +18,15 @@ class PhysicalTwinSimulator4Params(RPCServer):
     Can run simulations of the physical twin. This includes controller and plant.
     """
 
-    def __init__(self, ip=RASPBERRY_IP,
-                 port=RASPBERRY_PORT,
-                 username=PIKA_USERNAME,
-                 password=PIKA_PASSWORD,
-                 vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE,
-                 influx_url=INFLUXDB_URL,
-                 influx_token=INFLUXDB_TOKEN,
-                 influxdb_org=INFLUXDB_ORG,
-                 influxdb_bucket=INFLUXDB_BUCKET
-                 ):
-        super().__init__(ip=ip,
-                         port=port,
-                         username=username,
-                         password=password,
-                         vhost=vhost,
-                         exchange_name=exchange_name,
-                         exchange_type=exchange_type)
+    def __init__(self, rabbitmq_config, influxdb_config):
+        super().__init__(**rabbitmq_config)
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
-        self.client = InfluxDBClient(url=influx_url, token=influx_token, org=INFLUXDB_ORG)
-        self._influxdb_bucket = influxdb_bucket
-        self._influxdb_org = influxdb_org
+        self.client = InfluxDBClient(**influxdb_config)
+        self._influxdb_bucket = influxdb_config["bucket"]
+        self._influxdb_org = influxdb_config["org"]
 
-    def start_serving(self):
-        super(PhysicalTwinSimulator4Params, self).start_serving(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
+    def setup(self):
+        super(PhysicalTwinSimulator4Params, self).setup(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
 
     def run_historical(self, start_date, end_date,
                        C_air,

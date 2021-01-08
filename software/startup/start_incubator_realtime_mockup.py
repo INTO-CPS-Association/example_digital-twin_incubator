@@ -1,14 +1,9 @@
-import logging
-from datetime import datetime
-from time import time
-
 from oomodelling import Model
 
 from communication.server.rabbitmq import Rabbitmq
-from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from config.config import config_logger, load_config
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
-from startup.logging_config import config_logging
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
 from mock_plant.real_time_model_solver import RTModelSolver
 
@@ -18,12 +13,13 @@ class SampledRealTimePlantModel(Model):
                  G_box,
                  C_heater,
                  G_heater,
-                 initial_temperature=21,
+                 initial_box_temperature=21,
+                 initial_heat_temperature=21,
                  comm=Rabbitmq(ip="localhost"), temperature_difference=6):
         super().__init__()
 
-        self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_temperature,
-                                                 initial_heat_temperature=initial_temperature,
+        self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,
+                                                 initial_heat_temperature=initial_heat_temperature,
                                                  C_air=C_air,
                                                  G_box=G_box,
                                                  C_heater=C_heater,
@@ -42,7 +38,7 @@ class SampledRealTimePlantModel(Model):
 
         self.temperature_difference = temperature_difference
 
-        print("{:13}{:15}{:10}{:10}{:10}".format("time","heater_on", "t1", "t2", "t3"))
+        # print("{:13}{:15}{:10}{:10}{:10}".format("time","heater_on", "t1", "t2", "t3"))
 
         self.save()
 
@@ -61,23 +57,21 @@ class SampledRealTimePlantModel(Model):
         self.comm.send_message(routing_key=MOCK_TEMP_T2, message=t2)
         self.comm.send_message(routing_key=MOCK_TEMP_T3, message=t3)
 
-        print("{:%H:%M:%S}     {:15}{:<10.2f}{:<10.2f}{:<10.2f}".format(datetime.fromtimestamp(time()), str(self.cached_heater_on), t1, t2, t3), flush=True)
+        # print("{:%H:%M:%S}     {:15}{:<10.2f}{:<10.2f}{:<10.2f}".format(datetime.fromtimestamp(time()), str(self.cached_heater_on), t1, t2, t3), flush=True)
         return super().discrete_step()
 
 
-if __name__ == '__main__':
-    config_logging("incubator_realtime_mockup.log", level=logging.WARN)
-    # logging.getLogger("RTModelSolver").setLevel(logging.DEBUG)
-    # logging.getLogger("RabbitMQClass").setLevel(logging.DEBUG)
+def start_incubator_realtime_mockup(ok_queue=None):
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
 
-    C_air_num = four_param_model_params[0]
-    G_box_num = four_param_model_params[1]
-    C_heater_num = four_param_model_params[2]
-    G_heater_num = four_param_model_params[3]
-    model = SampledRealTimePlantModel(C_air=C_air_num,
-                                      G_box=G_box_num,
-                                      C_heater=C_heater_num,
-                                      G_heater=G_heater_num)
+    model = SampledRealTimePlantModel(**(config["digital_twin"]["models"]["plant"]["param4"]))
 
     solver = RTModelSolver()
+    if ok_queue is not None:
+        ok_queue.put("OK")
     solver.start_simulation(model, h=3.0)
+
+
+if __name__ == '__main__':
+    start_incubator_realtime_mockup()

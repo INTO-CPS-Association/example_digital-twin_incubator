@@ -13,7 +13,7 @@ def construct_filter(step_size, std_dev,
                      G_box_num,
                      C_heater_num,
                      G_heater_num,
-                     initial_heater_temperature,
+                     initial_heat_temperature,
                      initial_box_temperature):
     # Parameters
     C_air = sp.symbols("C_air")  # Specific heat capacity
@@ -86,7 +86,7 @@ def construct_filter(step_size, std_dev,
     dt_system = ct_system.sample(step_size, method="backward_diff")
 
     f = KalmanFilter(dim_x=2, dim_z=1, dim_u=2)
-    f.x = np.array([[initial_heater_temperature],  # T_heater at t=0
+    f.x = np.array([[initial_heat_temperature],  # T_heater at t=0
                     [initial_box_temperature]])  # T at t=0
     f.F = dt_system.A
     f.B = dt_system.B
@@ -105,7 +105,7 @@ class KalmanFilter4P(Model):
                  G_box,
                  C_heater,
                  G_heater,
-                 initial_room_temperature=25.0, initial_heater_temperature=25.0, initial_box_temperature=25.0):
+                 initial_room_temperature=25.0, initial_heat_temperature=25.0, initial_box_temperature=25.0):
         super().__init__()
 
         self.in_heater_on = self.input(lambda: False)
@@ -116,7 +116,7 @@ class KalmanFilter4P(Model):
         self.cached_T_heater = initial_box_temperature
         self.filter = construct_filter(step_size, std_dev,
                                        C_air, G_box, C_heater, G_heater,
-                                       initial_heater_temperature, initial_box_temperature)
+                                       initial_heat_temperature, initial_box_temperature)
 
         self.out_T = self.var(lambda: self.cached_T)
         self.out_T_heater = self.var(lambda: self.cached_T_heater)

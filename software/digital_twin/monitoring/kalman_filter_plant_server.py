@@ -8,27 +8,25 @@ import numpy as np
 
 class KalmanFilterPlantServer():
 
-    def __init__(self, ip=RASPBERRY_IP):
+    def __init__(self, rabbit_config):
         self._l = logging.getLogger("KalmanFilterPlantServer")
         self.filter = None
-        self.rabbitmq = Rabbitmq(ip=ip)
+        self.rabbitmq = Rabbitmq(**rabbit_config)
 
-    def start_monitoring(self, step_size, std_dev,
-                         C_air, G_box, C_heater, G_heater,
-                         initial_heater_temperature, initial_box_temperature):
+    def setup(self, step_size, std_dev,
+              C_air, G_box, C_heater, G_heater,
+              initial_heat_temperature, initial_box_temperature):
         self.rabbitmq.connect_to_server()
 
         self.filter = construct_filter(step_size, std_dev,
                                        C_air, G_box, C_heater, G_heater,
-                                       initial_heater_temperature, initial_box_temperature)
-        try:
-            self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
-                                    on_message_callback=self.kalman_step)
-            self.rabbitmq.start_consuming()
-        except:
-            self._l.warning("Stopping Kalman filter")
-            self.rabbitmq.close()
-            raise
+                                       initial_heat_temperature, initial_box_temperature)
+
+        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
+                                on_message_callback=self.kalman_step)
+
+    def start_monitoring(self):
+        self.rabbitmq.start_consuming()
 
     def kalman_step(self, ch, method, properties, body_json):
         in_heater = 1.0 if body_json["fields"]["heater_on"] else 0.0

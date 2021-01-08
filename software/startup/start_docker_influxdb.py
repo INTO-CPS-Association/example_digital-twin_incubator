@@ -1,9 +1,10 @@
-import docker_service_starter as ds
+from startup.utils import docker_service_starter as ds
 import requests
 
-if __name__ == '__main__':
+
+def start_docker_influxdb():
     containerName = "influxdb-server"
-    logFileName = "influxdb.log"
+    logFileName = "logs/influxdb.log"
     dockerComposeDirectoryPath = "../digital_twin/data_access/influxdbserver"
     sleepTimeBetweenAttempts = 1
     maxAttempts = 10
@@ -15,13 +16,17 @@ if __name__ == '__main__':
                 print("InfluxDB ready:\n " + r.text)
                 return True
             else:
-                print("InfluxDBn ot ready - statuscode: " + str(r.status_code))
+                pass
+                # print("InfluxDBn not ready - statuscode: " + str(r.status_code))
         except requests.exceptions.ConnectionError as x:
-            print("InfluxDBnot ready - Exception: " + x.__class__.__name__)
+            # print("InfluxDBnot ready - Exception: " + x.__class__.__name__)
+            pass
         return False
 
-    ds.killContainer(containerName)
+    ds.kill_container(containerName)
     ds.start(logFileName,
              dockerComposeDirectoryPath,
              test_connection_function, sleepTimeBetweenAttempts, maxAttempts)
-    ds.killContainer(containerName)
+
+if __name__ == '__main__':
+    start_docker_influxdb()

@@ -25,33 +25,36 @@ class RPCServer:
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
                  vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE
+                 exchange=PIKA_EXCHANGE,
+                 type=PIKA_EXCHANGE_TYPE
                  ):
         self.vhost = vhost
-        self.exchange_name = exchange_name
-        self.exchange_type = exchange_type
+        self.exchange_name = exchange
+        self.exchange_type = type
         self.ip = ip
         self.parameters = pika.ConnectionParameters(ip,
                                                     port,
                                                     vhost,
                                                     pika.PlainCredentials(username, password))
         self._l = logging.getLogger("RCPServer")
+        self.channel = None
 
-    def start_serving(self, routing_key, queue_name):
+    def setup(self, routing_key, queue_name):
         connection = pika.BlockingConnection(self.parameters)
-        channel = connection.channel()
-        channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
-        channel.queue_declare(queue=queue_name)
-        channel.basic_qos(prefetch_count=1)
-        channel.queue_bind(
+        self.channel = connection.channel()
+        self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
+        self.channel.queue_declare(queue=queue_name)
+        self.channel.basic_qos(prefetch_count=1)
+        self.channel.queue_bind(
             exchange=self.exchange_name,
             queue=queue_name,
             routing_key=routing_key
         )
-        channel.basic_consume(queue=queue_name, on_message_callback=self.serve)
-        self._l.debug(f"Listening for msgs in queue {queue_name} bound to topic {routing_key}")
-        channel.start_consuming()
+        self.channel.basic_consume(queue=queue_name, on_message_callback=self.serve)
+        self._l.debug(f"Ready to listen for msgs in queue {queue_name} bound to topic {routing_key}")
+
+    def start_serving(self):
+        self.channel.start_consuming()
 
     def serve(self, ch, method, props, body):
         body_json = decode_json(body)

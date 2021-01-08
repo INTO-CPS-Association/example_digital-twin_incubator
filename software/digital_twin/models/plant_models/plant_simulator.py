@@ -20,32 +20,15 @@ class PlantSimulator4Params(RPCServer):
     Can run simulations of the plant.
     """
 
-    def __init__(self, ip=RASPBERRY_IP,
-                 port=RASPBERRY_PORT,
-                 username=PIKA_USERNAME,
-                 password=PIKA_PASSWORD,
-                 vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE,
-                 influx_url=INFLUXDB_URL,
-                 influx_token=INFLUXDB_TOKEN,
-                 influxdb_org=INFLUXDB_ORG,
-                 influxdb_bucket=INFLUXDB_BUCKET
-                 ):
-        super().__init__(ip=ip,
-                         port=port,
-                         username=username,
-                         password=password,
-                         vhost=vhost,
-                         exchange_name=exchange_name,
-                         exchange_type=exchange_type)
+    def __init__(self, rabbitmq_config, influxdb_config):
+        super().__init__(**rabbitmq_config)
         self._l = logging.getLogger("PlantSimulator4Params")
-        self.client = InfluxDBClient(url=influx_url, token=influx_token, org=influxdb_org)
-        self._influxdb_bucket = influxdb_bucket
-        self._influxdb_org = influxdb_org
+        self.client = InfluxDBClient(**influxdb_config)
+        self._influxdb_bucket = influxdb_config["bucket"]
+        self._influxdb_org = influxdb_config["org"]
 
-    def start_serving(self):
-        super(PlantSimulator4Params, self).start_serving(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
+    def setup(self):
+        super(PlantSimulator4Params, self).setup(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
 
     def run(self, tags,
             timespan_seconds,

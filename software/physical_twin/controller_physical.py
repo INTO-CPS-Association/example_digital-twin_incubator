@@ -20,7 +20,7 @@ LINE_PRINT_FORMAT = {
 
 
 class ControllerPhysical:
-    def __init__(self, rabbitmq_ip=RASPBERRY_IP, temperature_desired=35.0, lower_bound=5, heating_time=20,
+    def __init__(self, rabbit_config, temperature_desired=35.0, lower_bound=5, heating_time=20,
                  heating_gap=30):
         self.temperature_desired = temperature_desired
         self.lower_bound = lower_bound
@@ -36,7 +36,7 @@ class ControllerPhysical:
         self.current_state = "CoolingDown"
         self.next_time = -1.0
 
-        self.rabbitmq = Rabbitmq(ip=rabbitmq_ip)
+        self.rabbitmq = Rabbitmq(**rabbit_config)
 
         self.header_written = False
 
@@ -62,6 +62,8 @@ class ControllerPhysical:
         self.safe_protocol()
         self._l.debug("Starting Fan")
         self._set_fan_on(True)
+        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
+                                on_message_callback=self.control_loop_callback)
 
     def ctrl_step(self):
         if self.box_air_temperature >= 58:
@@ -152,17 +154,9 @@ class ControllerPhysical:
 
     def start_control(self):
         try:
-            self.setup()
-            self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
-                                    on_message_callback=self.control_loop_callback)
             self.rabbitmq.start_consuming()
         except:
             self._l.warning("Stopping controller")
             self.cleanup()
             raise
 
-
-if __name__ == '__main__':
-    temperature_desired = float(input("Please input desired temperature: "))
-    controller = ControllerPhysical(temperature_desired=temperature_desired)
-    controller.start_control()

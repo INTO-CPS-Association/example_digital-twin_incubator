@@ -19,12 +19,12 @@ class IncubatorDriver:
                  t1,
                  t2,
                  t3,
-                 ip_raspberry=RASPBERRY_IP,
+                 rabbit_config,
                  simulate_actuation=True
                  ):
 
         # Connection info
-        self.rabbitmq = Rabbitmq(ip=ip_raspberry)
+        self.rabbitmq = Rabbitmq(**rabbit_config)
 
         self.heater_queue_name = ""
         self.fan_queue_name = ""

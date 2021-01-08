@@ -6,7 +6,7 @@ import time
 defaultDockerComposeCommand = ["docker-compose", "up", "--detach", "--build"]
 
 
-def killContainer(containerName):
+def kill_container(containerName):
     print("Searching for container with the name: " + containerName)
     client = docker.from_env()
     try:
@@ -27,7 +27,7 @@ def start(logFilePath, dockerComposeDirectoryPath,
         print("Log will be stored in: " + os.path.abspath(logFilePath))
         proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, stdout=f)
         if proc.returncode == 0:
-            print("docker-compose terminated succesfully.")
+            print("docker-compose terminated successfully.")
         else:
             print("docker-composed failed to terminate:" + str(proc.returncode))
             return False
@@ -40,6 +40,6 @@ def start(logFilePath, dockerComposeDirectoryPath,
                 service_ready = True
             else:
                 attempts -= 1
-                print("Service is not ready yet. Attempts remaning:" + str(attempts))
+                # print("Service is not ready yet. Attempts remaining:" + str(attempts))
                 if attempts > 0:
                     time.sleep(sleepTimeBetweenAttempts)

@@ -1,9 +1,20 @@
-import logging
-
+from config.config import config_logger, load_config
 from physical_twin.controller_physical import ControllerPhysical
-from startup.logging_config import config_logging
+
+
+def start_controller_physical(ok_queue=None):
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
+    controller = ControllerPhysical(rabbit_config=config["rabbitmq"], **(config["physical_twin"]["controller"]))
+    controller.setup()
+
+    if ok_queue is not None:
+        ok_queue.put("OK")
+
+    controller.start_control()
+
 
 if __name__ == '__main__':
-    config_logging("ctrl.log", level=logging.WARN)
-    controller = ControllerPhysical(rabbitmq_ip="localhost", temperature_desired=35.0)
-    controller.start_control()
+    start_controller_physical()
+
+

@@ -11,7 +11,7 @@ from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_U
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.visualization.data_plotting import plotly_incubator_data, show_plotly
-from startup.logging_config import config_logging
+from startup.utils.logging_config import config_logging
 
 
 def run_plant_simulation(params, start_date, end_date, initial_heat_temperature, record):

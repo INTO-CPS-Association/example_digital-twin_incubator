@@ -1,12 +1,12 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytz
 
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_s_to_ns
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from startup.logging_config import config_logging
+from startup.utils.logging_config import config_logging
 
 if __name__ == '__main__':
     C_air = four_param_model_params[0]

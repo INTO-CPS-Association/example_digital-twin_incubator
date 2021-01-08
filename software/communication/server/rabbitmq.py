@@ -11,12 +11,12 @@ class Rabbitmq:
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
                  vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE
+                 exchange=PIKA_EXCHANGE,
+                 type=PIKA_EXCHANGE_TYPE
                  ):
         self.vhost = vhost
-        self.exchange_name = exchange_name
-        self.exchange_type = exchange_type
+        self.exchange_name = exchange
+        self.exchange_type = type
 
         credentials = pika.PlainCredentials(username, password)
         self.parameters = pika.ConnectionParameters(ip,
