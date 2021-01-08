@@ -3,8 +3,8 @@ from digital_twin.data_access.dbmanager.incubator_state_influx_recorder import I
 
 
 def start_influx_data_recorder(ok_queue=None):
-    config_logger("logging.conf")
-    config = load_config("startup.conf")
+    config_logger("../logging.conf")
+    config = load_config("../startup.conf")
 
     recorder = IncubatorDataRecorderInflux()
     recorder.setup(rabbitmq_config=config["rabbitmq"], influxdb_config=config["influxdb"])

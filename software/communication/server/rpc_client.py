@@ -20,16 +20,16 @@ class RPCClient(Rabbitmq):
                  username=PIKA_USERNAME,
                  password=PIKA_PASSWORD,
                  vhost=PIKA_VHOST,
-                 exchange_name=PIKA_EXCHANGE,
-                 exchange_type=PIKA_EXCHANGE_TYPE
+                 exchange=PIKA_EXCHANGE,
+                 type=PIKA_EXCHANGE_TYPE
                  ):
         super().__init__(ip=ip,
                          port=port,
                          username=username,
                          password=password,
                          vhost=vhost,
-                         exchange_name=exchange_name,
-                         exchange_type=exchange_type)
+                         exchange=exchange,
+                         type=type)
         self._l = logging.getLogger("RPCClient")
         self.reply_queue = None
 

@@ -62,8 +62,8 @@ class SampledRealTimePlantModel(Model):
 
 
 def start_incubator_realtime_mockup(ok_queue=None):
-    config_logger("logging.conf")
-    config = load_config("startup.conf")
+    config_logger("../logging.conf")
+    config = load_config("../startup.conf")
 
     model = SampledRealTimePlantModel(**(config["digital_twin"]["models"]["plant"]["param4"]))
 

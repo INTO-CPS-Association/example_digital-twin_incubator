@@ -30,8 +30,9 @@ class Rabbitmq:
 
     def __del__(self):
         self._l.debug("Deleting queues, close channel and connection")
-        if not self.channel.is_closed and not self.connection.is_closed:
-            self.close()
+        if self.channel is not None:
+            if not self.channel.is_closed and not self.connection.is_closed:
+                self.close()
         self._l.info("Connection closed.")
 
     def __exit__(self, exc_type, exc_val, exc_tb):

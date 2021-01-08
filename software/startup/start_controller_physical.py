@@ -3,8 +3,8 @@ from physical_twin.controller_physical import ControllerPhysical
 
 
 def start_controller_physical(ok_queue=None):
-    config_logger("logging.conf")
-    config = load_config("startup.conf")
+    config_logger("../logging.conf")
+    config = load_config("../startup.conf")
     controller = ControllerPhysical(rabbit_config=config["rabbitmq"], **(config["physical_twin"]["controller"]))
     controller.setup()
 

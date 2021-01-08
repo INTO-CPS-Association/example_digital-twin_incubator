@@ -2,9 +2,9 @@ import requests
 
 from startup.utils.docker_service_starter import kill_container, start
 
+containerName = "rabbitmq-server"
 
 def start_docker_rabbitmq():
-    containerName = "rabbitmq-server"
     logFileName = "logs/rabbitmq.log"
     dockerComposeDirectoryPath = "../communication/installation"
     sleepTimeBetweenAttempts = 1
@@ -25,6 +25,10 @@ def start_docker_rabbitmq():
     start(logFileName,
              dockerComposeDirectoryPath,
              test_connection_function, sleepTimeBetweenAttempts, maxAttempts)
+
+
+def stop_docker_rabbitmq():
+    kill_container(containerName)
 
 
 if __name__ == '__main__':

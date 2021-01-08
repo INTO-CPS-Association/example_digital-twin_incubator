@@ -38,6 +38,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                        initial_box_temperature,
                        initial_heat_temperature,
                        record,
+                       as_lld,
                        reply_fun):
         # Access database to get the data needed.
         query_api = self.client.query_api()
@@ -60,7 +61,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
         room_temperature = room_temp_results["_value"].to_numpy()
 
         # The following is true because of the query we made at the db
-        assert time_seconds[0] >= start_date_s
+        assert time_seconds[0] >= start_date_s, time_seconds[0]
 
         # Ensure that the start_date is in the lookup table.
         # We need to do this because the data in the database may not exist at exactly the start date.
@@ -104,12 +105,19 @@ class PhysicalTwinSimulator4Params(RPCServer):
             "controller_comm_step": controller_comm_step
         }
 
-        results_db = convert_to_results_db(data_convert, params,
-                                           measurement="physical_twin_simulator_4params",
-                                           tags={
-                                               "source": "physical_twin_simulator_4params",
-                                               "experiment": "What-If-Experiment"
-                                           })
+        if as_lld:
+            results_db = convert_to_results_db(data_convert, params,
+                                               measurement="low_level_driver",
+                                               tags={
+                                                   "source": "low_level_driver"
+                                               })
+        else:
+            results_db = convert_to_results_db(data_convert, params,
+                                               measurement="physical_twin_simulator_4params",
+                                               tags={
+                                                   "source": "physical_twin_simulator_4params",
+                                                   "experiment": "What-If-Experiment"
+                                               })
 
         # Record results into db if specified
         if record:

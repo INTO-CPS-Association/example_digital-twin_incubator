@@ -1,9 +1,12 @@
 from startup.utils import docker_service_starter as ds
 import requests
 
+from startup.utils.docker_service_starter import kill_container
+
+containerName = "influxdb-server"
+
 
 def start_docker_influxdb():
-    containerName = "influxdb-server"
     logFileName = "logs/influxdb.log"
     dockerComposeDirectoryPath = "../digital_twin/data_access/influxdbserver"
     sleepTimeBetweenAttempts = 1
@@ -27,6 +30,11 @@ def start_docker_influxdb():
     ds.start(logFileName,
              dockerComposeDirectoryPath,
              test_connection_function, sleepTimeBetweenAttempts, maxAttempts)
+
+
+def stop_docker_influxdb():
+    kill_container(containerName)
+
 
 if __name__ == '__main__':
     start_docker_influxdb()
