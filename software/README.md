@@ -42,6 +42,11 @@ If `self.cli_mode` is true:
 2. Optimization problems can be parameterized with a small number of evaluations (so they still run, but it's much quicker).
 3. Tests that involve large data should be adapted in a way that it can be run quickly (e.g., with a subset of the data).
 
+## Starting the InfluxDB and the RabbitMQ
+The python files startup/startup_docker_influxdb.py and startup/startup_docker_rabbitmq.py starts the influxdb and the rabbitmq. 
+It awaits successfull or errornous activation of the respective component.
+They have not been wrapped in a generic component interface yet.
+
 # Handling Datasets
 
 1. Small datasets can be committed as csv files into the dataset folder.
