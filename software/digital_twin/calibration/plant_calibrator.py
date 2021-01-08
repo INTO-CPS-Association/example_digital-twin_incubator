@@ -48,7 +48,7 @@ class PlantCalibrator4Params(RPCServer):
         super(PlantCalibrator4Params, self).start_serving(ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTCALIBRATOR4)
 
     def run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
-                        initial_heat_temperature, initial_guess):
+                        initial_heat_temperature, initial_guess, reply_fun):
         self._l.debug("Accessing database to get the data needed.")
         # This might look inefficient, but querying for all fields at the same time returns a list of dataframes
         # And that list does not follow the same order of the fields asked.
@@ -159,4 +159,4 @@ class PlantCalibrator4Params(RPCServer):
             write_api.write(self._influxdb_bucket, self._influxdb_org, point)
 
         self._l.debug(f"Sending results back.")
-        return msg
+        reply_fun(msg)
