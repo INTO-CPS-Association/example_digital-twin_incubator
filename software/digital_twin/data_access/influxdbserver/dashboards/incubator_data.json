@@ -20,35 +20,35 @@
      "data": [
       {
        "type": "cell",
-       "id": "06d4eaa1e7305000"
+       "id": "06e5afbe9a56e000"
       },
       {
        "type": "cell",
-       "id": "06d4eaa1e8705000"
+       "id": "06e5afbe9d56e000"
       },
       {
        "type": "cell",
-       "id": "06d4eaa1e9705000"
+       "id": "06e5afbe9e16e000"
       },
       {
        "type": "cell",
-       "id": "06d4ebdc1eb45000"
+       "id": "06e5afbe9f16e000"
       },
       {
        "type": "cell",
-       "id": "06d4ebed19f45000"
+       "id": "06e5afbea116e000"
       },
       {
        "type": "cell",
-       "id": "06d4ec26b2345000"
+       "id": "06e5afbea356e000"
       },
       {
        "type": "cell",
-       "id": "06d4ec68d0745000"
+       "id": "06e5afbea496e000"
       },
       {
        "type": "cell",
-       "id": "06d4ec8d52345000"
+       "id": "06e5afbea556e000"
       }
      ]
     },
@@ -59,7 +59,7 @@
   },
   "included": [
    {
-    "id": "06d4eaa1e7305000",
+    "id": "06e5afbe9a56e000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -71,13 +71,49 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4eaa1e7305000"
+       "id": "06e5afbe9a56e000"
       }
      }
     }
    },
    {
-    "id": "06d4eaa1e8705000",
+    "id": "06e5afbe9d56e000",
+    "type": "cell",
+    "attributes": {
+     "x": 7,
+     "y": 0,
+     "w": 2,
+     "h": 2
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06e5afbe9d56e000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06e5afbe9e16e000",
+    "type": "cell",
+    "attributes": {
+     "x": 5,
+     "y": 2,
+     "w": 2,
+     "h": 1
+    },
+    "relationships": {
+     "view": {
+      "data": {
+       "type": "view",
+       "id": "06e5afbe9e16e000"
+      }
+     }
+    }
+   },
+   {
+    "id": "06e5afbe9f16e000",
     "type": "cell",
     "attributes": {
      "x": 0,
@@ -89,49 +125,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4eaa1e8705000"
+       "id": "06e5afbe9f16e000"
       }
      }
     }
    },
    {
-    "id": "06d4eaa1e9705000",
-    "type": "cell",
-    "attributes": {
-     "x": 7,
-     "y": 0,
-     "w": 2,
-     "h": 2
-    },
-    "relationships": {
-     "view": {
-      "data": {
-       "type": "view",
-       "id": "06d4eaa1e9705000"
-      }
-     }
-    }
-   },
-   {
-    "id": "06d4ebdc1eb45000",
-    "type": "cell",
-    "attributes": {
-     "x": 5,
-     "y": 2,
-     "w": 2,
-     "h": 1
-    },
-    "relationships": {
-     "view": {
-      "data": {
-       "type": "view",
-       "id": "06d4ebdc1eb45000"
-      }
-     }
-    }
-   },
-   {
-    "id": "06d4ebed19f45000",
+    "id": "06e5afbea116e000",
     "type": "cell",
     "attributes": {
      "x": 5,
@@ -143,13 +143,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4ebed19f45000"
+       "id": "06e5afbea116e000"
       }
      }
     }
    },
    {
-    "id": "06d4ec26b2345000",
+    "id": "06e5afbea356e000",
     "type": "cell",
     "attributes": {
      "x": 5,
@@ -161,13 +161,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4ec26b2345000"
+       "id": "06e5afbea356e000"
       }
      }
     }
    },
    {
-    "id": "06d4ec68d0745000",
+    "id": "06e5afbea496e000",
     "type": "cell",
     "attributes": {
      "x": 5,
@@ -179,13 +179,13 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4ec68d0745000"
+       "id": "06e5afbea496e000"
       }
      }
     }
    },
    {
-    "id": "06d4ec8d52345000",
+    "id": "06e5afbea556e000",
     "type": "cell",
     "attributes": {
      "x": 7,
@@ -197,21 +197,21 @@
      "view": {
       "data": {
        "type": "view",
-       "id": "06d4ec8d52345000"
+       "id": "06e5afbea556e000"
       }
      }
     }
    },
    {
     "type": "view",
-    "id": "06d4eaa1e7305000",
+    "id": "06e5afbe9a56e000",
     "attributes": {
      "name": "Temperature",
      "properties": {
       "shape": "chronograf-v2",
       "queries": [
        {
-        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"low_level_driver\" or r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"average_temperature\" or r[\"_field\"] == \"t1\" or r[\"_field\"] == \"t2\" or r[\"_field\"] == \"t3\" or r[\"_field\"] == \"temperature_desired\")",
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"low_level_driver\" or r[\"_measurement\"] == \"controller\" or r[\"_measurement\"] == \"kalman_filter_plant\")\n  |> filter(fn: (r) => r[\"_field\"] == \"average_temperature\" or r[\"_field\"] == \"t1\" or r[\"_field\"] == \"t2\" or r[\"_field\"] == \"t3\" or r[\"_field\"] == \"temperature_desired\" or r[\"_field\"] == \"T_heater\")",
         "editMode": "advanced",
         "name": "",
         "builderConfig": {
@@ -309,7 +309,119 @@
    },
    {
     "type": "view",
-    "id": "06d4eaa1e8705000",
+    "id": "06e5afbe9d56e000",
+    "attributes": {
+     "name": "Controller State",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"current_state\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": "",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06e5afbe9e16e000",
+    "attributes": {
+     "name": "HeatingGap",
+     "properties": {
+      "shape": "chronograf-v2",
+      "type": "single-stat",
+      "queries": [
+       {
+        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"heating_gap\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
+        "editMode": "advanced",
+        "name": "",
+        "builderConfig": {
+         "buckets": [],
+         "tags": [
+          {
+           "key": "_measurement",
+           "values": [],
+           "aggregateFunctionType": "filter"
+          }
+         ],
+         "functions": [
+          {
+           "name": "mean"
+          }
+         ],
+         "aggregateWindow": {
+          "period": "auto",
+          "fillValues": false
+         }
+        }
+       }
+      ],
+      "prefix": "",
+      "tickPrefix": "",
+      "suffix": "s",
+      "tickSuffix": "",
+      "colors": [
+       {
+        "id": "base",
+        "type": "text",
+        "hex": "#00C9FF",
+        "name": "laser",
+        "value": 0
+       }
+      ],
+      "decimalPlaces": {
+       "isEnforced": true,
+       "digits": 2
+      },
+      "note": "",
+      "showNoteWhenEmpty": false
+     }
+    }
+   },
+   {
+    "type": "view",
+    "id": "06e5afbe9f16e000",
     "attributes": {
      "name": "Actuators",
      "properties": {
@@ -414,119 +526,7 @@
    },
    {
     "type": "view",
-    "id": "06d4eaa1e9705000",
-    "attributes": {
-     "name": "Controller State",
-     "properties": {
-      "shape": "chronograf-v2",
-      "type": "single-stat",
-      "queries": [
-       {
-        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"current_state\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")",
-        "editMode": "advanced",
-        "name": "",
-        "builderConfig": {
-         "buckets": [],
-         "tags": [
-          {
-           "key": "_measurement",
-           "values": [],
-           "aggregateFunctionType": "filter"
-          }
-         ],
-         "functions": [
-          {
-           "name": "mean"
-          }
-         ],
-         "aggregateWindow": {
-          "period": "auto",
-          "fillValues": false
-         }
-        }
-       }
-      ],
-      "prefix": "",
-      "tickPrefix": "",
-      "suffix": "",
-      "tickSuffix": "",
-      "colors": [
-       {
-        "id": "base",
-        "type": "text",
-        "hex": "#00C9FF",
-        "name": "laser",
-        "value": 0
-       }
-      ],
-      "decimalPlaces": {
-       "isEnforced": true,
-       "digits": 2
-      },
-      "note": "",
-      "showNoteWhenEmpty": false
-     }
-    }
-   },
-   {
-    "type": "view",
-    "id": "06d4ebdc1eb45000",
-    "attributes": {
-     "name": "HeatingGap",
-     "properties": {
-      "shape": "chronograf-v2",
-      "type": "single-stat",
-      "queries": [
-       {
-        "text": "from(bucket: \"incubator\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"controller\")\n  |> filter(fn: (r) => r[\"_field\"] == \"heating_gap\")\n  |> filter(fn: (r) => r[\"source\"] == \"controller\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> yield(name: \"mean\")",
-        "editMode": "advanced",
-        "name": "",
-        "builderConfig": {
-         "buckets": [],
-         "tags": [
-          {
-           "key": "_measurement",
-           "values": [],
-           "aggregateFunctionType": "filter"
-          }
-         ],
-         "functions": [
-          {
-           "name": "mean"
-          }
-         ],
-         "aggregateWindow": {
-          "period": "auto",
-          "fillValues": false
-         }
-        }
-       }
-      ],
-      "prefix": "",
-      "tickPrefix": "",
-      "suffix": "s",
-      "tickSuffix": "",
-      "colors": [
-       {
-        "id": "base",
-        "type": "text",
-        "hex": "#00C9FF",
-        "name": "laser",
-        "value": 0
-       }
-      ],
-      "decimalPlaces": {
-       "isEnforced": true,
-       "digits": 2
-      },
-      "note": "",
-      "showNoteWhenEmpty": false
-     }
-    }
-   },
-   {
-    "type": "view",
-    "id": "06d4ebed19f45000",
+    "id": "06e5afbea116e000",
     "attributes": {
      "name": "HeatingTime",
      "properties": {
@@ -582,7 +582,7 @@
    },
    {
     "type": "view",
-    "id": "06d4ec26b2345000",
+    "id": "06e5afbea356e000",
     "attributes": {
      "name": "LowerBound",
      "properties": {
@@ -638,7 +638,7 @@
    },
    {
     "type": "view",
-    "id": "06d4ec68d0745000",
+    "id": "06e5afbea496e000",
     "attributes": {
      "name": "DesiredTemperature",
      "properties": {
@@ -694,7 +694,7 @@
    },
    {
     "type": "view",
-    "id": "06d4ec8d52345000",
+    "id": "06e5afbea556e000",
     "attributes": {
      "name": "Timer",
      "properties": {
