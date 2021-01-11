@@ -2,6 +2,10 @@ This is where the code that start the DT services is located.
 
 Each service run in its own process and has as a corresponding start script.
 
+Before starting any service, make sure you have docker installed, and that you have followed the instructions in:
+1. [Rabbitmq README](../communication/installation/README.md)
+2. [Influxdb README](../digital_twin/data_access/influxdbserver/README.md)
+
 The script [start_all_services.py](./start_all_services.py) starts all services (including the mock of the incubator hardware)
 
 The service that mimics the real-time incubator is in [start_incubator_realtime_mockup.py](./start_incubator_realtime_mockup.py)

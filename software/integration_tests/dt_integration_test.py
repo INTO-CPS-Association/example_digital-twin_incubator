@@ -1,13 +1,12 @@
 import logging
 import unittest
 from datetime import timedelta, datetime
-from time import sleep
 
 from influxdb_client import InfluxDBClient
 
-from cli.generate_dummy_data import generate_dummy_data, generate_room_data, generate_incubator_exec_data
+from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
 from communication.shared.protocol import from_s_to_ns
-from config.config import config_logger, load_config
+from digital_twin.config.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from startup.start_calibrator import start_calibrator
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter
@@ -30,7 +29,7 @@ class StartDTWithDummyData(CLIModeTest):
     def setUpClass(cls):
         stop_docker_influxdb()
         stop_docker_rabbitmq()
-        setup_db(influxdb_docker_dir="../digital_twin/data_access/influxdbserver")
+        setup_db(influxdb_docker_dir="digital_twin/data_access/influxdbserver")
         start_docker_rabbitmq()
         start_docker_influxdb()
         cls.processes = []
@@ -43,8 +42,8 @@ class StartDTWithDummyData(CLIModeTest):
         cls.processes.append(start_as_daemon(start_calibrator))
         cls.processes.append(start_as_daemon(start_controller_physical))
 
-        config_logger("../logging.conf")
-        cls.config = load_config("../startup.conf")
+        config_logger("logging.conf")
+        cls.config = load_config("startup.conf")
 
         cls.l = logging.getLogger("DTIntegrationTest")
 
@@ -87,8 +86,8 @@ class StartDTWithDummyData(CLIModeTest):
         self.assertEqual(room_temp_results.size, average_temp_results.size)
 
     def test_2_basic_components(self):
-        
-
+        # TODO: Check that controller physical is producing data.
+        pass
 
 if __name__ == '__main__':
     unittest.main()

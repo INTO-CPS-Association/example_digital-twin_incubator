@@ -1,7 +1,7 @@
 from oomodelling import Model
 
 from communication.server.rabbitmq import Rabbitmq
-from config.config import config_logger, load_config
+from digital_twin.config.config import config_logger, load_config
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
@@ -62,8 +62,8 @@ class SampledRealTimePlantModel(Model):
 
 
 def start_incubator_realtime_mockup(ok_queue=None):
-    config_logger("../logging.conf")
-    config = load_config("../startup.conf")
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
 
     model = SampledRealTimePlantModel(**(config["digital_twin"]["models"]["plant"]["param4"]))
 

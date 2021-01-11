@@ -1,10 +1,10 @@
-from config.config import load_config, config_logger
+from digital_twin.config.config import load_config, config_logger
 from digital_twin.data_access.dbmanager.incubator_state_influx_recorder import IncubatorDataRecorderInflux
 
 
 def start_influx_data_recorder(ok_queue=None):
-    config_logger("../logging.conf")
-    config = load_config("../startup.conf")
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
 
     recorder = IncubatorDataRecorderInflux()
     recorder.setup(rabbitmq_config=config["rabbitmq"], influxdb_config=config["influxdb"])

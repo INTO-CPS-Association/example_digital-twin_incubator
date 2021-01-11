@@ -1,12 +1,14 @@
 import requests
 
+from digital_twin.fsutils import resource_file_path
 from startup.utils.docker_service_starter import kill_container, start
 
 containerName = "rabbitmq-server"
 
+
 def start_docker_rabbitmq():
     logFileName = "logs/rabbitmq.log"
-    dockerComposeDirectoryPath = "../communication/installation"
+    dockerComposeDirectoryPath = resource_file_path("communication/installation")
     sleepTimeBetweenAttempts = 1
     maxAttempts = 10
 

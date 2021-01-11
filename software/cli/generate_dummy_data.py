@@ -5,7 +5,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PTSIMULATOR4
-from config.config import config_logger, load_config
+from digital_twin.config.config import config_logger, load_config
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
 import numpy as np
 
@@ -71,8 +71,8 @@ def generate_incubator_exec_data(config, start_date, end_date):
 
 
 def generate_dummy_data():
-    config_logger("../logging.conf")
-    config = load_config("../startup.conf")
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
 
     # Time range for the fake data
     end_date = datetime.now()

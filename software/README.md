@@ -3,14 +3,19 @@ This folder contains the code that makes the digital twin possible.
 # Directory Structure
 
 ```
+├───cli -- Contains code to communicate with the running DT components.
 ├───communication -- Contains code to establish the communication layer between physical twin and digital twin.
 ├───digital_twin -- Code that forms the digital twin.
+├───docs -- Documentation.
+├───integration_tests -- Code to run tests that involve settup and running scenarios with the DT components.
+├───mock_plant -- Code setting up the local virtual incubator plant.
 ├───old_software -- Old code that is still being organized
 ├───physical_twin -- Code that implements the physical twin
-└───tests -- Tests that exercise the code above.
+├───startup -- Code that allows starting and stopping the DT components
+└───tests -- Unit that exercise code on which the DT components depend.
 ```
 
-# Running the Tests
+# Running the Unit Tests
 
 ## First-time setup
 1. Open terminal in this folder.
@@ -28,11 +33,11 @@ This folder contains the code that makes the digital twin possible.
 ## After first time setup
 
 Follow the above instructions, skipping the installation of the dependencies.
-See script ![./run_tests.ps1](./run_tests.ps1) for more details.
+See script [./run_tests.ps1](./run_tests.ps1) for more details.
 
-# Creating Tests
+# Creating Unit Tests
 
-Follow the example of ![./tests/example_test.py](./tests/example_test.py)
+Follow the example of [./tests/example_test.py](./tests/example_test.py)
 
 Each test should correspond to one experiment, and each experiment should be targeted at answering one question.
 
@@ -42,10 +47,15 @@ If `self.cli_mode` is true:
 2. Optimization problems can be parameterized with a small number of evaluations (so they still run, but it's much quicker).
 3. Tests that involve large data should be adapted in a way that it can be run quickly (e.g., with a subset of the data).
 
-## Starting the InfluxDB and the RabbitMQ
-The python files startup/startup_docker_influxdb.py and startup/startup_docker_rabbitmq.py starts the influxdb and the rabbitmq. 
-It awaits successfull or errornous activation of the respective component.
-They have not been wrapped in a generic component interface yet.
+# Starting the DT framework
+
+Follow the instructions in [README.md](./startup/README.md)
+
+# Running Integration Tests
+
+Make sure you can successfully start the DT framework and run the unit tests before attempting to run the integration tests.
+
+The script [run_integration_tests.ps1](./run_integration_tests.ps1) contains the instructions.
 
 # Handling Datasets
 

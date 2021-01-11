@@ -1,10 +1,10 @@
-from config.config import config_logger, load_config
+from digital_twin.config.config import config_logger, load_config
 from digital_twin.monitoring.kalman_filter_plant_server import KalmanFilterPlantServer
 
 
 def start_plant_kalmanfilter(ok_queue=None):
-    config_logger("../logging.conf")
-    config = load_config("../startup.conf")
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
 
     monitor = KalmanFilterPlantServer(rabbit_config=config["rabbitmq"])
 

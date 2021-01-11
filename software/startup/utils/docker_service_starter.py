@@ -24,9 +24,9 @@ def start(logFilePath, dockerComposeDirectoryPath,
             testConnectionFunction,
             sleepTimeBetweenAttempts,
             maxAttempts):
+    print("Log will be stored in: " + os.path.abspath(logFilePath))
     with open(logFilePath, "wt") as f:
         print("Running docker-compose command: " + " ".join(defaultDockerComposeCommand))
-        print("Log will be stored in: " + os.path.abspath(logFilePath))
         proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, stdout=f)
         if proc.returncode == 0:
             print("docker-compose terminated successfully.")

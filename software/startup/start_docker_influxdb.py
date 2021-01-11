@@ -1,3 +1,4 @@
+from digital_twin.fsutils import resource_file_path
 from startup.utils import docker_service_starter as ds
 import requests
 
@@ -8,7 +9,7 @@ containerName = "influxdb-server"
 
 def start_docker_influxdb():
     logFileName = "logs/influxdb.log"
-    dockerComposeDirectoryPath = "../digital_twin/data_access/influxdbserver"
+    dockerComposeDirectoryPath = resource_file_path("digital_twin/data_access/influxdbserver")
     sleepTimeBetweenAttempts = 1
     maxAttempts = 10
 
