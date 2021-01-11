@@ -13,13 +13,13 @@ if __name__ == '__main__':
     params = four_param_model_params
 
     C_air = params[0]
-    G_box = params[1]
+    G_box = params[1] + 2.0
     C_heater = params[2]
     G_heater = params[3]
-    initial_heat_temperature = 21.0
+    initial_heat_temperature = 24.0
 
-    start_date = datetime.fromisoformat("2021-01-04 09:56:36").astimezone(pytz.utc)
-    end_date = datetime.fromisoformat("2021-01-04 10:11:36").astimezone(pytz.utc)
+    start_date = datetime.fromisoformat("2021-01-10 10:24:00").astimezone(pytz.utc)
+    end_date = datetime.fromisoformat("2021-01-10 10:31:00").astimezone(pytz.utc)
     print(f"start_date={start_date}")
     print(f"end_date={end_date}")
 
@@ -32,12 +32,12 @@ if __name__ == '__main__':
 
     reply = client.invoke_method(ROUTING_KEY_PLANTCALIBRATOR4, "run_calibration",
                                  {
-                                     "calibration_id": "2021-01-04 09:56:36",
+                                     "calibration_id": "2021-01-10 10:24:00",
                                      "start_date_ns": start_date_ns,
                                      "end_date_ns": end_date_ns,
                                      "Nevals": 100,
                                      "commit": False,
-                                     "record_progress": False,
+                                     "record_progress": True,
                                      "initial_heat_temperature": initial_heat_temperature,
                                      "initial_guess": {
                                          "C_air": C_air,

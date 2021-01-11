@@ -6,12 +6,13 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
 from communication.server.rpc_server import RPCServer
-from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s
+from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s, from_s_to_ns
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from digital_twin.models.plant_models.model_functions import create_lookup_table
 
+TIMESTAMP_TOLERANCE = 1e-6
 
 class PhysicalTwinSimulator4Params(RPCServer):
     """
@@ -61,7 +62,12 @@ class PhysicalTwinSimulator4Params(RPCServer):
         room_temperature = room_temp_results["_value"].to_numpy()
 
         # The following is true because of the query we made at the db
-        assert time_seconds[0] >= start_date_s, time_seconds[0]
+        # The tolerance factor is because of numerical rounding issues.
+        assert time_seconds[0]+TIMESTAMP_TOLERANCE >= start_date_s and \
+               time_seconds[-1] <= end_date_s+TIMESTAMP_TOLERANCE, \
+            f"Query between dates {start_date_s} and {end_date_s} produced incoherent timestamps from the db. " \
+            f"The initial timestamp found is {time_seconds[0]} and final timestamp is {time_seconds[-1]}. " \
+            f"The corresponding differences (which should be positive) are {time_seconds[0] - start_date_s} and {end_date_s-time_seconds[-1]}."
 
         # Ensure that the start_date is in the lookup table.
         # We need to do this because the data in the database may not exist at exactly the start date.

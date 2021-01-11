@@ -14,6 +14,8 @@ def kill_container(containerName):
         if container.status == "running":
             print("Container is running. Issuing kill request.")
             container.kill()
+            print(client.containers.get(containerName).status)
+        assert client.containers.get(containerName).status != "running"
     except (docker.errors.NotFound, docker.errors.APIError) as x:
         print("Exception in attempt to kill container: " + str(x))
 

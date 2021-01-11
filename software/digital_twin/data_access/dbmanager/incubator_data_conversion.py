@@ -9,21 +9,6 @@ def convert_to_results_db(results_dict, params, measurement, tags):
 
     time = results_dict["time"]
 
-    # Record a single point with all the parameters
-    assert "variability" not in tags
-    parameter_tags = tags.copy()
-    parameter_tags["variability"] = "parameter"
-    tags["variability"] = "variable"
-    assert tags["variability"] != parameter_tags["variability"]
-
-    point = {
-        "measurement": measurement,
-        "time": from_s_to_ns(time[0]),
-        "tags": parameter_tags,
-        "fields": params
-    }
-    results_db.append(point)
-
     def get_row(i):
         row = {}
         for k in results_dict:
