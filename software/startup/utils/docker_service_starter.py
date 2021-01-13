@@ -11,6 +11,7 @@ def kill_container(containerName):
     client = docker.from_env()
     try:
         container = client.containers.get(containerName)
+        print("Container status: " + container.status)
         if container.status == "running":
             print("Container is running. Issuing kill request.")
             container.kill()
@@ -18,6 +19,8 @@ def kill_container(containerName):
         assert client.containers.get(containerName).status != "running"
     except (docker.errors.NotFound, docker.errors.APIError) as x:
         print("Exception in attempt to kill container: " + str(x))
+    finally:
+        client.close()
 
 
 def start(logFilePath, dockerComposeDirectoryPath,
@@ -25,6 +28,9 @@ def start(logFilePath, dockerComposeDirectoryPath,
             sleepTimeBetweenAttempts,
             maxAttempts):
     print("Log will be stored in: " + os.path.abspath(logFilePath))
+
+    os.makedirs(os.path.dirname(logFilePath), exist_ok=True)
+
     with open(logFilePath, "wt") as f:
         print("Running docker-compose command: " + " ".join(defaultDockerComposeCommand))
         proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, stdout=f)
