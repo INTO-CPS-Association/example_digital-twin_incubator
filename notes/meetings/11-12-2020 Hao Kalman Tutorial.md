@@ -2,10 +2,10 @@
 
 Tasks:
 Hao:
-- [ ] Continue understanding of Kalman filter
-- [ ] Write down introduction to Kalman filter
-- [ ] Explain extended Kalman filter
-- [ ] Make controller work with the real system.
+- [x] Continue understanding of Kalman filter
+- [x] Write down introduction to Kalman filter
+- [x] Explain extended Kalman filter
+- [x] Make controller work with the real system.
 - [x] Fix class of rabbitmq
 
 Claudio:
