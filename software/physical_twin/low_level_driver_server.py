@@ -8,10 +8,12 @@ from communication.server.rabbitmq import Rabbitmq
 from communication.shared.connection_parameters import *
 from communication.shared.protocol import *
 from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
+from digital_twin.config.config import config_logger, load_config
 
 
 class IncubatorDriver:
     logger = logging.getLogger("Incubator")
+
 
     def __init__(self,
                  heater,
@@ -157,11 +159,15 @@ class IncubatorDriver:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
+    config_logger("logging.conf")
+    config = load_config("startup.conf")
+
     incubator = IncubatorDriver(heater=Heater(12),
                                 fan=Fan(13),
                                 t1=TemperatureSensor("/sys/bus/w1/devices/10-0008039ad4ee/w1_slave"),
                                 t2=TemperatureSensor("/sys/bus/w1/devices/10-0008039b25c1/w1_slave"),
                                 t3=TemperatureSensor("/sys/bus/w1/devices/10-0008039a977a/w1_slave"),
+                                rabbit_config=config["rabbitmq"],
                                 simulate_actuation=False)
     incubator.setup()
     incubator.control_loop()
