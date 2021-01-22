@@ -117,7 +117,7 @@ class IncubatorDriver:
             timestamps.append(time.time_ns())
 
         timestamp = time.time_ns()
-        print(f"sdfasd={readings[1]}\n {readings[2]}")
+        print(f"sdfasd={type(readings[1])}\n {type(readings[2])}")
         message = {
             "measurement": "low_level_driver",
             "time": timestamp,
