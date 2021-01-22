@@ -1,0 +1,2 @@
+t1,time_t1,t2,time_t2,t3,time_t3,average_temperature,heater_on,fan_on,execution_interval,elapsed
+21.187,1611324962800605977,21.375,1611324963680285540,21.25,1611324964560291765,21.3125,False,False,3,2.6740403175354004

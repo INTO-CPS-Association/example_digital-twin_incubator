@@ -113,7 +113,7 @@ class IncubatorDriver:
         readings = [] * n_sensors
         timestamps = [] * n_sensors
         for i in range(n_sensors):
-            readings.append(self.temperature_sensor[i].read())
+            readings.append(float(self.temperature_sensor[i].read()))
             timestamps.append(time.time_ns())
 
         timestamp = time.time_ns()
@@ -130,7 +130,7 @@ class IncubatorDriver:
                 "time_t2": timestamps[1],
                 "t3": readings[2],
                 "time_t3": timestamps[2],
-                "average_temperature": str((float(readings[1]) + float(readings[2])) / 2),
+                "average_temperature": (readings[1] + readings[2]) / 2,
                 "heater_on": self.heater.is_lit,
                 "fan_on": self.fan.is_lit,
                 "execution_interval": exec_interval,
