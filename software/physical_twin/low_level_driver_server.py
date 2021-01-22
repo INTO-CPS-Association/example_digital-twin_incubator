@@ -117,6 +117,7 @@ class IncubatorDriver:
             timestamps.append(time.time_ns())
 
         timestamp = time.time_ns()
+        print(f"sdfasd={readings[1]}\n {readings[2]}")
         message = {
             "measurement": "low_level_driver",
             "time": timestamp,
@@ -130,7 +131,7 @@ class IncubatorDriver:
                 "time_t2": timestamps[1],
                 "t3": readings[2],
                 "time_t3": timestamps[2],
-                "average_temperature": (readings[1].double() + readings[2].double()) / 2,
+                "average_temperature": (readings[1] + readings[2] / 2,
                 "heater_on": self.heater.is_lit,
                 "fan_on": self.fan.is_lit,
                 "execution_interval": exec_interval,
