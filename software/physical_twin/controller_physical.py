@@ -107,12 +107,12 @@ class ControllerPhysical:
 
     def print_terminal(self, message):
         if not self.header_written:
-            print("{:13}{:20}{:9}{:11}{:8}{:7}{:21}{:6}".format(
+            print("{:15}{:20}{:9}{:11}{:8}{:7}{:21}{:6}".format(
                 "time", "execution_interval", "elapsed", "heater_on", "fan_on", "t1", "box_air_temperature", "state"
             ))
             self.header_written = True
 
-        print("{:%d/%m %H:%M}  {:<20.2f}{:<9.2f}{:11}{:8}{:<7.2f}{:<21.2f}{:6}".format(
+        print("{:%d/%m %H:%M:%S}  {:<20.2f}{:<9.2f}{:11}{:8}{:<7.2f}{:<21.2f}{:6}".format(
             datetime.fromtimestamp(from_ns_to_s(message["time"])), message["fields"]["execution_interval"],
             message["fields"]["elapsed"],
             str(self.heater_ctrl), str(message["fields"]["fan_on"]), message["fields"]["t1"],
