@@ -131,7 +131,7 @@ class IncubatorDriver:
                 "time_t2": timestamps[1],
                 "t3": readings[2],
                 "time_t3": timestamps[2],
-                "average_temperature": (readings[1] + readings[2]) / 2,
+                "average_temperature": str((float(readings[1]) + float(readings[2])) / 2),
                 "heater_on": self.heater.is_lit,
                 "fan_on": self.fan.is_lit,
                 "execution_interval": exec_interval,
