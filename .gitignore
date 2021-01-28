@@ -10,3 +10,4 @@ venv/
 *.pyc
 /software/digital_twin/data_access/influxdbserver/influxdb
 *.log
+/software/startup.conf
