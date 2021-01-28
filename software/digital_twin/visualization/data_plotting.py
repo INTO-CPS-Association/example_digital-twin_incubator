@@ -32,8 +32,9 @@ def plot_incubator_data(data):
     ax5.legend()
 
 
-def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
-                          overlay_heater=True, show_actuators=False, show_sensor_temperatures=False):
+def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None,
+                          overlay_heater=True, show_actuators=False, show_sensor_temperatures=False,
+                          show_hr_time=False):
     nRows = 2
     titles = ["Incubator Temperature", "Room Temperature"]
     if show_actuators:
@@ -43,35 +44,51 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None,
         nRows += 1
         titles += "Heatbed Temperature"
 
+    x_title = "Timestamp" if show_hr_time else "Time (s)"
+
+    time_field = "timestamp" if show_hr_time else "time"
+
     fig = make_subplots(rows=nRows, cols=1, shared_xaxes=True,
-                        x_title="Time (s)",
+                        x_title=x_title,
                         subplot_titles=titles)
 
     if show_sensor_temperatures:
-        fig.add_trace(go.Scatter(x=data["time"], y=data["t2"], name="t2 (right)"), row=1, col=1)
-        fig.add_trace(go.Scatter(x=data["time"], y=data["t3"], name="t3 (top)"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["t2"], name="t2 (right)"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["t3"], name="t3 (top)"), row=1, col=1)
 
-    fig.add_trace(go.Scatter(x=data["time"], y=data["average_temperature"], name="avg_T"), row=1, col=1)
+    fig.add_trace(go.Scatter(x=data[time_field], y=data["average_temperature"], name="avg_T"), row=1, col=1)
     if overlay_heater:
-        fig.add_trace(go.Scatter(x=data["time"], y=[40 if b else 30 for b in data["heater_on"]], name="heater_on"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=[40 if b else 30 for b in data["heater_on"]], name="heater_on"), row=1, col=1)
+
+    if events is not None:
+        for i, r in events.iterrows():
+            # Get the closest timestamp to the event time
+            closest_ts = min(data[time_field], key=lambda x:abs(x-r[time_field]))
+            # Get the average temperature for that timestamp
+            avg_temp = data.iloc[data.index[data[time_field] == closest_ts]]["average_temperature"].iloc[0]
+
+            fig.add_annotation(x=r[time_field], y=avg_temp,
+                               text=r["event"],
+                               showarrow=True,
+                               arrowhead=1)
 
     if compare_to is not None:
         for res in compare_to:
             if "T" in compare_to[res]:
-                fig.add_trace(go.Scatter(x=compare_to[res]["time"], y=compare_to[res]["T"], name=f"avg_temp({res})"), row=1, col=1)
+                fig.add_trace(go.Scatter(x=compare_to[res][time_field], y=compare_to[res]["T"], name=f"avg_temp({res})"), row=1, col=1)
 
-    fig.add_trace(go.Scatter(x=data["time"], y=data["t1"], name="room"), row=2, col=1)
+    fig.add_trace(go.Scatter(x=data[time_field], y=data["t1"], name="room"), row=2, col=1)
 
     next_row = 3
 
     if show_actuators:
-        fig.add_trace(go.Scatter(x=data["time"], y=data["heater_on"], name="heater_on"), row=next_row, col=1)
-        fig.add_trace(go.Scatter(x=data["time"], y=data["fan_on"], name="fan_on"), row=next_row, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["heater_on"], name="heater_on"), row=next_row, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["fan_on"], name="fan_on"), row=next_row, col=1)
         next_row += 1
 
     if heater_T_data is not None:
         for trace in heater_T_data:
-            fig.add_trace(go.Scatter(x=heater_T_data[trace]["time"], y=heater_T_data[trace]["T_heater"],
+            fig.add_trace(go.Scatter(x=heater_T_data[trace][time_field], y=heater_T_data[trace]["T_heater"],
                                      name=f"T_heater({trace})"), row=next_row, col=1)
         next_row += 1
 

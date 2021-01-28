@@ -8,10 +8,10 @@ from digital_twin.fsutils import resource_file_path
 from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
-def load_data(filepath, desired_timeframe=(- math.inf, math.inf)):
+def load_data(filepath, desired_timeframe=(- math.inf, math.inf), time_unit='s'):
     realpath = resource_file_path(filepath)
     csv = pandas.read_csv(realpath)
-    csv["timestamp"] = pandas.to_datetime(csv["time"], unit='s')
+    csv["timestamp"] = pandas.to_datetime(csv["time"], unit=time_unit)
     # normalize time
     csv["time"] = csv["time"] - csv.iloc[0]["time"]
 

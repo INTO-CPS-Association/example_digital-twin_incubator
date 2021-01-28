@@ -5,7 +5,6 @@ from gpiozero import LED
 
 # Import parameters and shared stuff
 from communication.server.rabbitmq import Rabbitmq
-from communication.shared.connection_parameters import *
 from communication.shared.protocol import *
 from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
 from digital_twin.config.config import config_logger, load_config
