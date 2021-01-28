@@ -2,8 +2,10 @@ import math
 import unittest
 
 import numpy as np
+import pandas
 
 from digital_twin.data_processing.data_processing import load_data
+from digital_twin.fsutils import resource_file_path
 from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from digital_twin.models.plant_models.model_functions import run_experiment_four_parameter_model
 from digital_twin.monitoring.kalman_filter_4p import KalmanFilter4P
@@ -17,11 +19,14 @@ class TestKalmanFilter(CLIModeTest):
         data_sample_size = 3.0
 
         # Load the data
-        tf = math.inf if self.ide_mode() else 800.0
-        data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
-                         desired_timeframe=(- math.inf, tf))
-
-        time = data["time"]
+        time_unit = 'ns'
+        data = load_data("../datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
+                         desired_timeframe=(- math.inf, math.inf),
+                         time_unit=time_unit,
+                         normalize_time=False,
+                         convert_to_seconds=True)
+        events = pandas.read_csv(resource_file_path("../datasets/lid_opening_experiment_jan_2021/events.csv"))
+        events["timestamp"] = pandas.to_datetime(events["time"], unit=time_unit)
 
         # Inputs to model
         measurements_heater = np.array([1.0 if b else 0.0 for b in data["heater_on"]])
@@ -56,27 +61,30 @@ class TestKalmanFilter(CLIModeTest):
         # Run experiment with model, without any filtering, just for comparison.
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
-        fig = plotly_incubator_data(data, compare_to={
-            "4pModel": {
-                "time": results_4p.signals["time"],
-                "T": results_4p.signals["T"],
-            },
-            "Kalman": {
-                "time": time,
-                "T": kalman_prediction[:, 1]
-            },
-        },
+        fig = plotly_incubator_data(data,
+                                    compare_to={
+                                        "4pModel": {
+                                            "timestamp": data["timestamp"],
+                                            "T": results_4p.signals["T"],
+                                        },
+                                        "Kalman": {
+                                            "timestamp": data["timestamp"],
+                                            "T": kalman_prediction[:, 1]
+                                        },
+                                    },
                                     heater_T_data={
                                         "4pModel": {
-                                            "time": results_4p.signals["time"],
+                                            "timestamp": data["timestamp"],
                                             "T_heater": results_4p.signals["T_heater"],
                                         },
                                         "Kalman": {
-                                            "time": time,
+                                            "timestamp": data["timestamp"],
                                             "T_heater": kalman_prediction[:, 0]
                                         },
                                     },
-                                    overlay_heater=True)
+                                    events=events,
+                                    overlay_heater=True,
+                                    show_hr_time=True)
 
         if self.ide_mode():
             show_plotly(fig)
