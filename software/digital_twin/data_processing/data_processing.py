@@ -4,16 +4,22 @@ import numpy
 import pandas
 from scipy import integrate
 
+from communication.shared.protocol import from_ns_to_s
 from digital_twin.fsutils import resource_file_path
 from digital_twin.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
-def load_data(filepath, desired_timeframe=(- math.inf, math.inf), time_unit='s'):
+def load_data(filepath, desired_timeframe=(- math.inf, math.inf), time_unit='s', normalize_time=True, convert_to_seconds=False):
     realpath = resource_file_path(filepath)
     csv = pandas.read_csv(realpath)
     csv["timestamp"] = pandas.to_datetime(csv["time"], unit=time_unit)
     # normalize time
-    csv["time"] = csv["time"] - csv.iloc[0]["time"]
+    if normalize_time:
+        csv["time"] = csv["time"] - csv.iloc[0]["time"]
+    # Convert time
+    if convert_to_seconds and time_unit != 's':
+        assert time_unit=='ns', "Other time units not supported."
+        csv["time"] = convert_time_s_to_ns(csv["time"])
 
     start_idx = 0
     while csv.iloc[start_idx]["time"] < desired_timeframe[0]:
@@ -29,6 +35,10 @@ def load_data(filepath, desired_timeframe=(- math.inf, math.inf), time_unit='s')
     csv = csv.iloc[indices]
 
     return derive_data(csv)
+
+
+def convert_time_s_to_ns(timeseries):
+    return timeseries.map(lambda time_ns: from_ns_to_s(time_ns))
 
 
 def derive_data(data):

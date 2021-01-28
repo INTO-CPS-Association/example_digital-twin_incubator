@@ -63,8 +63,9 @@ def run_experiment_two_parameter_model(data, params, h=3.0):
     model.in_heater_on = lambda: in_heater_table(model.time())
     model.in_room_temperature = lambda: in_room_temperature(model.time())
 
+    t0 = data.iloc[0]["time"]
     tf = data.iloc[-1]["time"]
-    sol = ModelSolver().simulate(model, 0.0, tf, h, t_eval=data["time"])
+    sol = ModelSolver().simulate(model, t0, tf, h, t_eval=data["time"])
     return model, sol
 
 
@@ -84,8 +85,9 @@ def run_experiment_four_parameter_model(data, params, h=3.0):
     model.in_heater_on = lambda: in_heater_table(model.time())
     model.in_room_temperature = lambda: in_room_temperature(model.time())
 
+    t0 = data.iloc[0]["time"]
     tf = data.iloc[-1]["time"]
-    sol = ModelSolver().simulate(model, 0.0, tf, h, t_eval=data["time"])
+    sol = ModelSolver().simulate(model, t0, tf, h, t_eval=data["time"])
     return model, sol
 
 

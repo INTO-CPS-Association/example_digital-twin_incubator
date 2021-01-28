@@ -30,7 +30,9 @@ class TestPlotData(CLIModeTest):
         time_unit = 'ns'
         data = load_data("../datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
                          desired_timeframe=(- math.inf, math.inf),
-                         time_unit=time_unit)
+                         time_unit=time_unit,
+                         normalize_time=False,
+                         convert_to_seconds=True)
         events = pandas.read_csv(resource_file_path("../datasets/lid_opening_experiment_jan_2021/events.csv"))
         events["timestamp"] = pandas.to_datetime(events["time"], unit=time_unit)
 
@@ -41,23 +43,15 @@ class TestPlotData(CLIModeTest):
                          0.79154106,  # G_box
                          227.76228512,  # C_heater
                          1.92343277]  # G_heater
-        # results4p, sol = run_experiment_four_parameter_model(data, params4pmodel)
-
-        params2pmodel = [616.56464029,  # C_air
-                         0.65001889]  # G_box
-        # results2p, sol = run_experiment_two_parameter_model(data, params2pmodel)
+        results4p, sol = run_experiment_four_parameter_model(data, params4pmodel)
 
         fig = plotly_incubator_data(data,
-                                    # compare_to={
-                                    #     "T(4)": {
-                                    #         "time": results4p.signals["time"],
-                                    #         "T": results4p.signals["T"],
-                                    #     },
-                                    #     # "T(2)": {
-                                    #     #     "time": results2p.signals["time"],
-                                    #     #     "T": results2p.signals["T"],
-                                    #     # },
-                                    # },
+                                    compare_to={
+                                        "T(4)": {
+                                            "timestamp": pandas.to_datetime(results4p.signals["time"], unit='s'),
+                                            "T": results4p.signals["T"],
+                                        }
+                                    },
                                     events=events,
                                     overlay_heater=True,
                                     # show_sensor_temperatures=True,
