@@ -24,7 +24,7 @@ class TestPlotData(CLIModeTest):
             plt.show()
 
     def test_plot_data_plotly(self):
-        data = load_data("../datasets/controller_tunning/exp2_ht20_hg30.csv",
+        data = load_data("../datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
                          desired_timeframe=(- math.inf, math.inf))
 
         if self.ide_mode():

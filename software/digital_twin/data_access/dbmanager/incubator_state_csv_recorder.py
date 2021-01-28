@@ -40,18 +40,20 @@ class IncubatorDataRecorderCSV():
 
         if not self.header_written:
             self._l.debug("Writing header.")
-            header = list(body_json["fields"].keys())
+            header = ["time"]
+            header += list(body_json["fields"].keys())
             self.csv_writer.writerow(header)
             self.header_written = True
 
-        values = list(body_json["fields"].values())
+        values = [body_json["time"]]
+        values += list(body_json["fields"].values())
         self.csv_writer.writerow(values)
         self.current_file.flush()
         self.number_records += 1
         self._l.debug(f"self.number_records={self.number_records}")
 
-    def start_recording(self, rabbitmq_ip):
-        rabbitmq = Rabbitmq(ip=rabbitmq_ip)
+    def start_recording(self, rabbit_config):
+        rabbitmq = Rabbitmq(**rabbit_config)
         rabbitmq.connect_to_server()
 
         try:
