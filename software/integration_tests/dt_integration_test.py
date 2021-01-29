@@ -24,6 +24,31 @@ from tests.cli_mode_test import CLIModeTest
 
 
 class StartDTWithDummyData(CLIModeTest):
+    """
+    The tests in this class are supported to run in alphabetical order, so that, e.g.,
+        the first test can produce dummy data, which the following tests use.
+    """
+
+    def test_1_dummy_data(self):
+        dbclient = InfluxDBClient(**self.config["influxdb"])
+        query_api = dbclient.query_api()
+        bucket = self.config["influxdb"]["bucket"]
+
+        start_date_ns = from_s_to_ns(self.start_date.timestamp())
+        end_date_ns = from_s_to_ns(self.end_date.timestamp())
+
+        room_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+
+        average_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
+
+        self.assertTrue(not room_temp_results.empty)
+        self.assertTrue(not average_temp_results.empty)
+        # Same number of samples
+        self.assertEqual(room_temp_results.size, average_temp_results.size)
+
+    def test_2_basic_components(self):
+        # TODO: Check that controller physical is producing data.
+        pass
 
     @classmethod
     def setUpClass(cls):
@@ -58,7 +83,6 @@ class StartDTWithDummyData(CLIModeTest):
                    f"between dates {cls.start_date} and {cls.end_date}.")
         generate_incubator_exec_data(cls.config, cls.start_date, cls.end_date)
 
-
     @classmethod
     def tearDownClass(cls):
         for p in cls.processes:
@@ -67,27 +91,6 @@ class StartDTWithDummyData(CLIModeTest):
             cls.l.info("OK")
         stop_docker_rabbitmq()
         stop_docker_influxdb()
-
-    def test_1_dummy_data(self):
-        dbclient = InfluxDBClient(**self.config["influxdb"])
-        query_api = dbclient.query_api()
-        bucket = self.config["influxdb"]["bucket"]
-
-        start_date_ns = from_s_to_ns(self.start_date.timestamp())
-        end_date_ns = from_s_to_ns(self.end_date.timestamp())
-
-        room_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
-
-        average_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
-
-        self.assertTrue(not room_temp_results.empty)
-        self.assertTrue(not average_temp_results.empty)
-        # Same number of samples
-        self.assertEqual(room_temp_results.size, average_temp_results.size)
-
-    def test_2_basic_components(self):
-        # TODO: Check that controller physical is producing data.
-        pass
 
 if __name__ == '__main__':
     unittest.main()

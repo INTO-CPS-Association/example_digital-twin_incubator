@@ -4,7 +4,7 @@ from communication.server.rabbitmq import Rabbitmq
 from digital_twin.config.config import config_logger, load_config
 from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from digital_twin.models.plant_models.room_temperature_model import room_temperature
-from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
+from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3, MOCK_G_BOX
 from mock_plant.real_time_model_solver import RTModelSolver
 
 
@@ -26,15 +26,20 @@ class SampledRealTimePlantModel(Model):
                                                  G_heater=G_heater)
         self.cached_heater_on = False
         self.heater_on = self.var(lambda: self.cached_heater_on)
-
         self.plant.in_heater_on = self.heater_on
+
+        # Wire G_box to the plant.G_box input, so that it can be changed from rabbitmq messages
+        self.cached_G_box = G_box
+        self.G_box = self.var(lambda: self.cached_G_box)
+        self.plant.G_box = self.G_box
 
         self.room_temperature = self.var(lambda: room_temperature(self.time()))
         self.plant.in_room_temperature = self.room_temperature
 
         self.comm = comm
         self.comm.connect_to_server()
-        self.queue_name = self.comm.declare_local_queue(routing_key=MOCK_HEATER_ON)
+        self.heater_queue_name = self.comm.declare_local_queue(routing_key=MOCK_HEATER_ON)
+        self.gbox_queue_name = self.comm.declare_local_queue(routing_key=MOCK_G_BOX)
 
         self.temperature_difference = temperature_difference
 
@@ -43,8 +48,13 @@ class SampledRealTimePlantModel(Model):
         self.save()
 
     def discrete_step(self):
+        # Read G_box setting from rabbitmq, and store it.
+        g_msg = self.comm.get_message(queue_name=self.gbox_queue_name)
+        if g_msg is not None:
+            self.cached_G_box = g_msg["G_box"]
+
         # Read heater setting from rabbitmq, and store it.
-        heater_on = self.comm.get_message(queue_name=self.queue_name)
+        heater_on = self.comm.get_message(queue_name=self.heater_queue_name)
         if heater_on is not None:
             self.cached_heater_on = heater_on["heater"]
 
