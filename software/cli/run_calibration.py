@@ -6,7 +6,7 @@ import pytz
 from cli.run_plant_simulation import run_plant_simulation
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PLANTCALIBRATOR4
-from digital_twin.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.models.plant_models import four_param_model_params
 from startup.utils.logging_config import config_logging
 
 if __name__ == '__main__':

@@ -3,11 +3,12 @@ from datetime import datetime, timedelta
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from communication.server.rpc_client import RPCClient
-from communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PTSIMULATOR4
-from digital_twin.config.config import config_logger, load_config
-from digital_twin.models.plant_models.room_temperature_model import room_temperature
 import numpy as np
+
+from incubator.communication.server.rpc_client import RPCClient
+from incubator.communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PTSIMULATOR4
+from incubator.config.config import config_logger, load_config
+from incubator.models.plant_models.room_temperature_model import room_temperature
 
 
 def generate_room_data(influxdb_config, start_date, end_date):

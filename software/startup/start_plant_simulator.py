@@ -1,5 +1,5 @@
-from digital_twin.config.config import config_logger, load_config
-from digital_twin.models.plant_models.plant_simulator import PlantSimulator4Params
+from incubator.config import config_logger, load_config
+from incubator.models.plant_models import PlantSimulator4Params
 
 
 def start_plant_simulator(ok_queue=None):

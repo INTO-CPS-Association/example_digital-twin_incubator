@@ -10,7 +10,7 @@ This folder contains the code that makes the digital twin possible.
 ├───integration_tests -- Code to run tests that involve settup and running scenarios with the DT components.
 ├───mock_plant -- Code setting up the local virtual incubator plant.
 ├───old_software -- Old code that is still being organized
-├───physical_twin -- Code that implements the physical twin
+├───incubator -- Code that implements the physical twin
 ├───startup -- Code that allows starting and stopping the DT components
 └───tests -- Unit that exercise code on which the DT components depend.
 ```

@@ -6,7 +6,7 @@ from influxdb_client import InfluxDBClient
 
 from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
 from communication.shared.protocol import from_s_to_ns
-from digital_twin.config.config import config_logger, load_config
+from incubator.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from startup.start_calibrator import start_calibrator
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter
@@ -20,7 +20,7 @@ from startup.start_influx_data_recorder import start_influx_data_recorder
 from startup.start_low_level_driver_mockup import start_low_level_driver_mockup
 from startup.utils.db_tasks import setup_db
 from startup.utils.start_as_daemon import start_as_daemon
-from tests.cli_mode_test import CLIModeTest
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 class StartDTWithDummyData(CLIModeTest):

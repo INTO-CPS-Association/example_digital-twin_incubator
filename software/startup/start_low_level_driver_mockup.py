@@ -1,7 +1,7 @@
-from digital_twin.config.config import config_logger, load_config
+from incubator.config import config_logger, load_config
 from mock_plant.mock_sensors_actuators import HeaterMock, LedMock, TemperatureSensorMock
 from mock_plant.mock_connection import MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3
-from physical_twin.low_level_driver_server import IncubatorDriver
+from incubator.physical_twin.low_level_driver_server import IncubatorDriver
 
 
 def start_low_level_driver_mockup(ok_queue=None):

@@ -1,9 +1,9 @@
 from oomodelling import Model
 
 from communication.server.rabbitmq import Rabbitmq
-from digital_twin.config.config import config_logger, load_config
-from digital_twin.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from digital_twin.models.plant_models.room_temperature_model import room_temperature
+from incubator.config import config_logger, load_config
+from incubator.models.plant_models import FourParameterIncubatorPlant
+from incubator.models.plant_models import room_temperature
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3, MOCK_G_BOX
 from mock_plant.real_time_model_solver import RTModelSolver
 

@@ -1,5 +1,5 @@
-from digital_twin.config.config import load_config, config_logger
-from digital_twin.models.physical_twin_models.physical_twin_simulator4 import PhysicalTwinSimulator4Params
+from incubator.config import load_config, config_logger
+from incubator.models.physical_twin_models.physical_twin_simulator4 import PhysicalTwinSimulator4Params
 
 
 def start_simulator(ok_queue=None):

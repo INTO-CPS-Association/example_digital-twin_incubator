@@ -6,11 +6,11 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
 from communication.server.rpc_server import RPCServer
-from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s, from_s_to_ns
+from communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4, from_ns_to_s
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
 from digital_twin.data_access.dbmanager.incubator_data_query import query
-from digital_twin.models.physical_twin_models.system_model4 import SystemModel4Parameters
-from digital_twin.models.plant_models.model_functions import create_lookup_table
+from models import SystemModel4Parameters
+from models.plant_models import create_lookup_table
 
 TIMESTAMP_TOLERANCE = 1e-6
 

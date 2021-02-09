@@ -1,4 +1,4 @@
-from digital_twin.config.config import config_logger, load_config
+from incubator.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_state_csv_recorder import IncubatorDataRecorderCSV
 
 if __name__ == '__main__':

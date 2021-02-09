@@ -2,7 +2,7 @@ import time
 
 from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_KF_PLANT_STATE
 from communication.server.rpc_server import *
-from digital_twin.monitoring.kalman_filter_4p import construct_filter
+from monitoring.kalman_filter_4p import construct_filter
 import numpy as np
 
 
