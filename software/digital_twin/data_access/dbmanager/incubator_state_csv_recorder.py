@@ -6,7 +6,8 @@ import logging
 import os
 from datetime import datetime
 
-from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.communication.shared.protocol import ROUTING_KEY_STATE
 
 
 class IncubatorDataRecorderCSV():

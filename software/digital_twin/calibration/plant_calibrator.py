@@ -4,11 +4,12 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from scipy.optimize import least_squares
 
-from communication.server.rpc_client import RPCClient
-from communication.server.rpc_server import RPCServer
-from communication.shared.protocol import ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTCALIBRATOR4
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 import numpy as np
+
+from incubator.communication.server.rpc_client import RPCClient
+from incubator.communication.server.rpc_server import RPCServer
+from incubator.communication.shared.protocol import ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTSIMULATOR4
 
 
 class PlantCalibrator4Params(RPCServer):

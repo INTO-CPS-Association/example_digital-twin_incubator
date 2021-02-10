@@ -1,6 +1,6 @@
 import requests
 
-from digital_twin.fsutils import resource_file_path
+from incubator.config.config import resource_file_path
 from startup.utils.docker_service_starter import kill_container, start
 
 containerName = "rabbitmq-server"

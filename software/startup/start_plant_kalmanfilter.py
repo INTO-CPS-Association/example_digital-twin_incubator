@@ -1,4 +1,4 @@
-from incubator.config import config_logger, load_config
+from incubator.config.config import config_logger, load_config
 from digital_twin.monitoring.kalman_filter_plant_server import KalmanFilterPlantServer
 
 

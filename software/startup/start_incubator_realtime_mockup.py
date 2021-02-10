@@ -1,11 +1,11 @@
 from oomodelling import Model
 
-from communication.server.rabbitmq import Rabbitmq
-from incubator.config import config_logger, load_config
-from incubator.models.plant_models import FourParameterIncubatorPlant
-from incubator.models.plant_models import room_temperature
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.config.config import config_logger, load_config
+from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3, MOCK_G_BOX
 from mock_plant.real_time_model_solver import RTModelSolver
+from models.plant_models.room_temperature_model import room_temperature
 
 
 class SampledRealTimePlantModel(Model):
@@ -15,7 +15,7 @@ class SampledRealTimePlantModel(Model):
                  G_heater,
                  initial_box_temperature=21,
                  initial_heat_temperature=21,
-                 comm=Rabbitmq(ip="localhost"), temperature_difference=6):
+                 comm=None, temperature_difference=6):
         super().__init__()
 
         self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,
@@ -75,7 +75,8 @@ def start_incubator_realtime_mockup(ok_queue=None):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
-    model = SampledRealTimePlantModel(**(config["digital_twin"]["models"]["plant"]["param4"]))
+    model = SampledRealTimePlantModel(**(config["digital_twin"]["models"]["plant"]["param4"]),
+                                      comm=Rabbitmq(**(config["rabbitmq"])))
 
     solver = RTModelSolver()
     if ok_queue is not None:

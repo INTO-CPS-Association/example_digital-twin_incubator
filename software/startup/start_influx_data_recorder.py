@@ -1,4 +1,4 @@
-from incubator.config import load_config, config_logger
+from incubator.config.config import load_config, config_logger
 from digital_twin.data_access.dbmanager.incubator_state_influx_recorder import IncubatorDataRecorderInflux
 
 

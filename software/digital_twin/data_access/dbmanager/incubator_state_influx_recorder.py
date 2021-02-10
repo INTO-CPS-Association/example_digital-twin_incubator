@@ -6,8 +6,8 @@ import logging
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from communication.server.rabbitmq import Rabbitmq
-from communication.shared.protocol import ROUTING_KEY_RECORDER
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.communication.shared.protocol import ROUTING_KEY_RECORDER
 
 
 class IncubatorDataRecorderInflux():

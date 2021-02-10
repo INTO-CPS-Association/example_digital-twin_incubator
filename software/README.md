@@ -28,16 +28,12 @@ When cloning this repo, don't forget to initialize the ![submodules](https://git
    2. Linux/Mac: `source venv/bin/activate`
 4. Install dependencies:
    1. `pip install -r ./requirements.txt`.
-5. Set the environment variable `CLIMODE` to `ON`, so that plotting is suppressed.
-   1. Windows Powershell: `$Env:CLIMODE = "ON"`
-6. Use Unittest to run the tests.
-   1. Example: `python -m unittest discover tests -p '*.py'`
+
 
 ## After first time setup
 
-Follow the above instructions, skipping the installation of the dependencies.
-See script [./run_tests.ps1](./run_tests.ps1) for more details.
-
+See script [./run_tests.ps1](./run_tests.ps1) for more details on which environment variables to set.
+Configure your IDE accordingly.
 
 # Starting the DT framework
 

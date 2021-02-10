@@ -1,6 +1,6 @@
 import pandas
 
-from communication.shared.protocol import from_s_to_ns
+from incubator.communication.shared.protocol import from_s_to_ns
 
 
 def convert_to_results_db(results_dict, params, measurement, tags):

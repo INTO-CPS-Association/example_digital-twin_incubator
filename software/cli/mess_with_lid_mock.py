@@ -1,5 +1,5 @@
-from communication.server.rabbitmq import Rabbitmq
-from incubator.config import config_logger, load_config
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.config.config import config_logger, load_config
 from mock_plant.mock_connection import MOCK_G_BOX
 
 

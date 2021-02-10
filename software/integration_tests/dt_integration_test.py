@@ -6,7 +6,7 @@ from influxdb_client import InfluxDBClient
 
 from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
 from communication.shared.protocol import from_s_to_ns
-from incubator.config import config_logger, load_config
+from incubator.config.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from startup.start_calibrator import start_calibrator
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter

@@ -2,7 +2,7 @@ import os
 import shutil
 import zipfile
 
-from digital_twin.fsutils import resource_file_path
+from incubator.config.config import resource_file_path
 
 
 def setup_db(influxdb_docker_dir="../../digital_twin/data_access/influxdbserver"):

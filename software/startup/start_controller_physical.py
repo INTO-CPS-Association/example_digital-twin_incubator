@@ -1,4 +1,4 @@
-from incubator.config import config_logger, load_config
+from incubator.config.config import config_logger, load_config
 from incubator.physical_twin.controller_physical import ControllerPhysical
 
 

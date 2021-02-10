@@ -1,4 +1,4 @@
-from digital_twin.fsutils import resource_file_path
+from incubator.config.config import resource_file_path
 from startup.utils import docker_service_starter as ds
 import requests
 
