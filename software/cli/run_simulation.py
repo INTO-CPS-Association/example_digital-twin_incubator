@@ -3,8 +3,9 @@ from datetime import datetime
 
 import pytz
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from incubator.communication.server.rpc_client import RPCClient
-from incubator.communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PTSIMULATOR4
+from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from startup.utils.logging_config import config_logging
 

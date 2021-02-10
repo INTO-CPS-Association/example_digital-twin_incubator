@@ -5,8 +5,9 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 
 import numpy as np
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from incubator.communication.server.rpc_client import RPCClient
-from incubator.communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PTSIMULATOR4
+from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.config.config import config_logger, load_config
 from incubator.models.plant_models.room_temperature_model import room_temperature
 

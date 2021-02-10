@@ -3,8 +3,9 @@ import time
 
 import numpy as np
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_KF_PLANT_STATE
 from incubator.communication.server.rabbitmq import Rabbitmq
-from incubator.communication.shared.protocol import ROUTING_KEY_STATE, ROUTING_KEY_KF_PLANT_STATE
+from incubator.communication.shared.protocol import ROUTING_KEY_STATE
 from incubator.monitoring.kalman_filter_4p import construct_filter
 
 

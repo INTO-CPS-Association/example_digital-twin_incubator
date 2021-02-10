@@ -1,7 +1,7 @@
 import logging
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from incubator.communication.server.rpc_client import RPCClient
-from incubator.communication.shared.protocol import ROUTING_KEY_PTSIMULATOR4
 from startup.utils.logging_config import config_logging
 
 if __name__ == '__main__':

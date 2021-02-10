@@ -4,8 +4,8 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
-from incubator.communication.shared.protocol import ROUTING_KEY_PLANTSIMULATOR4
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from incubator.models.plant_models.model_functions import create_lookup_table

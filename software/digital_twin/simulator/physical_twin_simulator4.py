@@ -5,10 +5,11 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.communication.server.rpc_server import RPCServer
-from incubator.communication.shared.protocol import from_ns_to_s, ROUTING_KEY_PTSIMULATOR4
+from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from incubator.models.plant_models.model_functions import create_lookup_table
 

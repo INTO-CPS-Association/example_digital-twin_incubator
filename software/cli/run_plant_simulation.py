@@ -4,11 +4,12 @@ from datetime import datetime
 import pytz
 from influxdb_client import InfluxDBClient
 
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTSIMULATOR4
 from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_URL, INFLUXDB_TOKEN, INFLUXDB_BUCKET, \
     INFLUXDB_ORG
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.communication.server.rpc_client import RPCClient
-from incubator.communication.shared.protocol import from_s_to_ns, ROUTING_KEY_PLANTSIMULATOR4
+from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
 from startup.utils.logging_config import config_logging
