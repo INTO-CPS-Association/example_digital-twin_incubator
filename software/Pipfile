@@ -1,0 +1,52 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+certifi = "==2020.12.5"
+chardet = "==4.0.0"
+colorzero = "==1.1"
+control = "==0.8.3"
+docker = "==4.4.1"
+filterpy = "==1.4.5"
+gpiozero = "==1.5.1"
+idna = "==2.10"
+influxdb-client = "==1.13.0"
+kiwisolver = "==1.3.1"
+matplotlib = "==3.3.3"
+mpmath = "==1.1.0"
+numpy = "==1.19.3"
+oomodelling = "==0.0.8"
+pandas = "==1.1.5"
+pika = "==1.1.0"
+plotly = "==4.14.1"
+pyhocon = "==0.3.57"
+pyparsing = "==2.4.7"
+python-dateutil = "==2.8.1"
+pytz = "==2020.4"
+requests = "==2.25.1"
+retrying = "==1.3.3"
+scipy = "==1.5.4"
+six = "==1.15.0"
+sympy = "==1.7"
+urllib3 = "==1.26.2"
+websocket-client = "==0.57.0"
+Cycler = "==0.10.0"
+Pillow = "==8.0.1"
+Rx = "==3.1.1"
+incubator = {editable = true, path = "./incubator"}
+testcontainers = "*"
+dtwp = {editable = true, path = "./external/dtwp"}
+testcontainer-python-rabbitmq = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+test="python -m unittest discover -v -s tests"
+build_update="python -m pip install --upgrade build"
+build="python -m build"
+# pipenv install --editable incubator
