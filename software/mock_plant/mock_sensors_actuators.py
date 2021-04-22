@@ -1,4 +1,5 @@
-from incubator.communication.server.rabbitmq import Rabbitmq
+from software.src.shared.communication.rabbitmq import Rabbitmq
+
 from mock_plant.mock_connection import MOCK_HEATER_ON
 
 

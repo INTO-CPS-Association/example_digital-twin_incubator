@@ -1,11 +1,7 @@
 from abc import abstractmethod
 
-import paramiko
-import scp
 import threading
 from pathlib import Path
-import socket
-from contextlib import contextmanager, closing
 import os, sys
 
 class Experiment:
