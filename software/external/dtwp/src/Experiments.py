@@ -6,7 +6,7 @@ import threading
 from pathlib import Path
 import socket
 from contextlib import contextmanager, closing
-
+import os, sys
 
 class Experiment:
 
@@ -48,6 +48,13 @@ class Experiment:
     def get_working_dir(self) -> Path:
         """Get a working director for this experiment"""
         path = Path("work") / type(self).__name__
+        if not path.exists():
+            path.mkdir(parents=True)
+        return path
+
+    def get_result_dir(self) -> Path:
+        """Get a working director for this experiment"""
+        path = Path(os.path.abspath(sys.modules[self.__module__].__file__)).parent/"results"
         if not path.exists():
             path.mkdir(parents=True)
         return path
