@@ -2,6 +2,7 @@ import logging
 import threading
 import time
 
+import pika
 from experiments.config.config import config_logger
 from pyhocon import ConfigFactory
 from software.src.shared.protocol.protocol import ROUTING_KEY_HEATER
@@ -38,10 +39,17 @@ class LowLevelDriverMockExperiment(ExperimentWithServices):
         rmq_config = ConfigFactory.parse_string(self.rabbitmq_service.get_rabbitmq_conf())
 
         def startConsuming():
-            with Rabbitmq(**rmq_config['rabbitmq']) as con:
-                self.consumeConnection = con
-                con.subscribe(MOCK_HEATER_ON, on_message_callback=self.read_mock_heater_on)
-                con.start_consuming()
+            try:
+                with Rabbitmq(**rmq_config['rabbitmq']) as con:
+                    self.consumeConnection = con
+                    con.subscribe(MOCK_HEATER_ON, on_message_callback=self.read_mock_heater_on)
+                    con.start_consuming()
+            except pika.exceptions.StreamLostError:
+                pass
+            except pika.exceptions.ChannelWrongStateError:
+                pass
+
+
 
         t = threading.Thread(target=startConsuming, daemon=True)
         with Rabbitmq(**rmq_config['rabbitmq']) as con:
@@ -52,7 +60,7 @@ class LowLevelDriverMockExperiment(ExperimentWithServices):
                 con.send_message(ROUTING_KEY_HEATER, {"heater": heater_on})
                 heater_on = not heater_on
                 time.sleep(2)
-        self.consumeConnection.stop_consuming()
+
 
     def describe(self):
         return '''Experiment starts the rabbitmq_service and makes it available to the low_level_driver_mock.
