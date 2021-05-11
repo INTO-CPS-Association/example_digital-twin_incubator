@@ -32,7 +32,7 @@ class KalmanFilterPlantServer():
         self.rabbitmq.start_consuming()
 
     def kalman_step(self, ch, method, properties, body_json):
-        in_heater = 1.0 if body_json["fields"]["heater_on"] else 0.0
+        in_heater = 1.0 if (body_json["fields"]["heater_on"].lower() == 'true') else 0.0
         in_room_T = body_json["fields"]["t1"]
 
         in_T = body_json["fields"]["average_temperature"]
