@@ -4,13 +4,12 @@ This folder contains the code that makes the digital twin possible.
 
 ```
 ├───cli -- Contains code to communicate with the running DT components.
-├───communication -- Contains code to establish the communication layer between physical twin and digital twin.
 ├───digital_twin -- Code that forms the digital twin.
 ├───docs -- Documentation.
+├───incubator -- Code that implements the physical twin
 ├───integration_tests -- Code to run tests that involve settup and running scenarios with the DT components.
 ├───mock_plant -- Code setting up the local virtual incubator plant.
 ├───old_software -- Old code that is still being organized
-├───incubator -- Code that implements the physical twin
 └───startup -- Code that allows starting and stopping the DT components.
 ```
 
@@ -26,7 +25,8 @@ When cloning this repo, don't forget to initialize the ![submodules](https://git
 3. Optional: activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 
    1. Windows Powershell:`.\venv\Scripts\Activate.ps1` 
    2. Linux/Mac: `source venv/bin/activate`
-4. Install dependencies:
+4. Recommended: install pip wheel: `pip install wheel`
+5. Install dependencies:
    1. `pip install -r ./requirements.txt`.
 
 
