@@ -9,7 +9,7 @@ from incubator.communication.shared.protocol import ROUTING_KEY_STATE
 from incubator.monitoring.kalman_filter_4p import construct_filter
 
 
-class KalmanFilterPlantServer():
+class KalmanFilterPlantServer:
 
     def __init__(self, rabbit_config):
         self._l = logging.getLogger("KalmanFilterPlantServer")

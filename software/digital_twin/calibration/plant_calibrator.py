@@ -4,7 +4,7 @@ from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from scipy.optimize import least_squares
 
-from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 import numpy as np
 
@@ -25,7 +25,7 @@ class PlantCalibrator4Params(RPCServer):
         self._influxdb_org = influxdb_config["org"]
         self.nevals = 0
 
-    def setup(self):
+    def setup(self, routing_key=ROUTING_KEY_PLANTCALIBRATOR4, queue_name=ROUTING_KEY_PLANTCALIBRATOR4):
         super(PlantCalibrator4Params, self).setup(ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTCALIBRATOR4)
 
     def run_calibration(self, calibration_id, start_date_ns, end_date_ns, Nevals, commit, record_progress,
@@ -40,8 +40,6 @@ class PlantCalibrator4Params(RPCServer):
                             "heater_on")
         average_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
                                          "low_level_driver", "average_temperature")
-
-        self._l.debug("Accessing database to get the most recent parameters.")
 
         self._l.debug("Ensuring that we have a consistent set of samples.")
         if not (len(room_temp_data) == len(heater_data) == len(average_temperature_data)):
