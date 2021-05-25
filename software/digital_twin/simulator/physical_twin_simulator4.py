@@ -7,13 +7,11 @@ from oomodelling import ModelSolver
 
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
-from digital_twin.data_access.dbmanager.incubator_data_query import query
+from digital_twin.data_access.dbmanager.incubator_data_query import query, query_convert_aligned_data
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.models.physical_twin_models.system_model4 import SystemModel4Parameters
 from incubator.models.plant_models.model_functions import create_lookup_table
-
-TIMESTAMP_TOLERANCE = 1e-6
 
 
 class PhysicalTwinSimulator4Params(RPCServer):
@@ -45,36 +43,16 @@ class PhysicalTwinSimulator4Params(RPCServer):
                        reply_fun):
         # Access database to get the data needed.
         query_api = self.client.query_api()
-        room_temp_results = query(query_api, self._influxdb_bucket, start_date, end_date, "low_level_driver", "t1")
 
-        # Check if there are results
-        if room_temp_results.empty:
-            error_msg = f"No room temperature data exists in the period specified " \
-                        f"by start_date={start_date} and end_date={end_date}."
-            self._l.warning(error_msg)
-            return {"error": error_msg}
-
-        # convert start and end dates to seconds
-        # This is needed because the simulation runs in seconds.
-        start_date_s = from_ns_to_s(start_date)
-        end_date_s = from_ns_to_s(end_date)
-
-        # Convert results into format that simulation model can take
-        time_seconds = room_temp_results.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy()
-        room_temperature = room_temp_results["_value"].to_numpy()
-
-        # The following is true because of the query we made at the db
-        # The tolerance factor is because of numerical rounding issues.
-        assert time_seconds[0]+TIMESTAMP_TOLERANCE >= start_date_s and \
-               time_seconds[-1] <= end_date_s+TIMESTAMP_TOLERANCE, \
-            f"Query between dates {start_date_s} and {end_date_s} produced incoherent timestamps from the db. " \
-            f"The initial timestamp found is {time_seconds[0]} and final timestamp is {time_seconds[-1]}. " \
-            f"The corresponding differences (which should be positive) are {time_seconds[0] - start_date_s} and {end_date_s-time_seconds[-1]}."
+        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date, {
+            "low_level_driver": ["t1"]
+        })
 
         # Ensure that the start_date is in the lookup table.
         # We need to do this because the data in the database may not exist at exactly the start date.
         # So we need to interpolate it from the data that exists.
-        time_seconds = np.insert(time_seconds, 0, start_date_s)
+        time_seconds = np.insert(time_seconds, 0, from_ns_to_s(start_date))
+        room_temperature = results["low_level_driver"]["t1"]
         room_temperature = np.insert(room_temperature, 0, room_temperature[0])
         in_room_temperature_table = create_lookup_table(time_seconds, room_temperature)
 
@@ -90,7 +68,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
 
         # Start simulation
-        ModelSolver().simulate(model, start_date_s, end_date_s, controller_comm_step)
+        ModelSolver().simulate(model, time_seconds[0], time_seconds[-1], controller_comm_step)
 
         # Convert results into format that is closer to the data in the database
         data_convert = {

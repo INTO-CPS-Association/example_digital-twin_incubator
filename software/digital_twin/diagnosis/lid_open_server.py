@@ -6,6 +6,7 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_LIDOPEN
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.server.rpc_server import RPCServer
+from incubator.models.plant_models.seven_parameters_model.seven_parameter_model import SevenParameterIncubatorPlant
 
 
 class LidOpenServer(RPCServer):
@@ -35,26 +36,27 @@ class LidOpenServer(RPCServer):
     def setup(self, routing_key=ROUTING_KEY_LIDOPEN, queue_name=ROUTING_KEY_LIDOPEN):
         super().setup(ROUTING_KEY_LIDOPEN, ROUTING_KEY_LIDOPEN)
 
-    def run_diagnosis(self, diagnosis_id, start_date_ns, end_date_ns, Nevals, rtol, atol, commit, reply_fun):
+    def run_diagnosis(self, diagnosis_id, start_date_ns, end_date_ns, model_params, Nevals, rtol, atol, commit, reply_fun):
         self._l.debug("Accessing database to get the data needed.")
 
         query_api = self.client.query_api()
+
         room_temp_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
         heater_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver",
                             "heater_on")
         average_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
                                          "low_level_driver", "average_temperature")
 
-        eater_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "kalman_filter_plant", "T_heater")
+        heater_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "kalman_filter_plant", "T_heater")
 
         self._l.debug("Ensuring that we have a consistent set of samples.")
-        if not (len(room_temp_data) == len(heater_data) == len(average_temperature_data) == len(eater_temperature_data)):
+        if not (len(room_temp_data) == len(heater_data) == len(average_temperature_data) == len(heater_temperature_data)):
             error_msg = f"Inconsistent number of samples found for " \
                         f"start_date_ns={start_date_ns} and end_date_ns={end_date_ns}." \
                         f"len(room_temp_data)={len(room_temp_data)}" \
                         f"len(heater_data)={len(heater_data)}" \
                         f"len(average_temperature)={len(average_temperature_data)}" \
-                        f"len(eater_temperature_data)={len(eater_temperature_data)}"
+                        f"len(heater_temperature_data)={len(heater_temperature_data)}"
             self._l.warning(error_msg)
             return {"error": error_msg}
 
@@ -65,4 +67,12 @@ class LidOpenServer(RPCServer):
                         f"Found only {len(room_temp_data)} samples."
             self._l.warning(error_msg)
             return {"error": error_msg}
+
+        self._l.debug("Sanitizing and converting data into lookup tables.")
+        time_seconds = room_temp_data.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy()
+
+
+
+
+        model = SevenParameterIncubatorPlant(**model_params)
 

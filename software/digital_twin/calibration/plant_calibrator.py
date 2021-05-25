@@ -5,7 +5,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from scipy.optimize import least_squares
 
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTSIMULATOR4
-from digital_twin.data_access.dbmanager.incubator_data_query import query
+from digital_twin.data_access.dbmanager.incubator_data_query import query, query_convert_aligned_data
 import numpy as np
 
 from incubator.communication.server.rpc_client import RPCClient
@@ -35,34 +35,20 @@ class PlantCalibrator4Params(RPCServer):
         # And that list does not follow the same order of the fields asked.
         # So this solution is less efficient, but more predictable.
         query_api = self.client.query_api()
-        room_temp_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
-        heater_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns, "low_level_driver",
-                            "heater_on")
-        average_temperature_data = query(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
-                                         "low_level_driver", "average_temperature")
 
-        self._l.debug("Ensuring that we have a consistent set of samples.")
-        if not (len(room_temp_data) == len(heater_data) == len(average_temperature_data)):
-            error_msg = f"Inconsistent number of samples found for " \
-                        f"start_date_ns={start_date_ns} and end_date_ns={end_date_ns}." \
-                        f"len(room_temp_data)={len(room_temp_data)}" \
-                        f"len(heater_data)={len(heater_data)}" \
-                        f"len(average_temperature)={len(average_temperature_data)}"
-            self._l.warning(error_msg)
-            return {"error": error_msg}
+        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
+                                                           {
+                                                               "low_level_driver": ["t1", "heater_on",
+                                                                                    "average_temperature"]
+                                                           })
 
-        self._l.debug("Checking if there are enough samples.")
-        if len(room_temp_data) < 1:
-            error_msg = f"Not enough physical twin data exists in the period specified " \
-                        f"by start_date_ns={start_date_ns} and end_date_ns={end_date_ns}. Found only {len(room_temp_data)} samples."
-            self._l.warning(error_msg)
-            return {"error": error_msg}
+        room_temp_data = results["low_level_driver"]["t1"]
+        heater_data = results["low_level_driver"]["heater_on"]
+        average_temperature = results["low_level_driver"]["average_temperature"]
 
         self._l.debug("Converting data to lists and time to seconds.")
-        time_seconds = room_temp_data.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy().tolist()
-        room_temperature = room_temp_data["_value"].to_numpy().tolist()
-        average_temperature = average_temperature_data["_value"].to_numpy()
-        heater_on = heater_data["_value"].to_numpy().tolist()
+        room_temperature = room_temp_data.tolist()
+        heater_on = heater_data.tolist()
 
         with RPCClient(ip=self.ip) as rpc_client:
             self.nevals = 0
