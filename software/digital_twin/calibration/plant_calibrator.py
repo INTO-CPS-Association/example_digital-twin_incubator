@@ -19,6 +19,7 @@ class PlantCalibrator4Params(RPCServer):
 
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
+        self.rabbitmq_config = rabbitmq_config
         self._l = logging.getLogger("PhysicalTwinSimulator4Params")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
@@ -46,11 +47,12 @@ class PlantCalibrator4Params(RPCServer):
         heater_data = results["low_level_driver"]["heater_on"]
         average_temperature = results["low_level_driver"]["average_temperature"]
 
-        self._l.debug("Converting data to lists and time to seconds.")
+        self._l.debug("Converting data to lists.")
         room_temperature = room_temp_data.tolist()
         heater_on = heater_data.tolist()
+        time_seconds_list = list(time_seconds)
 
-        with RPCClient(ip=self.ip) as rpc_client:
+        with RPCClient(**self.rabbitmq_config) as rpc_client:
             self.nevals = 0
 
             def residual(params):
@@ -65,7 +67,7 @@ class PlantCalibrator4Params(RPCServer):
                                                            "calibration": calibration_id,
                                                            "attempt": self.nevals
                                                        },
-                                                       "timespan_seconds": time_seconds,
+                                                       "timespan_seconds": time_seconds_list,
                                                        "C_air": C_air,
                                                        "G_box": G_box,
                                                        "C_heater": C_heater,

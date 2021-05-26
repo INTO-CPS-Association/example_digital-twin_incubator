@@ -3,13 +3,16 @@ import time
 import unittest
 from datetime import timedelta, datetime
 
+import numpy as np
 from influxdb_client import InfluxDBClient
 
 from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
 from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import from_s_to_ns
+from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4
 from incubator.config.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_data_query import query
+from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from startup.start_calibrator import start_calibrator
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter
 from startup.start_plant_simulator import start_plant_simulator
@@ -31,7 +34,7 @@ class StartDTWithDummyData(CLIModeTest):
         the first test can produce dummy data, which the following tests use.
     """
 
-    def test(self):
+    def test_1_basic_components(self):
         query_api = self.influxdb.query_api()
 
         start_date_ns = from_s_to_ns(self.start_date.timestamp())
@@ -39,7 +42,8 @@ class StartDTWithDummyData(CLIModeTest):
 
         room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
 
-        average_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
+        average_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver",
+                                     "average_temperature")
 
         self.assertTrue(not room_temp_results.empty)
         self.assertTrue(not average_temp_results.empty)
@@ -54,12 +58,59 @@ class StartDTWithDummyData(CLIModeTest):
 
         self.assertTrue(not heater_results.empty, "Controller did not produce results.")
 
-        heater_temperature_results = query(query_api, self.bucket, start_date_ns, time.time_ns(), "kalman_filter_plant", "T_heater")
+        heater_temperature_results = query(query_api, self.bucket, start_date_ns, time.time_ns(), "kalman_filter_plant",
+                                           "T_heater")
 
         self.assertTrue(not heater_temperature_results.empty, "Kalman Filter did not produce results.")
 
+    def test_2_calibration(self):
         self.l.info(f"Running calibration")
-        
+
+        params = four_param_model_params
+
+        C_air = params[0]
+        G_box = params[1] + 2.0
+        C_heater = params[2]
+        G_heater = params[3]
+
+        query_api = self.influxdb.query_api()
+
+        start_date_ns = from_s_to_ns(self.start_date.timestamp())
+        end_date_ns = from_s_to_ns(self.end_date.timestamp())
+
+        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+
+        initial_heat_temperature = room_temp_results.iloc[0]["_value"]
+
+        # Sharpen to start and end dates to the available data, to avoid the calibrator server complaining.
+        # Using about 25% of the data should be enough.
+        data_ratio = 0.25
+        timespan = room_temp_results["_time"]
+        start_date_ns = from_s_to_ns(timespan.iloc[-(int(data_ratio*timespan.size))].timestamp())
+        end_date_ns = from_s_to_ns(timespan.iloc[-1].timestamp())
+        self.l.info(f"Calibration interval: from {start_date_ns}ns to {end_date_ns}ns.")
+
+        reply = self.client.invoke_method(ROUTING_KEY_PLANTCALIBRATOR4, "run_calibration",
+                                          {
+                                              "calibration_id": "integration_test_calibration",
+                                              "start_date_ns": start_date_ns,
+                                              "end_date_ns": end_date_ns,
+                                              "Nevals": 10,
+                                              "commit": False,
+                                              "record_progress": True,
+                                              "initial_heat_temperature": initial_heat_temperature,
+                                              "initial_guess": {
+                                                  "C_air": C_air,
+                                                  "G_box": G_box,
+                                                  "C_heater": C_heater,
+                                                  "G_heater": G_heater
+                                              }
+                                          })
+        self.assertTrue("C_air" in reply)
+        self.assertTrue("G_box" in reply)
+        self.assertTrue("C_heater" in reply)
+        self.assertTrue("G_heater" in reply)
+
 
     @classmethod
     def setUpClass(cls):
@@ -83,8 +134,10 @@ class StartDTWithDummyData(CLIModeTest):
 
         cls.l = logging.getLogger("DTIntegrationTest")
 
-        # Time range for the fake data for 10h ago
-        cls.end_date = datetime.now()
+        # Time range for the fake data some past.
+        # The reason we pick the past and not some interval until the present is because the data for the present is already being generated.
+        # Doing so would add confusion to the test scenarios.
+        cls.end_date = datetime.now() - timedelta(hours=1)
         cls.start_date = cls.end_date - timedelta(hours=10)
 
         cls.l.info("Connecting to influxdb.")
@@ -93,7 +146,8 @@ class StartDTWithDummyData(CLIModeTest):
         cls.org = cls.config["influxdb"]["org"]
 
         cls.l.info(f"Generating room temperature data between dates {cls.start_date} and {cls.end_date}.")
-        generate_room_data(cls.influxdb, cls.bucket, cls.org, cls.start_date, cls.end_date)
+        points = generate_room_data(cls.influxdb, cls.bucket, cls.org, cls.start_date, cls.end_date)
+        cls.l.info(f"Generated {len(points)} dummy samples of room temperature data.")
 
         cls.l.info("Connecting to rabbitmq.")
         cls.client = RPCClient(**(cls.config["rabbitmq"]))

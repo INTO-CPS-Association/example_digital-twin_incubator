@@ -5,4 +5,4 @@ $Env:CLIMODE = "ON"
 $Env:PYTHONPATH = "incubator"
 
 # Run unittest in discovery mode for the integration_tests folder
-& python -m unittest discover -v integration_tests -p "*.py"
+& python -m unittest discover --failfast -v integration_tests -p "*.py"

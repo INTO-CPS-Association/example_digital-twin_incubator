@@ -10,6 +10,7 @@ from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.config.config import config_logger, load_config
 from incubator.models.plant_models.room_temperature_model import room_temperature
+from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 
 
 def generate_room_data(influxdb, bucket, org, start_date, end_date):
@@ -20,7 +21,7 @@ def generate_room_data(influxdb, bucket, org, start_date, end_date):
     write_api = influxdb.write_api(write_options=SYNCHRONOUS)
 
     # Construct points
-    timerange_s = np.arange(start_date_s, end_date_s, 3.0)
+    timerange_s = np.arange(start_date_s, end_date_s+CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL)
 
     def point(t):
         t_ns = from_s_to_ns(t)
@@ -40,6 +41,9 @@ def generate_room_data(influxdb, bucket, org, start_date, end_date):
 
     # Write them to DB
     write_api.write(bucket, org, points)
+
+    return points
+
 
 
 def generate_incubator_exec_data(rpc_client, config, start_date, end_date):
@@ -63,6 +67,7 @@ def generate_incubator_exec_data(rpc_client, config, start_date, end_date):
     reply = rpc_client.invoke_method(ROUTING_KEY_PTSIMULATOR4, "run_historical", params)
     if "error" in reply:
         print(reply)
+        raise ValueError(reply)
 
 
 def generate_dummy_data():

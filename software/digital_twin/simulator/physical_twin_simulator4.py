@@ -48,13 +48,14 @@ class PhysicalTwinSimulator4Params(RPCServer):
             "low_level_driver": ["t1"]
         })
 
-        # Ensure that the start_date is in the lookup table.
-        # We need to do this because the data in the database may not exist at exactly the start date.
+        # Ensure that the start_date and end_date are in the lookup table.
+        # We need to do this because the data in the database may not exist at exactly these dates.
         # So we need to interpolate it from the data that exists.
-        time_seconds = np.insert(time_seconds, 0, from_ns_to_s(start_date))
         room_temperature = results["low_level_driver"]["t1"]
-        room_temperature = np.insert(room_temperature, 0, room_temperature[0])
-        in_room_temperature_table = create_lookup_table(time_seconds, room_temperature)
+        room_temperature = np.append(np.insert(room_temperature, 0, room_temperature[0]), room_temperature[-1])
+
+        time_table = np.append(np.insert(time_seconds, 0, from_ns_to_s(start_date)-controller_comm_step), from_ns_to_s(end_date)+controller_comm_step)
+        in_room_temperature_table = create_lookup_table(time_table, room_temperature)
 
         model = SystemModel4Parameters(C_air,
                                        G_box,
@@ -67,12 +68,25 @@ class PhysicalTwinSimulator4Params(RPCServer):
         # Wire the lookup table to the model
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
 
+        self._l.debug(f"controller_comm_step={controller_comm_step}")
+
         # Start simulation
-        ModelSolver().simulate(model, time_seconds[0], time_seconds[-1], controller_comm_step)
+        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step)
+
+        times_align = len(model.signals["time"]) == len(time_seconds)
+        if not times_align:
+            msg = f"The resulting simulation signals and the time range of the in_room_temperature should be aligned. " \
+                  f"Instead, got {len(model.signals['time'])} samples from simulation and {len(time_seconds)} input samples. " \
+                  f"This could be caused by bad choice of controller communication step (currently at {controller_comm_step})." \
+                  f"End time points of simulation are ({model.signals['time'][0]}, {model.signals['time'][-1]}). " \
+                    f"End time points of db are ({time_seconds[0]}, {time_seconds[-1]})"
+            self._l.error(msg)
+            reply_fun({"error": msg})
+            return
 
         # Convert results into format that is closer to the data in the database
         data_convert = {
-            "time": model.signals["time"],
+            "time": time_seconds,
             "average_temperature": model.plant.signals['T'],
             "room_temperature": model.plant.signals['in_room_temperature'],
             "heater_temperature": model.plant.signals['T_heater'],

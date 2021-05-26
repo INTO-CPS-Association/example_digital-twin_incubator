@@ -5,11 +5,10 @@ import pandas
 
 from communication.shared.protocol import from_ns_to_s
 
-_l = logging.getLogger("IncubatorDataQuery")
-
-
 
 def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):
+    _l = logging.getLogger("IncubatorDataQuery")
+
     _l.debug("Query: ")
     query_to_be = f"""
         from(bucket: "{bucket}")
@@ -29,9 +28,13 @@ def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):
 
 
 def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, measurement_fields):
+    _l = logging.getLogger("IncubatorDataQuery")
+
     _l.debug("Querying given measurement fields.")
     _l.debug(measurement_fields)
     first_measurement = None
+    first_measurement_name = None
+    first_measurement_field = None
     raw_data = {}
     for measurement in measurement_fields:
         raw_data[measurement] = {}
@@ -39,22 +42,31 @@ def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, me
             raw_data[measurement][field] = query(query_api, bucket, start_date_ns, end_date_ns, measurement, field)
             assert not raw_data[measurement][field].empty, f"Query returned no data: ."
             if first_measurement is None:
+                first_measurement_name = measurement
+                first_measurement_field = field
                 first_measurement = raw_data[measurement][field]
 
     assert first_measurement is not None, "At least one measurement and field must be provided."
 
-    TIMESTAMP_TOLERANCE = 1e-6
+    # I've observed from experience that there are small numerical errors in the timestamps stored by influxdb.
+    # We could choose this value as a function of the system sampling size. That would be at least 3 seconds.
+    # Right now a precision of ms seems to be a good choice.
+    TIMESTAMP_TOLERANCE = 1e-3
 
-    _l.debug("Ensuring retrieve data is consistent.")
+    _l.debug("Ensuring retrieved data is consistent.")
     ground_truth_t = first_measurement["_time"]
     for measurement in measurement_fields:
         for field in measurement_fields[measurement]:
             t = raw_data[measurement][field]["_time"]
             assert len(t) == len(ground_truth_t)
             for i in range(len(t)):
-                assert abs((ground_truth_t.iloc[i] - t.iloc[i]).total_seconds()) < TIMESTAMP_TOLERANCE, \
-                    f"Found at least two timestamps that are not aligned by less than {TIMESTAMP_TOLERANCE}: " \
-                    f"{ground_truth_t.iloc[i]} and {t.iloc[i]}."
+                aligned = abs((ground_truth_t.iloc[i] - t.iloc[i]).total_seconds()) < TIMESTAMP_TOLERANCE
+                if not aligned:
+                    msg = f"Found at least two timestamps that are not aligned by less than {TIMESTAMP_TOLERANCE}: " \
+                          f"{first_measurement_name}.{first_measurement_field}({ground_truth_t.iloc[i]}) " \
+                          f"is not aligned with {measurement}.{field}({t.iloc[i]})."
+                    _l.error(msg)
+                    raise ValueError(msg)
 
     _l.debug("Converting timestamps to seconds.")
     # convert start and end dates to seconds
@@ -82,4 +94,3 @@ def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, me
             result_data[measurement][field] = raw_data[measurement][field]["_value"].to_numpy()
 
     return time_seconds, result_data
-

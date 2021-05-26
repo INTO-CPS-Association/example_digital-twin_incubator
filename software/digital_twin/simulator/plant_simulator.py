@@ -1,5 +1,6 @@
 import logging
 
+import numpy as np
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
@@ -55,8 +56,10 @@ class PlantSimulator4Params(RPCServer):
             self._l.warning(error_msg)
             return {"error": error_msg}
 
-        room_temperature_fun = create_lookup_table(timespan_seconds, room_temperature)
-        heater_on_fun = create_lookup_table(timespan_seconds, heater_on)
+        timetable = np.array(timespan_seconds)
+
+        room_temperature_fun = create_lookup_table(timetable, np.array(room_temperature))
+        heater_on_fun = create_lookup_table(timetable, np.array(heater_on))
 
         self._l.debug("Wiring model.")
         model = FourParameterIncubatorPlant(initial_room_temperature=room_temperature[0],
@@ -74,7 +77,7 @@ class PlantSimulator4Params(RPCServer):
         self._l.debug(f"Simulating model from time {start_t} to {end_t} with a maximum step size of {max_step_size}, "
                       f"and a total of {len(timespan_seconds)} samples.")
         try:
-            sol = ModelSolver().simulate(model, start_t, end_t, max_step_size,
+            sol = ModelSolver().simulate(model, start_t, end_t + max_step_size, max_step_size,
                                          t_eval=timespan_seconds)
 
             self._l.debug(f"Converting solution to influxdb data format.")
@@ -91,7 +94,7 @@ class PlantSimulator4Params(RPCServer):
             T_solution = get_signal("T")
             T_heater_solution = get_signal("T_heater")
 
-            # TODO: There's no need to send everything back.
+            # Maybe there's no need to send everything back.
             #  One could have a parameter that tells this component which data to send back via rabbitmq.
             #  At the same, this complicates the interface and I'm not certain this is a performance bottleneck.
             results = {
