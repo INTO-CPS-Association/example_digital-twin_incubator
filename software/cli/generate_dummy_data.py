@@ -12,16 +12,12 @@ from incubator.config.config import config_logger, load_config
 from incubator.models.plant_models.room_temperature_model import room_temperature
 
 
-def generate_room_data(influxdb_config, start_date, end_date):
+def generate_room_data(influxdb, bucket, org, start_date, end_date):
     start_date_s = start_date.timestamp()
     end_date_s = end_date.timestamp()
 
-    client = InfluxDBClient(**influxdb_config)
-    bucket = influxdb_config["bucket"]
-    org = influxdb_config["org"]
-
     # Get write-api
-    write_api = client.write_api(write_options=SYNCHRONOUS)
+    write_api = influxdb.write_api(write_options=SYNCHRONOUS)
 
     # Construct points
     timerange_s = np.arange(start_date_s, end_date_s, 3.0)
@@ -46,12 +42,9 @@ def generate_room_data(influxdb_config, start_date, end_date):
     write_api.write(bucket, org, points)
 
 
-def generate_incubator_exec_data(config, start_date, end_date):
+def generate_incubator_exec_data(rpc_client, config, start_date, end_date):
     start_date_ns = from_s_to_ns(start_date.timestamp())
     end_date_ns = from_s_to_ns(end_date.timestamp())
-
-    client = RPCClient(**(config["rabbitmq"]))
-    client.connect_to_server()
 
     params = {"start_date": start_date_ns,
               "end_date": end_date_ns,
@@ -67,7 +60,7 @@ def generate_incubator_exec_data(config, start_date, end_date):
     for k in params_ctrl:
         params[k] = params_ctrl[k]
 
-    reply = client.invoke_method(ROUTING_KEY_PTSIMULATOR4, "run_historical", params)
+    reply = rpc_client.invoke_method(ROUTING_KEY_PTSIMULATOR4, "run_historical", params)
     if "error" in reply:
         print(reply)
 
@@ -80,9 +73,16 @@ def generate_dummy_data():
     end_date = datetime.now()
     start_date = end_date - timedelta(hours=10)
 
-    generate_room_data(config["influxdb"], start_date, end_date)
+    influxdb = InfluxDBClient(**config["influxdb"])
+    bucket = config["influxdb"]["bucket"]
+    org = config["influxdb"]["org"]
 
-    generate_incubator_exec_data(config, start_date, end_date)
+    generate_room_data(influxdb, bucket, org, start_date, end_date)
+
+    client = RPCClient(**(config["rabbitmq"]))
+    client.connect_to_server()
+
+    generate_incubator_exec_data(client, config, start_date, end_date)
 
 
 if __name__ == '__main__':

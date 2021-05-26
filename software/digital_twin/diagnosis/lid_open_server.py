@@ -175,6 +175,6 @@ class LidOpenServer(RPCServer):
             return
 
         self._l.warning("None of the diagnosis methods worked.")
-        msg = {"Error": "None of the diagnosis methods worked."}
+        msg = {"error": "None of the diagnosis methods worked."}
         reply_fun(msg)
         return

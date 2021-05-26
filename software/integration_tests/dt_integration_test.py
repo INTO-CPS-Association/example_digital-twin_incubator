@@ -1,10 +1,12 @@
 import logging
+import time
 import unittest
 from datetime import timedelta, datetime
 
 from influxdb_client import InfluxDBClient
 
 from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
+from communication.server.rpc_client import RPCClient
 from communication.shared.protocol import from_s_to_ns
 from incubator.config.config import config_logger, load_config
 from digital_twin.data_access.dbmanager.incubator_data_query import query
@@ -29,26 +31,35 @@ class StartDTWithDummyData(CLIModeTest):
         the first test can produce dummy data, which the following tests use.
     """
 
-    def test_1_dummy_data(self):
-        dbclient = InfluxDBClient(**self.config["influxdb"])
-        query_api = dbclient.query_api()
-        bucket = self.config["influxdb"]["bucket"]
+    def test(self):
+        query_api = self.influxdb.query_api()
 
         start_date_ns = from_s_to_ns(self.start_date.timestamp())
         end_date_ns = from_s_to_ns(self.end_date.timestamp())
 
-        room_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
 
-        average_temp_results = query(query_api, bucket, start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
+        average_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "average_temperature")
 
         self.assertTrue(not room_temp_results.empty)
         self.assertTrue(not average_temp_results.empty)
         # Same number of samples
         self.assertEqual(room_temp_results.size, average_temp_results.size)
 
-    def test_2_basic_components(self):
-        # TODO: Check that controller physical is producing data.
-        pass
+        self.l.info(f"Waiting for components to produce data")
+
+        time.sleep(5)
+
+        heater_results = query(query_api, self.bucket, start_date_ns, time.time_ns(), "controller", "heater_on")
+
+        self.assertTrue(not heater_results.empty, "Controller did not produce results.")
+
+        heater_temperature_results = query(query_api, self.bucket, start_date_ns, time.time_ns(), "kalman_filter_plant", "T_heater")
+
+        self.assertTrue(not heater_temperature_results.empty, "Kalman Filter did not produce results.")
+
+        self.l.info(f"Running calibration")
+        
 
     @classmethod
     def setUpClass(cls):
@@ -76,12 +87,21 @@ class StartDTWithDummyData(CLIModeTest):
         cls.end_date = datetime.now()
         cls.start_date = cls.end_date - timedelta(hours=10)
 
+        cls.l.info("Connecting to influxdb.")
+        cls.influxdb = InfluxDBClient(**cls.config["influxdb"])
+        cls.bucket = cls.config["influxdb"]["bucket"]
+        cls.org = cls.config["influxdb"]["org"]
+
         cls.l.info(f"Generating room temperature data between dates {cls.start_date} and {cls.end_date}.")
-        generate_room_data(cls.config["influxdb"], cls.start_date, cls.end_date)
+        generate_room_data(cls.influxdb, cls.bucket, cls.org, cls.start_date, cls.end_date)
+
+        cls.l.info("Connecting to rabbitmq.")
+        cls.client = RPCClient(**(cls.config["rabbitmq"]))
+        cls.client.connect_to_server()
 
         cls.l.info(f"Generating incubator execution data as a what-if simulation "
                    f"between dates {cls.start_date} and {cls.end_date}.")
-        generate_incubator_exec_data(cls.config, cls.start_date, cls.end_date)
+        generate_incubator_exec_data(cls.client, cls.config, cls.start_date, cls.end_date)
 
     @classmethod
     def tearDownClass(cls):
@@ -89,8 +109,18 @@ class StartDTWithDummyData(CLIModeTest):
             cls.l.info(f"Killing {p.name}... ")
             p.kill()
             cls.l.info("OK")
+
+        cls.l.info(f"Closing connection to rabbitmq... ")
+        cls.client.close()
+        cls.client = None
+
+        cls.l.info(f"Closing connection to influxdb... ")
+        cls.influxdb.close()
+        cls.influxdb = None
+
         stop_docker_rabbitmq()
         stop_docker_influxdb()
+
 
 if __name__ == '__main__':
     unittest.main()
