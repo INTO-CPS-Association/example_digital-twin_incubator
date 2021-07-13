@@ -6,7 +6,7 @@ from time import sleep
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from config.config import config_logger, load_config
+from incubator.config.config import config_logger, load_config
 
 if __name__ == '__main__':
 
@@ -20,6 +20,8 @@ if __name__ == '__main__':
 
     n = 1
 
+    bucket = config["influxdb"]["bucket"]
+    org = config["influxdb"]["org"]
     while n>0:
         # Create a datapoint
         point = Point("test-data")\
