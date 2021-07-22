@@ -59,7 +59,7 @@ software/incubator$ git add . && git commit -m"commit the local changes made to 
 ```
 
 In order for the commit to be pushed on the remote, the main repo needs to point to this new commit.
-First, merge in any updates that have happened in the submodule remote.
+First, merge in any updates that have happened in the submodule remote. This will assume the master branch, for our case we need to append ```branch = main``` in the ```.gitmodules``` file first. Thereafter:
 ```bash
 software/incubator$ cd ..
 software/$ git submodule update --remote --merge
