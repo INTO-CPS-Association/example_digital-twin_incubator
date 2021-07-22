@@ -6,7 +6,11 @@ Before starting any service, make sure you have docker installed, and that you h
 1. [Rabbitmq README](../incubator/communication/installation/README.md)
 2. [Influxdb README](../digital_twin/data_access/influxdbserver/README.md)
 
-The script [start_all_services.py](./start_all_services.py) starts all services (including the mock of the incubator hardware)
+The script [start_all_services.py](./start_all_services.py) starts all services (including the mock of the incubator hardware). The library module can be run as a script by giving -m to the python command as follows:
+
+```bash
+software$ python -m startup.start_all_services
+```
 
 The service that mimics the real-time incubator is in [start_incubator_realtime_mockup.py](./start_incubator_realtime_mockup.py)
 
