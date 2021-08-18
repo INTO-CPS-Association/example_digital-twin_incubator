@@ -37,7 +37,7 @@ To start the influxdb server, run:
 
 More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
 
-# Management of rabbitmq
+# Management of influxdb
 
 1. Start influxdb server
 2. Open http://localhost:8086/ on your browser.

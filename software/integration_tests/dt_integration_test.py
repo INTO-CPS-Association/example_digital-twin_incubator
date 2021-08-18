@@ -157,6 +157,9 @@ class StartDTWithDummyData(CLIModeTest):
                    f"between dates {cls.start_date} and {cls.end_date}.")
         generate_incubator_exec_data(cls.client, cls.config, cls.start_date, cls.end_date)
 
+        cls.l.info(f"Waiting for data to be registered by influxdb")
+        time.sleep(5)
+
     @classmethod
     def tearDownClass(cls):
         for p in cls.processes:

@@ -35,9 +35,9 @@ def start(logFilePath, dockerComposeDirectoryPath,
         print("Running docker-compose command: " + " ".join(defaultDockerComposeCommand))
         proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, stdout=f)
         if proc.returncode == 0:
-            print("docker-compose terminated successfully.")
+            print("docker-compose successful.")
         else:
-            print("docker-composed failed to terminate:" + str(proc.returncode))
+            print("docker-composed failed:" + str(proc.returncode))
             return False
         service_ready = False
         attempts = maxAttempts
