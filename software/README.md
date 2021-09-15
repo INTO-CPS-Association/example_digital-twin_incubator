@@ -99,3 +99,13 @@ Make sure you can successfully start the DT framework and run the unit tests bef
 
 The script [run_integration_tests.ps1](./run_integration_tests.ps1) contains the instructions.
 
+# Running real experiments with Pi
+1. in order to use the gpiozero package, we need 
+   ```bash
+   export PYTHONPATH=/usr/lib/python3/dist-packages/:incubator
+   ```
+2. run the low_level_driver (under the software folder)
+   ```bash
+   python3 -m incubator.physical_twin.low_level_driver_server
+   ```
+3. Then you can run your controller or other service, before that, please configure the ip address correctly, currently it WLAN of the raspberry pi is 192.168.4.10 
