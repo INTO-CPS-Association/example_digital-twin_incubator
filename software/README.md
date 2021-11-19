@@ -16,6 +16,9 @@ This folder contains the code that makes the digital twin possible.
 # Cloning this repo
 
 When cloning this repo, don't forget to initialize the ![submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+```bash
+software $ git submodule update --init --recursive
+```
 
 # Running the Unit Tests
 
