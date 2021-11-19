@@ -44,7 +44,7 @@ def start(logFilePath, dockerComposeDirectoryPath,
         while service_ready is False and attempts > 0:
             r = testConnectionFunction()
             if r is True:
-                print("Service is ready");
+                print("Service is ready")
                 service_ready = True
             else:
                 attempts -= 1
