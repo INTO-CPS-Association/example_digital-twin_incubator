@@ -32,7 +32,7 @@ To start the influxdb server, run:
    [Activate virtual environment]
    python -m digital_twin.data_access.influxdbserver.test_server
    ```
-3. See the data produced by the script by logging in to http://localhost:8086/ and opening the test dashboard.
+3. See the data produced by the script by logging in to http://localhost:8086/ (user and password below) and opening the test dashboard.
 3. Stop and remove the server: `docker-compose down -v`
 
 More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
@@ -46,7 +46,7 @@ More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
 # Initial Setup of Database
 
 This has been done once, and there's no need to repeat it.
-But it is left here in case we loose the file [influxdb.zip](./influxdb.zip).
+But it is left here in case we lose the file [influxdb.zip](./influxdb.zip).
 
 1. Open http://localhost:8086/
 2. Press Get-Started
