@@ -27,7 +27,7 @@ software $ git submodule update --init --recursive
    2. Linux/Mac: `source venv/bin/activate`
 4. Recommended: install pip wheel: `pip install wheel`
 5. Install dependencies:
-   1. `pip install -r ./requirements.txt`.
+   1. `pip install -r ./requirements.txt`
 
 ## After first time setup: Starting the DT framework
 
