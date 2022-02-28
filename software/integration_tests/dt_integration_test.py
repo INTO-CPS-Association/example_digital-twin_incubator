@@ -47,7 +47,8 @@ class StartDTWithDummyData(CLIModeTest):
 
         self.assertTrue(not room_temp_results.empty)
         self.assertTrue(not average_temp_results.empty)
-        # Same number of samples
+        # Same number of samples.
+        # TODO: This test sometimes fails and we need to investivate what's wrong with it.
         self.assertEqual(room_temp_results.size, average_temp_results.size)
 
         self.l.info(f"Waiting for components to produce data")
