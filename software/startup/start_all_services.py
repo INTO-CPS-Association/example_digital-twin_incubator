@@ -1,4 +1,5 @@
 from startup.start_calibrator import start_calibrator
+from startup.start_controller_physical_open_loop import start_controller_physical_open_loop
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter
 from startup.start_plant_simulator import start_plant_simulator
 from startup.start_simulator import start_simulator
@@ -20,4 +21,7 @@ if __name__ == '__main__':
     start_as_daemon(start_plant_simulator)
     start_as_daemon(start_simulator)
     start_as_daemon(start_calibrator)
-    start_as_daemon(start_controller_physical)
+
+    # Choose one of the controllers below:
+    # start_as_daemon(start_controller_physical)
+    start_as_daemon(start_controller_physical_open_loop)
