@@ -71,7 +71,7 @@ class SampledRealTimePlantModel(Model):
         return super().discrete_step()
 
 
-def start_incubator_realtime_mockup(ok_queue=None):
+def start_incubator_realtime_mockup(ok_queue=None, step_size=3.0):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
@@ -81,7 +81,7 @@ def start_incubator_realtime_mockup(ok_queue=None):
     solver = RTModelSolver()
     if ok_queue is not None:
         ok_queue.put("OK")
-    solver.start_simulation(model, h=3.0)
+    solver.start_simulation(model, h=step_size)
 
 
 if __name__ == '__main__':
