@@ -74,7 +74,7 @@ def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, me
     start_date_s = from_ns_to_s(start_date_ns)
     end_date_s = from_ns_to_s(end_date_ns)
 
-    # Convert raw_data into format that simulation model can take
+    # Convert raw_data into format that simulation _model can take
     time_seconds = first_measurement.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy()
 
     _l.debug("Check that data start and end intervals are coherent.")

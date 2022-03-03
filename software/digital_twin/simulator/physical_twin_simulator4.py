@@ -65,7 +65,7 @@ class PhysicalTwinSimulator4Params(RPCServer):
                                        initial_box_temperature,
                                        initial_heat_temperature)
 
-        # Wire the lookup table to the model
+        # Wire the lookup table to the _model
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
 
         self._l.debug(f"controller_comm_step={controller_comm_step}")

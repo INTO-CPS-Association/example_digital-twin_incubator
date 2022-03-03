@@ -13,8 +13,9 @@ from incubator.models.plant_models.model_functions import create_lookup_table
 
 
 class PlantSimulator4Params:
-    def run_simulation(self, timespan_seconds, initial_box_temperature, initial_heat_temperature, room_temperature, heater_on, C_air,
-                       G_box, C_heater, G_heater):
+    def run_simulation(self, timespan_seconds, initial_box_temperature, initial_heat_temperature,
+                       room_temperature, heater_on,
+                       C_air, G_box, C_heater, G_heater):
 
         timetable = np.array(timespan_seconds)
 
@@ -35,7 +36,9 @@ class PlantSimulator4Params:
 
         sol = ModelSolver().simulate(model, start_t, end_t + max_step_size, max_step_size,
                                      t_eval=timespan_seconds)
-        return sol, model
+        # Extract state trajectories
+        T_and_T_heater = sol.y[1:]
+        return T_and_T_heater, model
 
 
 class PlantSimulator4ParamsServer(RPCServer):
