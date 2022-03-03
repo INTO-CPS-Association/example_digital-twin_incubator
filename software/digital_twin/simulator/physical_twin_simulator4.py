@@ -14,20 +14,20 @@ from incubator.models.physical_twin_models.system_model4 import SystemModel4Para
 from incubator.models.plant_models.model_functions import create_lookup_table
 
 
-class PhysicalTwinSimulator4Params(RPCServer):
+class PhysicalTwinSimulator4ParamsServer(RPCServer):
     """
     Can run simulations of the physical twin. This includes controller and plant.
     """
 
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
-        self._l = logging.getLogger("PhysicalTwinSimulator4Params")
+        self._l = logging.getLogger("PhysicalTwinSimulator4ParamsServer")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
         self._influxdb_org = influxdb_config["org"]
 
     def setup(self):
-        super(PhysicalTwinSimulator4Params, self).setup(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
+        super(PhysicalTwinSimulator4ParamsServer, self).setup(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
 
     def run_historical(self, start_date, end_date,
                        C_air,
