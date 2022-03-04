@@ -14,7 +14,7 @@ from incubator.communication.server.rpc_server import RPCServer
 
 class PlantCalibrator4Params(RPCServer):
     """
-    Can run calibrations of the plant simulator.
+    Can run calibrations of the plant pt_simulator.
     """
 
     def __init__(self, rabbitmq_config, influxdb_config):

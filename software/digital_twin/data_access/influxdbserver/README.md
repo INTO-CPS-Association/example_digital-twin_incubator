@@ -43,7 +43,7 @@ More information: https://docs.influxdata.com/influxdb/v2.0/get-started/
 2. Open http://localhost:8086/ on your browser.
 3. Alternative, open a terminal in the container: `docker exec -it influxdb-server /bin/bash`
 
-# Initial Setup of Database
+# Initial Setup of IDatabase
 
 This has been done once, and there's no need to repeat it.
 But it is left here in case we lose the file [influxdb.zip](./influxdb.zip).
