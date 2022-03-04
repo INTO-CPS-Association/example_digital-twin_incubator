@@ -44,7 +44,7 @@ class LidOpenServer(RPCServer):
     1. Reads the data from DB according to the specified window. This includes reading the initial state from the
         KalmanFilterPlantServer data.
     2. Compares the data to the simulation with no open lid, and collects residual.
-    3. Does the same for the _model with open lid, and collects residual.
+    3. Does the same for the _plant with open lid, and collects residual.
     4. If any of the above are below a given threshold, then it returns immediately with the appropriate reply.
     5. Otherwise, it must be the case that the lid was opened at some point.
     6. So it runs the optimization on the times at which it became open/closed.
