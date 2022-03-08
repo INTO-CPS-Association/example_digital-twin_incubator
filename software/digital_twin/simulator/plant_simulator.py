@@ -36,9 +36,7 @@ class PlantSimulator4Params:
 
         sol = ModelSolver().simulate(model, start_t, end_t + max_step_size, max_step_size,
                                      t_eval=timespan_seconds)
-        # Extract state trajectories
-        T_and_T_heater = sol.y[1:]
-        return T_and_T_heater, model
+        return sol, model
 
 
 class PlantSimulator4ParamsServer(RPCServer):

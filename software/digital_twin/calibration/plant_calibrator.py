@@ -20,7 +20,7 @@ class PlantCalibrator4Params(RPCServer):
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
         self.rabbitmq_config = rabbitmq_config
-        self._l = logging.getLogger("PhysicalTwinSimulator4ParamsServer")
+        self._l = logging.getLogger("PlantCalibrator4Params")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
         self._influxdb_org = influxdb_config["org"]

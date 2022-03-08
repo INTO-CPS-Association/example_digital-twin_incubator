@@ -44,7 +44,9 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         # Access database to get the data needed.
         query_api = self.client.query_api()
 
-        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date, {
+        # Adds one to end_data to ensure that points coinciding with final end data are also captured.
+        # See https://github.com/INTO-CPS-Association/example_digital-twin_incubator/issues/20
+        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date + 1, {
             "low_level_driver": ["t1"]
         })
 
