@@ -2,7 +2,7 @@ from digital_twin.self_adaptation.self_adaptation_manager_server import SelfAdap
 from incubator.config.config import config_logger, load_config
 
 
-def start_self_adaptation_simulator(ok_queue=None):
+def start_self_adaptation_manager(ok_queue=None):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
@@ -17,4 +17,4 @@ def start_self_adaptation_simulator(ok_queue=None):
 
 
 if __name__ == '__main__':
-    start_self_adaptation_simulator()
+    start_self_adaptation_manager()
