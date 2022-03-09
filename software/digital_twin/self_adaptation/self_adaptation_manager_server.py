@@ -6,7 +6,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 
 from calibration.calibrator import Calibrator
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_KF_PLANT_STATE, ROUTING_KEY_KF_UPDATE_PARAMETERS, \
-    ROUTING_KEY_SELF_ADAPTATION_STATE
+    ROUTING_KEY_SELF_ADAPTATION_STATE, ROUTING_KEY_SELF_ADAPTATION_TRIGGER
 from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data, query_most_recent_fields
 from digital_twin.simulator.plant_simulator import PlantSimulator4Params
 from incubator.communication.server.rabbitmq import Rabbitmq
@@ -31,7 +31,7 @@ class SelfAdaptationManagerServer:
         self._influxdb_org = influxdb_config["org"]
 
         # TODO: Move to config files.
-        anomaly_threshold = 0.3
+        anomaly_threshold = 0.2
         # Time spent before declaring that there is an self_adaptation_manager, after the first time the self_adaptation_manager occurred.
         ensure_anomaly_timer = 1
         # Time spent, after the self_adaptation_manager was declared as detected, just so enough data about the system is gathered.
@@ -62,6 +62,8 @@ class SelfAdaptationManagerServer:
                                                              calibrator, updateable_kalman_filter, ctrl_optimizer)
         self.sm = SelfAdaptationSignalCollectorSM(self.step_self_adaptation)
 
+        self.next_step_is_self_adaptation = False
+
     def setup(self):
         self.rabbitmq.connect_to_server()
 
@@ -69,6 +71,8 @@ class SelfAdaptationManagerServer:
                                 on_message_callback=self.consume_state_message)
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_KF_PLANT_STATE,
                                 on_message_callback=self.consume_kalmanfilter_message)
+        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_SELF_ADAPTATION_TRIGGER,
+                                on_message_callback=self.trigger_self_adaptation)
 
     def start(self):
         self.rabbitmq.start_consuming()
@@ -83,12 +87,19 @@ class SelfAdaptationManagerServer:
         self._l.debug(body_json)
         self.sm.step(body_json)
 
+    def trigger_self_adaptation(self, ch, method, properties, body_json):
+        self._l.debug("Triggering self adaptation.")
+        self.next_step_is_self_adaptation = True
+
     def step_self_adaptation(self, timestamp_ns, lld_measurement, kf_measurement):
         self._l.debug("Adaptation step")
         real_temperature = lld_measurement["fields"]["average_temperature"]
         predicted_temperature = kf_measurement["fields"]["average_temperature"]
         time_s = from_ns_to_s(timestamp_ns)
-        self.self_adaptation_manager.step(real_temperature, predicted_temperature, time_s)
+        self.self_adaptation_manager.step(real_temperature, predicted_temperature, time_s, self.next_step_is_self_adaptation)
+
+        if self.next_step_is_self_adaptation:
+            self.next_step_is_self_adaptation = False
 
         message = {
             "measurement": "self_adaptation_manager",
@@ -216,27 +227,35 @@ class DatabaseFacade(IDatabase):
         # Try to get the information from the influxdb
         query_api = self.dbclient.query_api()
 
-        parameter_results = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
+        results = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
                                                      ["plant_calibrator"],
                                                      ["C_air", "G_box", "C_heater", "G_heater"])
 
-        # TODO: Figure out how to get parameters from parameter_results
-
-        # If that fails, return the default configuration
-        C_air = self.plant_params["C_air"]
-        G_box = self.plant_params["G_box"]
-        C_heater = self.plant_params["C_heater"]
-        G_heater = self.plant_params["G_heater"]
+        if results.empty:
+            # If that fails, return the default configuration
+            C_air = self.plant_params["C_air"]
+            G_box = self.plant_params["G_box"]
+            C_heater = self.plant_params["C_heater"]
+            G_heater = self.plant_params["G_heater"]
+        else:
+            C_air = results[results["_field"] == "C_air"]["_value"].iloc[0]
+            G_box = results[results["_field"] == "G_box"]["_value"].iloc[0]
+            C_heater = results[results["_field"] == "C_heater"]["_value"].iloc[0]
+            G_heater = results[results["_field"] == "G_heater"]["_value"].iloc[0]
 
         return C_air, G_box, C_heater, G_heater
 
     def get_plant_snapshot(self):
         query_api = self.dbclient.query_api()
         results = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
-                                                     ["low_level_driver", "kalman_filter_plant"],
-                                                     ["t1", "heater_on", "average_temperature", "T_heater"])
-        # TODO: Figure out what to do with results.
-        return results
+                                           ["low_level_driver", "kalman_filter_plant"],
+                                           ["t1", "average_temperature", "T_heater"])
+        T_heater = results[results["_field"] == "T_heater"]["_value"].iloc[0]
+        T = results[(results["_field"] == "average_temperature") & (results["_measurement"] == "low_level_driver")]["_value"].iloc[0]
+        room_T = results[results["_field"] == "t1"]["_value"].iloc[0]
+        time_s = results["_time"].iloc[0].timestamp()
+
+        return time_s, T, T_heater, room_T
 
     def get_ctrl_parameters(self):
         """
@@ -245,22 +264,31 @@ class DatabaseFacade(IDatabase):
         """
         query_api = self.dbclient.query_api()
 
-        parameter_results = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
+        results_int = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
                                                      ["supervisor"],
-                                                     ["n_samples_heating", "n_samples_period", "controller_step_size"])
+                                                     ["n_samples_heating", "n_samples_period"])
+        results_float = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
+                                                     ["supervisor"],
+                                                     ["controller_step_size"])
 
-        # TODO: Figure out how to get parameters from parameter_results
 
-        # If that fails, return the default configuration
-        n_samples_heating = self.ctrl_params["n_samples_heating"]
-        n_samples_period = self.ctrl_params["n_samples_heating"]
-        # TODO: Replace this "magic" number with the value from the startup config file. Apply this all over the code.
-        controller_step_size = 3.0
+        if results_int.empty or results_float.empty:
+            # If that fails, return the default configuration
+            n_samples_heating = self.ctrl_params["n_samples_heating"]
+            n_samples_period = self.ctrl_params["n_samples_period"]
+            # TODO: Replace this "magic" number with the value from the startup config file. Apply this all over the code.
+            controller_step_size = 3.0
+        else:
+            # Conversion to int is necessary because these are int64, which cannot be encoded in JSON.
+            n_samples_heating = int(results_int[results_int["_field"] == "n_samples_heating"]["_value"].iloc[0])
+            n_samples_period = int(results_int[results_int["_field"] == "n_samples_period"]["_value"].iloc[0])
+            controller_step_size = results_float[results_float["_field"] == "controller_step_size"]["_value"].iloc[0]
 
         return n_samples_heating, n_samples_period, controller_step_size
 
     def store_new_ctrl_parameters(self, start_time_s, n_samples_heating, n_samples_period, controller_step_size):
-        self._l.debug(f"Sending new ctrl parameters to database: {n_samples_heating, n_samples_period, controller_step_size}")
+        self._l.debug(
+            f"Sending new ctrl parameters to database: {n_samples_heating, n_samples_period, controller_step_size}")
 
         start_date_ns = from_s_to_ns(start_time_s)
 
@@ -357,7 +385,8 @@ class SelfAdaptationSignalCollectorSM:
 
     def process_complete_system_snapshot(self):
         assert self.kf_measurement["time"] == self.lld_measurement["time"]
-        self.process_complete_system_snapshot_fun(self.kf_measurement["time"], self.lld_measurement, self.kf_measurement)
+        self.process_complete_system_snapshot_fun(self.kf_measurement["time"], self.lld_measurement,
+                                                  self.kf_measurement)
         self.kf_measurement = None
         self.lld_measurement = None
         self.state = "Initial"

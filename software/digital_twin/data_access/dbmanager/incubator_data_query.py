@@ -22,7 +22,8 @@ def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):
                                                  f"Instead, the following object of type {type(result)} " \
                                                  f"has been returned: {result}. " \
                                                  f"Maybe the database has an inconsistent set of records for the " \
-                                                 f"same measurement. For instance, the tags might be different."
+                                                 f"same measurement. For instance, the tags might be different, " \
+                                                 f"or the type of values is different."
     _l.debug(f"New query for {measurement}'s {field}: {len(result)} samples retrieved.")
     return result
 
@@ -48,7 +49,8 @@ def query_most_recent_fields(query_api, bucket, start_date_ns, n_records, measur
                                                  f"Instead, the following object of type {type(result)} " \
                                                  f"has been returned: {result}. " \
                                                  f"Maybe the database has an inconsistent set of records for the " \
-                                                 f"same measurement. For instance, the tags might be different."
+                                                 f"same measurement.  For instance, the tags might be different, " \
+                                                 f"or the type of values is different."
     _l.debug(f"New query for {measurements} and {fields}: {len(result)} samples retrieved.")
     return result
 
