@@ -8,7 +8,7 @@ def start_plant_kalmanfilter(ok_queue=None):
 
     monitor = KalmanFilterPlantServer(rabbit_config=config["rabbitmq"])
 
-    monitor.setup(step_size=3.0, std_dev=0.00001,
+    monitor.setup(step_size=3.0, std_dev=1.4,
                   **(config["digital_twin"]["models"]["plant"]["param4"]))
 
     if ok_queue is not None:

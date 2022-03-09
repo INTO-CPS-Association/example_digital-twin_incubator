@@ -6,7 +6,10 @@ def start_self_adaptation_manager(ok_queue=None):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
-    monitor = SelfAdaptationManagerServer(rabbit_config=config["rabbitmq"])
+    monitor = SelfAdaptationManagerServer(rabbit_config=config["rabbitmq"],
+                                          influxdb_config=config["influxdb"],
+                                          pt_config=config["physical_twin"],
+                                          dt_config=config["digital_twin"])
 
     monitor.setup()
 

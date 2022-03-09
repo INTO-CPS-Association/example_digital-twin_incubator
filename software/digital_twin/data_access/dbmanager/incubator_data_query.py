@@ -27,7 +27,34 @@ def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):
     return result
 
 
+def query_most_recent_fields(query_api, bucket, start_date_ns, n_records, measurements, fields):
+    _l = logging.getLogger("IncubatorDataQuery")
+
+    measurements_filter = ' or '.join([f'r["_measurement"] == "{m}"' for m in measurements])
+    fields_filter = ' or '.join([f'r["_field"] == "{f}"' for f in fields])
+
+    _l.debug("query_most_recent_fields: ")
+    query_to_be = f"""
+            from(bucket: "{bucket}")
+              |> range(start: time(v: {start_date_ns}))
+              |> filter(fn: (r) => {measurements_filter})
+              |> filter(fn: (r) => {fields_filter})
+              |> sort(columns: ["_time"], desc: true)
+              |> limit(n:{n_records})
+            """
+    _l.debug(query_to_be)
+    result = query_api.query_data_frame(query_to_be)
+    assert isinstance(result, pandas.DataFrame), f"Result is not a dataframe. " \
+                                                 f"Instead, the following object of type {type(result)} " \
+                                                 f"has been returned: {result}. " \
+                                                 f"Maybe the database has an inconsistent set of records for the " \
+                                                 f"same measurement. For instance, the tags might be different."
+    _l.debug(f"New query for {measurements} and {fields}: {len(result)} samples retrieved.")
+    return result
+
+
 def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, measurement_fields):
+    assert start_date_ns <= end_date_ns
     _l = logging.getLogger("IncubatorDataQuery")
 
     _l.debug("Querying given measurement fields.")

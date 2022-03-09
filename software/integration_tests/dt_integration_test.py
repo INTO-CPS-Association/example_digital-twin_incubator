@@ -14,9 +14,11 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBR
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.config.config import config_logger, load_config
 from incubator.tests.cli_mode_test import CLIModeTest
+from mock_plant.mock_connection import MOCK_G_BOX
 from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from startup.start_calibrator import start_calibrator
 from startup.start_controller_physical import start_controller_physical
+from startup.start_controller_physical_open_loop import start_controller_physical_open_loop
 from startup.start_docker_influxdb import start_docker_influxdb, stop_docker_influxdb
 from startup.start_docker_rabbitmq import start_docker_rabbitmq, stop_docker_rabbitmq
 from startup.start_incubator_realtime_mockup import start_incubator_realtime_mockup
@@ -29,7 +31,8 @@ from startup.start_simulator import start_simulator
 from startup.utils.db_tasks import setup_db
 from startup.utils.start_as_daemon import start_as_daemon
 
-
+# TODO: Create a second integration test, just like this one, but that uses the open loop controller consistently.
+#  Right now, we're using the open loop controller online, but the closed loop controller to generate the dummy data.
 class StartDTWithDummyData(CLIModeTest):
     """
     The tests in this class are supported to run in alphabetical order, so that, e.g.,
@@ -62,7 +65,8 @@ class StartDTWithDummyData(CLIModeTest):
         cls.processes.append(start_as_daemon(start_plant_kalmanfilter))
         cls.processes.append(start_as_daemon(start_plant_simulator))
         cls.processes.append(start_as_daemon(start_calibrator))
-        cls.processes.append(start_as_daemon(start_controller_physical))
+        # cls.processes.append(start_as_daemon(start_controller_physical))
+        cls.processes.append(start_as_daemon(start_controller_physical_open_loop))
         cls.processes.append(start_as_daemon(start_self_adaptation_manager))
 
         config_logger("logging.conf")
