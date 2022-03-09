@@ -31,7 +31,7 @@ class SelfAdaptationManagerServer:
         self._influxdb_org = influxdb_config["org"]
 
         # TODO: Move to config files.
-        anomaly_threshold = 0.2
+        anomaly_threshold = 0.3
         # Time spent before declaring that there is an self_adaptation_manager, after the first time the self_adaptation_manager occurred.
         ensure_anomaly_timer = 1
         # Time spent, after the self_adaptation_manager was declared as detected, just so enough data about the system is gathered.
