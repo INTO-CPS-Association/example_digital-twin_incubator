@@ -33,8 +33,8 @@ class SampledRealTimePlantModel(Model):
         self.G_box = self.var(lambda: self.cached_G_box)
         self.plant.G_box = self.G_box
 
-        self.room_temperature = self.var(lambda: room_temperature(self.time()))
-        self.plant.in_room_temperature = self.room_temperature
+        # self.room_temperature = self.var(lambda: room_temperature(self.time()))
+        # self.plant.in_room_temperature = self.room_temperature
 
         self.comm = comm
         self.comm.connect_to_server()
