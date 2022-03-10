@@ -42,7 +42,7 @@ class SupervisorServer:
         ctrl_optimizer = ControllerOptimizer(database, pt_simulator, ctrl, conv_xatol, conv_fatol, max_iterations,
                                              restrict_T_heater, desired_temperature, max_t_heater)
 
-        self.sm = SupervisorSM(ctrl_optimizer, desired_temperature, max_t_heater, restrict_T_heater,
+        self.sm = SupervisorSM(ctrl_optimizer, desired_temperature, max_t_heater,
                                   trigger_optimization_threshold, wait_til_supervising_timer)
 
     def setup(self):
