@@ -6,17 +6,17 @@ def start_self_adaptation_manager(ok_queue=None):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
-    monitor = SelfAdaptationManagerServer(rabbit_config=config["rabbitmq"],
+    self_adaptor = SelfAdaptationManagerServer(rabbit_config=config["rabbitmq"],
                                           influxdb_config=config["influxdb"],
                                           pt_config=config["physical_twin"],
                                           dt_config=config["digital_twin"])
 
-    monitor.setup()
+    self_adaptor.setup()
 
     if ok_queue is not None:
         ok_queue.put("OK")
 
-    monitor.start()
+    self_adaptor.start()
 
 
 if __name__ == '__main__':
