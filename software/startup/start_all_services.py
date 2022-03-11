@@ -31,6 +31,6 @@ if __name__ == '__main__':
     start_as_daemon(start_controller_physical_open_loop)
 
     # Enable self adaptation
-    # start_as_daemon(start_self_adaptation_manager)
-    # start_as_daemon(start_supervisor)
+    start_as_daemon(start_self_adaptation_manager)
+    start_as_daemon(start_supervisor)
 

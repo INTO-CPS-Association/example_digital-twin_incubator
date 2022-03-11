@@ -16,7 +16,7 @@ from interfaces.database import IDatabase
 from interfaces.parametric_controller import IParametricController
 from interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
 from models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
-from self_adaptation.controller_optimizer import ControllerOptimizer
+from self_adaptation.controller_optimizer import ControllerOptimizer, NoOPControllerOptimizer
 from self_adaptation.self_adaptation_manager import SelfAdaptationManager
 
 
@@ -31,19 +31,20 @@ class SelfAdaptationManagerServer:
         self._influxdb_org = influxdb_config["org"]
 
         # TODO: Move to config files.
-        anomaly_threshold = 100.0
+        anomaly_threshold = 2.0
         # Time spent before declaring that there is an self_adaptation_manager, after the first time the self_adaptation_manager occurred.
         ensure_anomaly_timer = 1
         # Time spent, after the self_adaptation_manager was declared as detected, just so enough data about the system is gathered.
         # The data used for recalibration will be in interval [time_first_occurrence, time_data_gathered]
-        gather_data_timer = 6
+        gather_data_timer = 10
         cool_down_timer = 5
         conv_xatol = 0.1
         conv_fatol = 0.1
         max_iterations = 200
-        desired_temperature = 38
+        desired_temperature = 41
         max_t_heater = 60
         restrict_T_heater = True
+        optimize_controller = True
 
         database = DatabaseFacade(self.dbclient, self._influxdb_bucket, self._influxdb_org,
                                   dt_config["models"]["plant"]["param4"], pt_config["controller_open_loop"])
@@ -56,8 +57,11 @@ class SelfAdaptationManagerServer:
         ctrl = ParametricControllerFacade(self.rabbitmq)
 
         pt_simulator = SystemModel4ParametersOpenLoopSimulator()
-        ctrl_optimizer = ControllerOptimizer(database, pt_simulator, ctrl, conv_xatol, conv_fatol, max_iterations,
-                                             restrict_T_heater, desired_temperature, max_t_heater)
+
+        if optimize_controller:
+            ctrl_optimizer = ControllerOptimizer(database, pt_simulator, ctrl, conv_xatol, conv_fatol, max_iterations, restrict_T_heater, desired_temperature, max_t_heater)
+        else:
+            ctrl_optimizer = NoOPControllerOptimizer()
 
         self.self_adaptation_manager = SelfAdaptationManager(anomaly_threshold,
                                                              ensure_anomaly_timer, gather_data_timer, cool_down_timer,

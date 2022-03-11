@@ -1,5 +1,6 @@
 from incubator.config.config import config_logger, load_config
 from digital_twin.monitoring.kalman_filter_plant_server import KalmanFilterPlantServer
+from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 
 
 def start_plant_kalmanfilter(ok_queue=None):
@@ -8,7 +9,8 @@ def start_plant_kalmanfilter(ok_queue=None):
 
     monitor = KalmanFilterPlantServer(rabbit_config=config["rabbitmq"])
 
-    monitor.setup(step_size=3.0, std_dev=1.4,
+    # TODO: Move these parameters to config file.
+    monitor.setup(step_size=CTRL_EXEC_INTERVAL, std_dev=0.001,
                   **(config["digital_twin"]["models"]["plant"]["param4"]))
 
     if ok_queue is not None:

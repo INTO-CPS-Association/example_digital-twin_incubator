@@ -25,13 +25,13 @@ class SupervisorServer:
         conv_xatol = 0.1
         conv_fatol = 0.1
         max_iterations = 200
-        desired_temperature = 38
+        desired_temperature = 41
         max_t_heater = 60
-        restrict_T_heater = True
+        restrict_T_heater = True  # TODO: pass this onto supervisor as well, so that the behavior is consistent.
 
-        trigger_optimization_threshold = 1000.0
+        trigger_optimization_threshold = 10.0
         heater_underused_threshold = 10.0
-        wait_til_supervising_timer = 20  # N steps supervisor should wait before kicking in.
+        wait_til_supervising_timer = 500  # N steps supervisor should wait before kicking in.
 
         database = DatabaseFacade(self.dbclient, self._influxdb_bucket, self._influxdb_org,
                                   dt_config["models"]["plant"]["param4"], pt_config["controller_open_loop"])
@@ -44,7 +44,8 @@ class SupervisorServer:
                                              restrict_T_heater, desired_temperature, max_t_heater)
 
         self.sm = SupervisorThresholdSM(ctrl_optimizer, desired_temperature, max_t_heater,
-                                        trigger_optimization_threshold, wait_til_supervising_timer)
+                                        trigger_optimization_threshold, heater_underused_threshold,
+                                        wait_til_supervising_timer)
 
     def setup(self):
         self.rabbitmq.connect_to_server()
