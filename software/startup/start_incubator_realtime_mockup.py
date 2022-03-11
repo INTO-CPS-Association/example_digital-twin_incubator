@@ -82,7 +82,7 @@ def start_incubator_realtime_mockup(ok_queue=None, step_size=CTRL_EXEC_INTERVAL)
     solver = RTModelSolver()
     if ok_queue is not None:
         ok_queue.put("OK")
-    solver.start_simulation(model, h=step_size, rt_factor=0.1)
+    solver.start_simulation(model, h=step_size)
 
 
 if __name__ == '__main__':
