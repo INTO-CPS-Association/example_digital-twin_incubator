@@ -8,7 +8,7 @@ from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.shared.protocol import from_ns_to_s
 from models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
 from self_adaptation.controller_optimizer import ControllerOptimizer
-from self_adaptation.supervisor import SupervisorSM
+from self_adaptation.supervisor import SupervisorThresholdSM
 
 
 class SupervisorServer:
@@ -42,8 +42,8 @@ class SupervisorServer:
         ctrl_optimizer = ControllerOptimizer(database, pt_simulator, ctrl, conv_xatol, conv_fatol, max_iterations,
                                              restrict_T_heater, desired_temperature, max_t_heater)
 
-        self.sm = SupervisorSM(ctrl_optimizer, desired_temperature, max_t_heater,
-                                  trigger_optimization_threshold, wait_til_supervising_timer)
+        self.sm = SupervisorThresholdSM(ctrl_optimizer, desired_temperature, max_t_heater,
+                                        trigger_optimization_threshold, wait_til_supervising_timer)
 
     def setup(self):
         self.rabbitmq.connect_to_server()
