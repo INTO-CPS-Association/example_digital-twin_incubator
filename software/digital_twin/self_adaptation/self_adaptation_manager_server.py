@@ -31,12 +31,13 @@ class SelfAdaptationManagerServer:
         self._influxdb_org = influxdb_config["org"]
 
         # TODO: Move to config files.
-        anomaly_threshold = 0.3
+        anomaly_threshold = 100.0
         # Time spent before declaring that there is an self_adaptation_manager, after the first time the self_adaptation_manager occurred.
         ensure_anomaly_timer = 1
         # Time spent, after the self_adaptation_manager was declared as detected, just so enough data about the system is gathered.
         # The data used for recalibration will be in interval [time_first_occurrence, time_data_gathered]
         gather_data_timer = 6
+        cool_down_timer = 5
         conv_xatol = 0.1
         conv_fatol = 0.1
         max_iterations = 200
@@ -58,7 +59,8 @@ class SelfAdaptationManagerServer:
         ctrl_optimizer = ControllerOptimizer(database, pt_simulator, ctrl, conv_xatol, conv_fatol, max_iterations,
                                              restrict_T_heater, desired_temperature, max_t_heater)
 
-        self.self_adaptation_manager = SelfAdaptationManager(anomaly_threshold, ensure_anomaly_timer, gather_data_timer,
+        self.self_adaptation_manager = SelfAdaptationManager(anomaly_threshold,
+                                                             ensure_anomaly_timer, gather_data_timer, cool_down_timer,
                                                              calibrator, updateable_kalman_filter, ctrl_optimizer)
         self.sm = SelfAdaptationSignalCollectorSM(self.step_self_adaptation)
 

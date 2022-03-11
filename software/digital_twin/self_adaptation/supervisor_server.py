@@ -29,8 +29,8 @@ class SupervisorServer:
         max_t_heater = 60
         restrict_T_heater = True
 
-        trigger_optimization_threshold = 10.0
-        wait_til_supervising_timer = 10  # N steps supervisor should wait before kicking in.
+        trigger_optimization_threshold = 1000.0
+        wait_til_supervising_timer = 20  # N steps supervisor should wait before kicking in.
 
         database = DatabaseFacade(self.dbclient, self._influxdb_bucket, self._influxdb_org,
                                   dt_config["models"]["plant"]["param4"], pt_config["controller_open_loop"])
