@@ -87,7 +87,12 @@ def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, me
     for measurement in measurement_fields:
         for field in measurement_fields[measurement]:
             t = raw_data[measurement][field]["_time"]
-            assert len(t) == len(ground_truth_t)
+            if not (len(t) == len(ground_truth_t)):
+                msg = f"Retrieved data is inconsistent: " \
+                      f"Measure {first_measurement_name} has {len(ground_truth_t)} samples, " \
+                      f"but {measurement} has {len(t)} samples."
+                _l.error(msg)
+                raise ValueError(msg)
             for i in range(len(t)):
                 aligned = abs((ground_truth_t.iloc[i] - t.iloc[i]).total_seconds()) < TIMESTAMP_TOLERANCE
                 if not aligned:
