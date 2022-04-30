@@ -27,7 +27,7 @@ def compute_simulation_lid_residual(time_seconds, model_params, heater_data, roo
     t0 = time_seconds[0]
     tf = time_seconds[-1]
     h = (tf - t0) / len(time_seconds)
-    sol = ModelSolver().simulate(model, t0, tf, h, t_eval=time_seconds)
+    sol = ModelSolver().simulate(model, t0, tf, h/10.0, t_eval=time_seconds)
 
     average_temp_approx = sol.y[0, :]
     residual = (average_temperature_data - average_temp_approx)

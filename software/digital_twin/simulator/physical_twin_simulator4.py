@@ -73,7 +73,7 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         self._l.debug(f"controller_comm_step={controller_comm_step}")
 
         # Start simulation
-        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step)
+        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step, controller_comm_step/100.0)
 
         times_align = len(model.signals["time"]) == len(time_seconds)
         if not times_align:
