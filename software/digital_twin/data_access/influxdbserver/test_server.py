@@ -18,10 +18,14 @@ if __name__ == '__main__':
     # Get write-api
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
-    n = 1
+    N = 10
 
     bucket = config["influxdb"]["bucket"]
     org = config["influxdb"]["org"]
+
+    print(f"Sending {N} data points to influxdb...")
+
+    n = N
     while n>0:
         # Create a datapoint
         point = Point("test-data")\
@@ -37,16 +41,25 @@ if __name__ == '__main__':
         sleep(1)
         n -= 1
 
-    query_api = client.query_api()
-    results = query_api.query_data_frame(f"""
+    print(f"Sent {N} data points to influxdb.")
+    
+    print(f"Reading {N} data points from influxdb...")
+    
+    query_string = f"""
     from(bucket: "{bucket}")
       |> range(start: -10h, stop: now())
       |> filter(fn: (r) => r["_measurement"] == "test-data")
       |> filter(fn: (r) => r["_field"] == "test-field")
-    """)
+      |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
+    """
 
-    print(results[["_time","_value"]])
+    print(f"Query used:")
+    print(query_string)
 
+    query_api = client.query_api()
 
+    results = query_api.query_data_frame(query_string)
 
+    print(results[["_time","test-field"]])
 
+    print(f"Read {N} data points from influxdb.")

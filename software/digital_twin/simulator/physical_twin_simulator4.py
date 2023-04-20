@@ -14,20 +14,20 @@ from incubator.models.physical_twin_models.system_model4 import SystemModel4Para
 from incubator.models.plant_models.model_functions import create_lookup_table
 
 
-class PhysicalTwinSimulator4Params(RPCServer):
+class PhysicalTwinSimulator4ParamsServer(RPCServer):
     """
     Can run simulations of the physical twin. This includes controller and plant.
     """
 
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
-        self._l = logging.getLogger("PhysicalTwinSimulator4Params")
+        self._l = logging.getLogger("PhysicalTwinSimulator4ParamsServer")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
         self._influxdb_org = influxdb_config["org"]
 
     def setup(self):
-        super(PhysicalTwinSimulator4Params, self).setup(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
+        super(PhysicalTwinSimulator4ParamsServer, self).setup(ROUTING_KEY_PTSIMULATOR4, ROUTING_KEY_PTSIMULATOR4)
 
     def run_historical(self, start_date, end_date,
                        C_air,
@@ -44,7 +44,9 @@ class PhysicalTwinSimulator4Params(RPCServer):
         # Access database to get the data needed.
         query_api = self.client.query_api()
 
-        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date, {
+        # Adds one to end_data to ensure that points coinciding with final end data are also captured.
+        # See https://github.com/INTO-CPS-Association/example_digital-twin_incubator/issues/20
+        time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date + 1, {
             "low_level_driver": ["t1"]
         })
 
@@ -65,13 +67,13 @@ class PhysicalTwinSimulator4Params(RPCServer):
                                        initial_box_temperature,
                                        initial_heat_temperature)
 
-        # Wire the lookup table to the model
+        # Wire the lookup table to the _plant
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
 
         self._l.debug(f"controller_comm_step={controller_comm_step}")
 
         # Start simulation
-        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step)
+        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step, controller_comm_step/100.0)
 
         times_align = len(model.signals["time"]) == len(time_seconds)
         if not times_align:

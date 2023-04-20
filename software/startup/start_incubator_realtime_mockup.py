@@ -6,6 +6,7 @@ from incubator.models.plant_models.four_parameters_model.four_parameter_model im
 from mock_plant.mock_connection import MOCK_HEATER_ON, MOCK_TEMP_T1, MOCK_TEMP_T2, MOCK_TEMP_T3, MOCK_G_BOX
 from mock_plant.real_time_model_solver import RTModelSolver
 from models.plant_models.room_temperature_model import room_temperature
+from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 
 
 class SampledRealTimePlantModel(Model):
@@ -33,8 +34,8 @@ class SampledRealTimePlantModel(Model):
         self.G_box = self.var(lambda: self.cached_G_box)
         self.plant.G_box = self.G_box
 
-        self.room_temperature = self.var(lambda: room_temperature(self.time()))
-        self.plant.in_room_temperature = self.room_temperature
+        # self.room_temperature = self.var(lambda: room_temperature(self.time()))
+        # self.plant.in_room_temperature = self.room_temperature
 
         self.comm = comm
         self.comm.connect_to_server()
@@ -71,7 +72,7 @@ class SampledRealTimePlantModel(Model):
         return super().discrete_step()
 
 
-def start_incubator_realtime_mockup(ok_queue=None):
+def start_incubator_realtime_mockup(ok_queue=None, step_size=CTRL_EXEC_INTERVAL):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
@@ -81,7 +82,7 @@ def start_incubator_realtime_mockup(ok_queue=None):
     solver = RTModelSolver()
     if ok_queue is not None:
         ok_queue.put("OK")
-    solver.start_simulation(model, h=3.0)
+    solver.start_simulation(model, h=step_size)
 
 
 if __name__ == '__main__':

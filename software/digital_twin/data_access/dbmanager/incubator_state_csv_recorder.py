@@ -12,7 +12,7 @@ from incubator.communication.shared.protocol import ROUTING_KEY_STATE
 
 class IncubatorDataRecorderCSV():
     def __init__(self, csv_file_path, csv_file_prefix, rollover_limit):
-        self._l = logging.getLogger("IncubatorDataRecorder")
+        self._l = logging.getLogger("IncubatorDataRecorderCSV")
         self.csv_file_path = csv_file_path
         self.csv_file_prefix = csv_file_prefix
         self.rollover_limit = rollover_limit

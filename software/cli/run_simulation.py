@@ -7,6 +7,7 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR
 from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 from startup.utils.logging_config import config_logging
 
 if __name__ == '__main__':
@@ -22,6 +23,7 @@ if __name__ == '__main__':
     start_date_ns = from_s_to_ns(start_date.timestamp())
 
     config_logging(level=logging.WARN)
+    # TODO: This code is broken
     client = RPCClient(ip="localhost")
     client.connect_to_server()
 
@@ -35,7 +37,7 @@ if __name__ == '__main__':
                                                                               "heating_time": 20.0,
                                                                               "heating_gap": 30.0,
                                                                               "temperature_desired": 25.0,
-                                                                              "controller_comm_step": 3.0,
+                                                                              "controller_comm_step": CTRL_EXEC_INTERVAL,
                                                                               "initial_box_temperature": 21.0,
                                                                               "initial_heat_temperature": 21.0,
                                                                               "record": True})

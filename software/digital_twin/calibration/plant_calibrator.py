@@ -14,13 +14,13 @@ from incubator.communication.server.rpc_server import RPCServer
 
 class PlantCalibrator4Params(RPCServer):
     """
-    Can run calibrations of the plant simulator.
+    Can run calibrations of the plant pt_simulator.
     """
 
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
         self.rabbitmq_config = rabbitmq_config
-        self._l = logging.getLogger("PhysicalTwinSimulator4Params")
+        self._l = logging.getLogger("PlantCalibrator4Params")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
         self._influxdb_org = influxdb_config["org"]

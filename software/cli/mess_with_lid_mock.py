@@ -15,4 +15,4 @@ if __name__ == '__main__':
     config = load_config("startup.conf")
 
     send_G_box_config(config["rabbitmq"], config["digital_twin"]["models"]["plant"]["param4"]["G_box"])
-    # send_G_box_config(config["rabbitmq"], 2*config["digital_twin"]["models"]["plant"]["param4"]["G_box"])
+    # send_G_box_config(config["rabbitmq"], 10*config["digital_twin"]["models"]["plant"]["param4"]["G_box"])

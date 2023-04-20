@@ -14,7 +14,7 @@ software$ python -m startup.start_all_services
 
 The service that mimics the real-time incubator is in [start_incubator_realtime_mockup.py](./start_incubator_realtime_mockup.py)
 
-After starting the influxdb service, you can login to http://<Influxdb IP>:8086/ to see the influxdb management page, 
+After starting the influxdb service, you can login to http://[Influxdb_IP]:8086/ to see the influxdb management page, 
 were you can create dashboards to see the data produced by the incubator.
 
 After starting all services successfully, the controller service will start producing output that looks like the following:

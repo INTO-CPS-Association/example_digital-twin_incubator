@@ -23,7 +23,7 @@ def on_connect(client, userdata, flags, rc):
 #    topic = "mytopic" 
 #    payload = "hej"
 #    for i in range(1,10):
- #     client.publish(topic, payload, hostname=hostname)
+ #     dbclient.publish(topic, payload, hostname=hostname)
 
 
 client = mqtt.Client()

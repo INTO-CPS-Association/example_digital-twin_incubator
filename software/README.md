@@ -21,13 +21,15 @@ software $ git submodule update --init --recursive
 
 ## First-time setup
 1. Open terminal in this folder.
-2. Optional: create a virtual environment: `python -m venv venv`
-3. Optional: activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 
+2. (Optional) Create a virtual environment: `python -m venv venv`
+3. (Optional) Activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 
    1. Windows Powershell:`.\venv\Scripts\Activate.ps1` 
    2. Linux/Mac: `source venv/bin/activate`
-4. Recommended: install pip wheel: `pip install wheel`
+4. (Optional) Install pip wheel: `pip install wheel`
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
+6. Make sure the PYTHONPATH [environment variable](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html) contains the [incubator](./incubator/) folder: 
+   1. (Powershell) `$Env:PYTHONPATH = "incubator"`
 
 ## After first time setup: Starting the DT framework
 

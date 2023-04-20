@@ -27,7 +27,7 @@ def compute_simulation_lid_residual(time_seconds, model_params, heater_data, roo
     t0 = time_seconds[0]
     tf = time_seconds[-1]
     h = (tf - t0) / len(time_seconds)
-    sol = ModelSolver().simulate(model, t0, tf, h, t_eval=time_seconds)
+    sol = ModelSolver().simulate(model, t0, tf, h/10.0, t_eval=time_seconds)
 
     average_temp_approx = sol.y[0, :]
     residual = (average_temperature_data - average_temp_approx)
@@ -44,7 +44,7 @@ class LidOpenServer(RPCServer):
     1. Reads the data from DB according to the specified window. This includes reading the initial state from the
         KalmanFilterPlantServer data.
     2. Compares the data to the simulation with no open lid, and collects residual.
-    3. Does the same for the model with open lid, and collects residual.
+    3. Does the same for the _plant with open lid, and collects residual.
     4. If any of the above are below a given threshold, then it returns immediately with the appropriate reply.
     5. Otherwise, it must be the case that the lid was opened at some point.
     6. So it runs the optimization on the times at which it became open/closed.

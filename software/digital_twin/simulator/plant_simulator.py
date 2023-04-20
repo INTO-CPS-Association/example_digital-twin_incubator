@@ -1,9 +1,11 @@
 import logging
+import math
 
 import numpy as np
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 from oomodelling import ModelSolver
+from scipy.interpolate import interpolate
 
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
@@ -12,20 +14,55 @@ from incubator.models.plant_models.four_parameters_model.four_parameter_model im
 from incubator.models.plant_models.model_functions import create_lookup_table
 
 
-class PlantSimulator4Params(RPCServer):
+class PlantSimulator4Params:
+    def run_simulation(self, timespan_seconds, initial_box_temperature, initial_heat_temperature,
+                       room_temperature, heater_on,
+                       C_air, G_box, C_heater, G_heater):
+
+        timetable = np.array(timespan_seconds)
+
+        room_temperature_fun = create_lookup_table(timetable, np.array(room_temperature))
+        # room_temperature_fun = interpolate.interp1d(timetable, np.array(room_temperature))
+        heater_on_fun = create_lookup_table(timetable, np.array(heater_on))
+        # heater_on_fun = interpolate.interp1d(timetable, np.array(heater_on))
+
+        model = FourParameterIncubatorPlant(initial_room_temperature=room_temperature[0],
+                                            initial_box_temperature=initial_box_temperature,
+                                            initial_heat_temperature=initial_heat_temperature,
+                                            C_air=C_air, G_box=G_box,
+                                            C_heater=C_heater, G_heater=G_heater)
+        model.in_room_temperature = lambda: room_temperature_fun(model.time())
+        model.in_heater_on = lambda: heater_on_fun(model.time())
+
+        start_t = timespan_seconds[0]
+        end_t = timespan_seconds[-1]
+
+        controller_step_size = timespan_seconds[1] - timespan_seconds[0]
+        # We assume the timeseries is mostly uniform
+        for i in range(1, len(timespan_seconds)):
+            assert math.fabs(controller_step_size - (timespan_seconds[i] - timespan_seconds[i-1])) <= controller_step_size/10.0
+
+        sol = ModelSolver().simulate(model, start_t, end_t+controller_step_size,
+                                     controller_step_size, controller_step_size/10.0,
+                                     t_eval=timespan_seconds)
+        return sol, model
+
+
+class PlantSimulator4ParamsServer(RPCServer):
     """
     Can run simulations of the plant.
     """
 
     def __init__(self, rabbitmq_config, influxdb_config):
         super().__init__(**rabbitmq_config)
-        self._l = logging.getLogger("PlantSimulator4Params")
+        self._l = logging.getLogger("PlantSimulator4ParamsServer")
         self.client = InfluxDBClient(**influxdb_config)
         self._influxdb_bucket = influxdb_config["bucket"]
         self._influxdb_org = influxdb_config["org"]
+        self.simulator = PlantSimulator4Params()
 
     def setup(self):
-        super(PlantSimulator4Params, self).setup(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
+        super(PlantSimulator4ParamsServer, self).setup(ROUTING_KEY_PLANTSIMULATOR4, ROUTING_KEY_PLANTSIMULATOR4)
 
     def run(self, tags,
             timespan_seconds,
@@ -56,29 +93,10 @@ class PlantSimulator4Params(RPCServer):
             self._l.warning(error_msg)
             return {"error": error_msg}
 
-        timetable = np.array(timespan_seconds)
-
-        room_temperature_fun = create_lookup_table(timetable, np.array(room_temperature))
-        heater_on_fun = create_lookup_table(timetable, np.array(heater_on))
-
-        self._l.debug("Wiring model.")
-        model = FourParameterIncubatorPlant(initial_room_temperature=room_temperature[0],
-                                            initial_box_temperature=initial_box_temperature,
-                                            initial_heat_temperature=initial_heat_temperature,
-                                            C_air=C_air, G_box=G_box,
-                                            C_heater=C_heater, G_heater=G_heater)
-        model.in_room_temperature = lambda: room_temperature_fun(model.time())
-        model.in_heater_on = lambda: heater_on_fun(model.time())
-
-        start_t = timespan_seconds[0]
-        end_t = timespan_seconds[-1]
-        max_step_size = timespan_seconds[1] - timespan_seconds[0]
-
-        self._l.debug(f"Simulating model from time {start_t} to {end_t} with a maximum step size of {max_step_size}, "
-                      f"and a total of {len(timespan_seconds)} samples.")
         try:
-            sol = ModelSolver().simulate(model, start_t, end_t + max_step_size, max_step_size,
-                                         t_eval=timespan_seconds)
+            sol, model = self.simulator.run_simulation(timespan_seconds, initial_box_temperature, initial_heat_temperature,
+                                                       room_temperature, heater_on,
+                                                       C_air, G_box, C_heater, G_heater)
 
             self._l.debug(f"Converting solution to influxdb data format.")
             state_names = model.state_names()

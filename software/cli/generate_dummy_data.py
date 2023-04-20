@@ -45,7 +45,6 @@ def generate_room_data(influxdb, bucket, org, start_date, end_date):
     return points
 
 
-
 def generate_incubator_exec_data(rpc_client, config, start_date, end_date):
     start_date_ns = from_s_to_ns(start_date.timestamp())
     end_date_ns = from_s_to_ns(end_date.timestamp())
@@ -68,6 +67,7 @@ def generate_incubator_exec_data(rpc_client, config, start_date, end_date):
     if "error" in reply:
         print(reply)
         raise ValueError(reply)
+    return reply
 
 
 def generate_dummy_data():
