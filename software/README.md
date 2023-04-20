@@ -27,7 +27,7 @@ software $ git submodule update --init --recursive
    2. Linux/Mac: `source venv/bin/activate`
 4. (Optional) Install pip wheel: `pip install wheel`
 5. Install dependencies:
-   1. `pip install -r ./requirements.txt`.
+   1. `pip install -r ./requirements.txt`
 6. Make sure the PYTHONPATH [environment variable](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html) contains the [incubator](./incubator/) folder: 
    1. (Powershell) `$Env:PYTHONPATH = "incubator"`
 
