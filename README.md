@@ -45,7 +45,7 @@ Follow the instructions in [software/README.md](software/README.md)
 
 ## More Documentation
 
-You can find more documentation here: [docs/_build/html/index.html](docs/_build/html/index.html)
+You can find more documentation here: https://into-cps-association.github.io/example_digital-twin_incubator/docs/build/html/index.html
 
 ## Repository Maintenance Instructions
 
