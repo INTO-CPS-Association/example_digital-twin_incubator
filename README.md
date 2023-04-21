@@ -9,7 +9,8 @@ Feng, Hao, Cláudio Gomes, Casper Thule, Kenneth Lausdahl, Alexandros Iosifidis,
 ## The Incubator Physical Twin
 
 The overall purpose of the system is to reach a certain temperature within a box and keep the temperature regardless of content.
-![Incubator](figures/system.png)
+
+![Incubator](figures/system.svg)
 
 The system consists of:
 - A Styrofoam box in order to have an insulated container.
@@ -33,7 +34,9 @@ The DT does the following:
 
 It is possible to run the digital twin on our computer, with or without a connection to the physical twin.
 
-Follow the instructions in [software/README.md](software/README.md)
+Follow the instructions in [software/README.md](software/README.md).
+
+*You're advised to read carefully all documentation before following the instructions suggested*.
 
 ## Repository Maintenance Instructions
 

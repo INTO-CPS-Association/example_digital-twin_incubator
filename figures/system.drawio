@@ -1,1 +1,91 @@
-<mxfile host="Electron" modified="2020-08-21T08:07:21.311Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/13.0.3 Chrome/80.0.3987.163 Electron/8.2.1 Safari/537.36" etag="aPWdvLlY2YA0zWQUWLOI" version="13.0.3" type="device"><diagram id="pX_AYpZvNBJtFISHPC4g" name="Page-1">7Vpbc9o4GP01zOw+2GPLF+CxQGg7227Z0na3+5IRtmIrlS2PLAfIr1/JlgFbDpAESC87kwnWZ0m2zvnu0HPGyeo1g1n8noaI9IAVrnrOpAeAbVu++JCSdSUZ+FYliBgO1aStYI7vkRLW0wocorwxkVNKOM6awoCmKQp4QwYZo8vmtBtKmk/NYIQ0wTyARJf+jUMeq1OA/lb+BuEorp9s+8PqTgLryeokeQxDutwROVc9Z8wo5dVVshojIsGrcanWTR+4u3kxhlJ+zILXfmFPYBFM118Kd/l28PFf3zbULneQFOrA6mX5ukaA0SINkdzE7jmjZYw5mmcwkHeXgnMhi3lC1G39peonIMbRakekXvI1ognibC2m1HcdBZjSGFBrzHKLv+MqWbyL/UAJoeI82uy9hUVcKGQegRI4jBJKw1dS3cQopSlqopJzyHh9O8AskKsq6RSTg9ihsKGjOnI7yHgdwNQyhgjk+K6p2V1gqSfMKBZvsiHGaRHj9L3mFjktWIDUql1NPLSR1dpIABMhrm1Ucrc59tPpdDQ6P6EkQwzygqGeNCOfCOhGCyauInk1R2lOmU66IOYdXAiX16AbEhylkmlBJGJCIJUfC5/ySt1IcBiWKsBQju/hotzPEuNMHrkEwRv1vEmnUuzV0LaVbRyjekjD93RZn2V6tus0DfAk2tM3vcauhtNvbkFvbnJ0Fr7dw+ZbM1SyOaM55phKphaUc5oIHmjBCU7ReBNmrC6iQ5jHpau0mhrRVgBOpd8UESGTz09WkQyeZoZDkOA8MG+gmDQS/z+tywkBTRLxOs/3rZtgVFse8DTfus+DnNyzeoep6UDJjBHk12gVxDCNEMtb4+vfAorJNS8WKP/9SNN8kPhu6hpEM8qhWja0zhMEHUcnyrY6mHLOxZSvMfVGgI50pyhOyNvhj9FvwnSIcKGb8HgjAl9LdLzf7MpCtnnKqTjwW4lIX09EuvIQcC4K+hoFwh1xpIJkIzARIhJktONjAkKL8CL5m+O3o7sO29DVYeufCzZ70Bm452pIGY9pRFNIrrbSljZt57yj0v5LrG4R52tVscCC0yaSAkC2/kcOTAvU469yP9P1+7VgslJPqEbr3dEMMSwQkJawX6WrvGsfAiqgV3nVYXd8MOE8Ohd4HnHDlyDuAjC73xXMmwL1B4P5dPAdWaa068szlynAfQleGrWqCsy7leppPNG5ufPcFnfDy3Jn6zWmRmZZ7CF2dYeqms+uwnXVJLL2VBMH86kecFzHdV1PJlV5VhUsN3glNxuRVqb73FRYy9o6S6V2Fn93F5p5kONrUZ+K4xBSLj1F+mE3mXcHevrRVeIAYHoPa9nz4pieuE1h2mncF+8mPITvoxsHoG1xzh44v7sWQW2ev3iLT3Obgye2+LSN7Mu2+MDP2OP7v8m3Dx29lfQ2zQtxHBH1gCUrZSii0k/crwCDVr/CeeF+BdB7RhMcYQ7lyk9LLEKgDxOJRbrIsw0Ij2nLHuyxahwdkzxZ1uhqCjqyFngvvIdJYFZt3pXBnSGF8TuI7AoCZ+v9AT2B2RcdAwLzHAdaVNyId9skK8xll0S4JDX6qixCXm/bI3Kw3hmcrjlSa+nBqv3o2uUysbpt7r7Vov+pX8d57W7/uWP1UNOuuWC39BLyYVqk/ggXC8zf//U9x+raYk4Qq+2+34yqz4zVF4jFA43R8bbM+2UCsGefLQB/zhH7sLiV9TWwSKXycmnMufxhzKvSbqbL5dJcwDSKKA3NQARMMB1aK/EHvCQxbPDFcGc4NcY0yQoBoDEbG+PZZ2OOiQBBiKmo46PyU9wcwxwZom41MmPY94ZDz6wYm7IkCeWb5wiyIN7E9KBg10sBZ0wL+U3EZPxndUqx57cf5mVrNZ+M4snsQ2iPbyezPww2+PzlNjZ2tUGZha7WR33h0uEmNE08+nsquytd6ApE7uP1Tgx3VK8WbX/EVHmQ7U/BnKv/AA==</diagram></mxfile>
+<mxfile host="Electron" modified="2023-04-21T04:02:12.291Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.1 Chrome/112.0.5615.87 Electron/24.1.2 Safari/537.36" etag="KdZRObKwtu4kVoQ2Tcx7" version="21.2.1" type="device">
+  <diagram id="pX_AYpZvNBJtFISHPC4g" name="Page-1">
+    <mxGraphModel dx="1175" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-1" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="130" y="260" width="340" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-2" value="" style="endArrow=none;html=1;startArrow=circle;startFill=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="330" y="375" as="sourcePoint" />
+            <mxPoint x="330" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-3" value="Temperature &lt;br&gt;Sensor" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="G6u1DaucFyVu4wI8RZ61-2" vertex="1" connectable="0">
+          <mxGeometry x="0.5143" y="2" relative="1" as="geometry">
+            <mxPoint x="7.5" y="-37" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-4" value="" style="verticalLabelPosition=bottom;outlineConnect=0;align=center;dashed=0;html=1;verticalAlign=top;shape=mxgraph.pid2misc.fan;fanType=common" parent="1" vertex="1">
+          <mxGeometry x="220" y="325" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-5" value="" style="shape=mxgraph.pid.heat_exchangers.heat_exchanger_(coil_tubes);html=1;align=center;verticalLabelPosition=bottom;verticalAlign=top;dashed=0;rotation=90;" parent="1" vertex="1">
+          <mxGeometry x="130" y="335" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-6" value="Heater" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="160" y="270" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-7" value="Content" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="360" y="300" width="94" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.02;entryY=0.467;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="G6u1DaucFyVu4wI8RZ61-13" target="G6u1DaucFyVu4wI8RZ61-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="G6u1DaucFyVu4wI8RZ61-13" target="G6u1DaucFyVu4wI8RZ61-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="G6u1DaucFyVu4wI8RZ61-13" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=none;startFill=0;" parent="1" source="G6u1DaucFyVu4wI8RZ61-13" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-13" value="" style="pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#434445;aspect=fixed;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;shape=mxgraph.vvd.scsi_controller;" parent="1" vertex="1">
+          <mxGeometry x="310" y="480" width="50" height="22.5" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-17" value="Fan" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="240" y="335" as="geometry">
+            <mxPoint x="7.5" y="-37" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-22" value="" style="endArrow=none;html=1;startArrow=circle;startFill=1;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="540" y="385" as="sourcePoint" />
+            <mxPoint x="540" y="315" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-23" value="Temperature &lt;br&gt;Sensor" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="G6u1DaucFyVu4wI8RZ61-22" vertex="1" connectable="0">
+          <mxGeometry x="0.5143" y="2" relative="1" as="geometry">
+            <mxPoint x="7.5" y="-37" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-25" value="Insulated Container" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="280" y="230" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-26" value="Digital Twin&amp;nbsp;" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.laptop;pointerEvents=1;" parent="1" vertex="1">
+          <mxGeometry x="310" y="630" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-27" value="" style="endArrow=classic;startArrow=classic;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="G6u1DaucFyVu4wI8RZ61-26" target="G6u1DaucFyVu4wI8RZ61-13" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="280" y="600" as="sourcePoint" />
+            <mxPoint x="330" y="550" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-29" value="Serial /&lt;br&gt;RabbitMQ" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="G6u1DaucFyVu4wI8RZ61-27" vertex="1" connectable="0">
+          <mxGeometry x="0.1765" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="G6u1DaucFyVu4wI8RZ61-28" value="Controller" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="280" y="510" width="40" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
