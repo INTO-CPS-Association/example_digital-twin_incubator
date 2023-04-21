@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Overview &mdash; Incubator Case Study  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/style.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Hardware" href="hardware.html" />
+    <link rel="prev" title="INTO-CPS Digital Twin Case Study: Incubator" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Incubator Case Study
+              <img src="_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#communication-protocol">Communication Protocol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#communication-with-low-level-driver">Communication with low_level_driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#communication-with-rabbitmq-fmu">Communication with RabbitMQ FMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rabbitmq-topics">RabbitMQ Topics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rabbitmq-messages">RabbitMQ Messages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">Hardware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#hardware-elements">Hardware Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#raspberry-pi-gpio-connections">Raspberry Pi GPIO connections</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#temperature-sensor-mapping">Temperature Sensor Mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Experiments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#software">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#temperature-uniformity">Temperature Uniformity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#calibration">Calibration</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Incubator Case Study</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">System Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/system_overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="system-overview">
+<h1>System Overview<a class="headerlink" href="#system-overview" title="Permalink to this headline"></a></h1>
+<p>The communication system setup in as depicted in <a class="reference internal" href="#communication-system-setup"><span class="std std-ref">Communication System Setup</span></a>.
+All communication goes through the RabbitMQ server, even the communication between the controller and the IO layer on the Raspberry Pi.
+This ensures a completely opaque view of all hardware communication. Thus, if the controller wants to read a temperature it publishes a <cite>read temperature</cite> message.
+The IO layer will receive this message and issue a read on the GPIO. Once the reading is finished, then the IO layer will publish a <cite>temperature</cite> message, which the controller receives.
+Anyone else interested in this communication, such as the digital twin, can listen to all of this communication as well.</p>
+<div class="figure align-center" id="communication-system-setup">
+<img alt="_images/system_setup.png" src="_images/system_setup.png" />
+<p class="caption"><span class="caption-text">Communication System Setup</span><a class="headerlink" href="#communication-system-setup" title="Permalink to this image"></a></p>
+</div>
+<div class="section" id="communication-protocol">
+<h2>Communication Protocol<a class="headerlink" href="#communication-protocol" title="Permalink to this headline"></a></h2>
+<p>There are two protocols to consider here:</p>
+<ol class="upperalpha simple">
+<li><p>Communication with low_level_driver</p></li>
+<li><p>Communication with rabbitmq fmu.</p></li>
+</ol>
+<div class="section" id="communication-with-low-level-driver">
+<h3>Communication with low_level_driver<a class="headerlink" href="#communication-with-low-level-driver" title="Permalink to this headline"></a></h3>
+<p>Specified in the python class <code class="docutils literal notranslate"><span class="pre">IncubatorDriver</span></code>.
+Essentially, a single message is published for each control loop execution.
+That message contains the readings of all temperature sensors, and state of the controller (parameters, etc.).</p>
+</div>
+<div class="section" id="communication-with-rabbitmq-fmu">
+<h3>Communication with RabbitMQ FMU<a class="headerlink" href="#communication-with-rabbitmq-fmu" title="Permalink to this headline"></a></h3>
+<p>The protocol has to match with <a class="reference external" href="https://into-cps-rabbitmq-fmu.readthedocs.io/en/latest/user-manual.html">https://into-cps-rabbitmq-fmu.readthedocs.io/en/latest/user-manual.html</a></p>
+</div>
+<div class="section" id="rabbitmq-topics">
+<h3>RabbitMQ Topics<a class="headerlink" href="#rabbitmq-topics" title="Permalink to this headline"></a></h3>
+<div class="line-block">
+<div class="line">Messages going to IO: incubator.toio</div>
+<div class="line">Messages going to controller: incubator.tocontroller</div>
+</div>
+</div>
+<div class="section" id="rabbitmq-messages">
+<h3>RabbitMQ Messages<a class="headerlink" href="#rabbitmq-messages" title="Permalink to this headline"></a></h3>
+<dl>
+<dt>Issue a temperature reading</dt><dd><div class="line-block">
+<div class="line">Message that initiates a temperature reading:</div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+     &quot;time&quot;: timestamp
+     &quot;readTemperature1&quot;: True or False
+     &quot;readTemperature2&quot;: True or False
+     &quot;readTemperature3&quot;: True or False
+}
+</pre></div>
+</div>
+<p>routing key: incubator.hardware.w1.tempRead</p>
+</dd>
+<dt>Temperature Reading</dt><dd><div class="line-block">
+<div class="line">Message containing a temperature reading:</div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+     &quot;time&quot;: timestamp
+     &quot;sensorReading1&quot;: value or False
+     &quot;sensorReading2&quot;: value or False
+     &quot;sensorReading3&quot;: value or False
+}
+</pre></div>
+</div>
+<p>routing key: incubator.hardware.w1.tempState</p>
+</dd>
+<dt>Issue a start/stop of the Fan</dt><dd><div class="line-block">
+<div class="line">Message that starts/stops the fan:</div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+     &quot;time&quot;: timestamp
+     &quot;startFan&quot;: True or False
+}
+</pre></div>
+</div>
+<p>routing key: incubator.hardware.gpio.fanManipulate</p>
+</dd>
+<dt>Issue a start/stop of the Heater</dt><dd><div class="line-block">
+<div class="line">Message that starts/stops the heater:</div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+     &quot;time&quot;: timestamp
+     &quot;startHeater&quot;: True or False
+}
+</pre></div>
+</div>
+<p>routing key: incubator.hardware.gpio.heaterManipulate</p>
+</dd>
+<dt>Change the value of a parameter</dt><dd><div class="line-block">
+<div class="line">Message that changes the value of a parameter</div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span>{
+     &quot;time&quot;: timestamp
+     &quot;Upper temperature&quot;: Value or False
+     &quot;Lower temperature&quot;: Value or False
+     &quot;Dissipation delay&quot;: Value or False
+     &quot;Heater on for X&quot;: Value or False
+}
+</pre></div>
+</div>
+<p>routing key: incubator.hardware.gpio.paraChange</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="INTO-CPS Digital Twin Case Study: Incubator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hardware.html" class="btn btn-neutral float-right" title="Hardware" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, INTO-CPS Association.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

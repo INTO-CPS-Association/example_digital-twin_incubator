@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hardware &mdash; Incubator Case Study  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/style.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Experiments" href="experiments.html" />
+    <link rel="prev" title="System Overview" href="system_overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Incubator Case Study
+              <img src="_static/logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="system_overview.html">System Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="system_overview.html#communication-protocol">Communication Protocol</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="system_overview.html#communication-with-low-level-driver">Communication with low_level_driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_overview.html#communication-with-rabbitmq-fmu">Communication with RabbitMQ FMU</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_overview.html#rabbitmq-topics">RabbitMQ Topics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="system_overview.html#rabbitmq-messages">RabbitMQ Messages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Hardware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-elements">Hardware Elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#raspberry-pi-gpio-connections">Raspberry Pi GPIO connections</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#temperature-sensor-mapping">Temperature Sensor Mapping</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Experiments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#software">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#temperature-uniformity">Temperature Uniformity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="experiments.html#calibration">Calibration</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Incubator Case Study</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hardware</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hardware.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="hardware">
+<h1>Hardware<a class="headerlink" href="#hardware" title="Permalink to this headline"></a></h1>
+<div class="section" id="hardware-elements">
+<h2>Hardware Elements<a class="headerlink" href="#hardware-elements" title="Permalink to this headline"></a></h2>
+<ul>
+<li><p>3 temperature sensors of the type DS18S20</p></li>
+<li><div class="line-block">
+<div class="line">1 heat bed of the type RepRap PCB Heat bed MK2a (improved design)</div>
+<div class="line">Dimensions (Heat Bed): 200mm x 200mm</div>
+<div class="line">Resistance: 0.9 - 1.1 Ohms</div>
+<div class="line">Operating voltage: 12 Volts</div>
+<div class="line">Operating current: 11 - 13 Amps</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">1 Fan 24V 92x25 B 87,4m³/h 34dBA - <a class="reference external" href="https://elektronik-lavpris.dk/files/sup2/EE92252B1-A99_D09023340G-00.pdf">https://elektronik-lavpris.dk/files/sup2/EE92252B1-A99_D09023340G-00.pdf</a> - <a class="reference external" href="https://elektronik-lavpris.dk/p122514/ee92252b1-a99-fan-24v-92x25-b-874m-h-34dba/">https://elektronik-lavpris.dk/p122514/ee92252b1-a99-fan-24v-92x25-b-874m-h-34dba/</a></div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Raspberry Pie starter kit</div>
+<div class="line">Raspberry Pi 4 Model B - 4 GB - <a class="reference external" href="https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0_preliminary.pdf">https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0_preliminary.pdf</a></div>
+<div class="line">6GB Micro SD - Class A1 - Med NOOBS</div>
+<div class="line">Officiel Raspberry Pi USB-C Strømforsyning – EU – 5V 3A - Sort</div>
+<div class="line">Officiel Raspberry Pi 7” Touchscreen Display</div>
+<div class="line">SmartiPi Touch 2 - Case til Raspberry Pi 7” Touchscreen Display</div>
+<div class="line">USB Micro SD Kortlæser</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Thermo box - Climapor thermokasse m/låg t/Eurokasse 54,5x35x18 cm</div>
+</div>
+</li>
+<li><div class="line-block">
+<div class="line">Custom Electronics</div>
+</div>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Add custom electronics information</p>
+</div>
+</div>
+<div class="section" id="raspberry-pi-gpio-connections">
+<h2>Raspberry Pi GPIO connections<a class="headerlink" href="#raspberry-pi-gpio-connections" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line">GPIO 12: PWM Heater</div>
+<div class="line">GPIO 13: PWM Fan</div>
+<div class="line">GPIO 4: 1-wire temperature sensors</div>
+</div>
+<div class="section" id="temperature-sensor-mapping">
+<h3>Temperature Sensor Mapping<a class="headerlink" href="#temperature-sensor-mapping" title="Permalink to this headline"></a></h3>
+<p>In order to read a temperature from the temperature sensors multiple IDs can be found in : <code class="code docutils literal notranslate"><span class="pre">/sys/bus/w1/devices/</span></code>.
+So to read a value from a sensor, one can do: <code class="code docutils literal notranslate"><span class="pre">cat</span> <span class="pre">/sys/bus/w1/devices/10-0008039ad4ee/w1_slave</span></code>.</p>
+<p>Each ID in the devices folder correspond to a particular sensor. Follow the wires of the temperature sensors and you will find a paper label with a number on it.
+The ID to number mapping is:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">ID to Sensor Number Mapping</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Sensor Number</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>10-0008039ad4ee</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>10-0008039b25c1</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>10-0008039a977a</p></td>
+<td><p>3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="system_overview.html" class="btn btn-neutral float-left" title="System Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="experiments.html" class="btn btn-neutral float-right" title="Experiments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, INTO-CPS Association.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
