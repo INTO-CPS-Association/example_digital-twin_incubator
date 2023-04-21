@@ -49,8 +49,9 @@ You can find more documentation here: [docs/_build/html/index.html](docs/_build/
 
 ## Repository Maintenance Instructions
 
-General guidelines (instructions are in the following subsections)
+We make extensive use of README.md files. Please read them and keep them up to date.
 
+General guidelines:
 1. Run the tests as often as possible.
 2. Create tests as much as possible.
 3. Ask for code reviews (code readable by at least two people is more likely readable by a third)

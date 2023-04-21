@@ -1,2 +1,1 @@
-& sphinx-build -M html . _build
-pause
+& sphinx-build -M html . build
