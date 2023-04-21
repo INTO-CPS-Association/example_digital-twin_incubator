@@ -5,7 +5,7 @@ This directory contains all things code related.
 ```
 ├───cli -- Contains code to communicate with the running DT components.
 ├───digital_twin -- Code that forms the digital twin.
-├───incubator -- Code that implements the physical twin and models
+├───incubator -- Code that implements the physical twin, models, and datasets
 ├───integration_tests -- Code to run integration tests.
 ├───mock_plant -- Code setting up the local virtual incubator plant.
 └───startup -- Code to start and stop the DT services.
@@ -53,3 +53,7 @@ The script [run_integration_tests.ps1](./run_integration_tests.ps1) contains the
 ## System Architecture
 
 Read the documentation in [./docs/README.md](./docs/README.md)
+
+## Datasets and Experiment Reports
+
+See [incubator/datasets](./incubator/datasets/README.md)
