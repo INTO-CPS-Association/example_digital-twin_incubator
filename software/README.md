@@ -4,7 +4,7 @@
 ├───cli -- Contains code to communicate with the running DT components.
 ├───digital_twin -- Code that forms the digital twin.
 ├───docs -- Documentation.
-├───incubator -- Code that implements the physical twin
+├───incubator -- Code that implements the physical twin and Models
 ├───integration_tests -- Code to run tests that involve setup and running scenarios with the DT components.
 ├───mock_plant -- Code setting up the local virtual incubator plant.
 └───startup -- Code that allows starting and stopping the DT components.

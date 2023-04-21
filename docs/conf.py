@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "INTO-CPS"
+project = "Incubator Case Study"
 copyright = "2020, INTO-CPS Association"
 author = "INTO-CPS Association"
 
@@ -72,8 +72,6 @@ html_static_path = ["_static"]
 html_css_files = [
     "style.css",
 ]
-# We do not wish to process "GitHub" README.MD in the source tree
-
 html_logo = "images/logo.svg"
 
 html_theme_options = {'collapse_navigation': False}
