@@ -4,7 +4,7 @@ from datetime import datetime
 from influxdb_client import InfluxDBClient
 from influxdb_client.client.write_api import SYNCHRONOUS
 
-from calibration.calibrator import Calibrator
+from incubator.calibration.calibrator import Calibrator
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_KF_PLANT_STATE, ROUTING_KEY_KF_UPDATE_PARAMETERS, \
     ROUTING_KEY_SELF_ADAPTATION_STATE, ROUTING_KEY_SELF_ADAPTATION_TRIGGER
 from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data, query_most_recent_fields

@@ -6,9 +6,9 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_KF_PLANT_ST
 from digital_twin.self_adaptation.self_adaptation_manager_server import DatabaseFacade, ParametricControllerFacade
 from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.shared.protocol import from_ns_to_s
-from models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
-from self_adaptation.controller_optimizer import ControllerOptimizer
-from self_adaptation.supervisor import SupervisorThresholdSM
+from incubator.models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
+from incubator.self_adaptation.controller_optimizer import ControllerOptimizer
+from incubator.self_adaptation.supervisor import SupervisorThresholdSM
 
 
 class SupervisorServer:

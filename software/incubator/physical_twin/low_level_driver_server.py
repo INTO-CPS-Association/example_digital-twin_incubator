@@ -1,3 +1,4 @@
+import concurrent.futures
 import logging
 import time
 
@@ -113,10 +114,20 @@ class IncubatorDriver:
         n_sensors = len(self.temperature_sensor)
         readings = [] * n_sensors
         timestamps = [] * n_sensors
-        for i in range(n_sensors):
-            readings.append(float(self.temperature_sensor[i].read()))
-            self.logger.debug(f"Elapsed after read sensor {i}: {time.time() - start}s")
-            timestamps.append(time.time_ns())
+
+        # Use concurrency to read temp sensors in parallel.
+        with concurrent.futures.ThreadPoolExecutor(max_workers=n_sensors) as executor:
+            tasks = {executor.submit(self.temperature_sensor[i].read): i for i in range(n_sensors)}
+            for task in concurrent.futures.as_completed(tasks):
+                i = tasks[task]
+                try:
+                    data = task.result()
+                    readings.append(float(data))
+                    self.logger.debug(f"Elapsed after read sensor {i}: {time.time() - start}s")
+                    timestamps.append(time.time_ns())
+                except Exception as exc:
+                    self.logger.error(f"Problem reading sensor {i}: {exc}")
+                    raise exc
 
         timestamp = time.time_ns()
         message = {
