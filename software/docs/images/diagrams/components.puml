@@ -1,5 +1,0 @@
-@startuml Components
-interface       StateEstimator
-class           KalmanFilter
-StateEstimator <|-- KalmanFilter
-@enduml

@@ -1,15 +1,12 @@
 # Software
 
 This directory contains all things code related.
-
-```
-├───cli -- Contains code to communicate with the running DT components.
-├───digital_twin -- Code that forms the digital twin.
-├───incubator -- Code that implements the physical twin, models, and datasets
-├───integration_tests -- Code to run integration tests.
-├───mock_plant -- Code setting up the local virtual incubator plant.
-└───startup -- Code to start and stop the DT services.
-```
+- [cli](./cli) -- Contains code to communicate with the running DT components.
+- [digital_twin](./digital_twin) -- Code that forms the digital twin.
+- [incubator](./incubator) -- Code that implements the physical twin, models, and datasets
+- [integration_tests](./integration_tests) -- Code to run integration tests.
+- [mock_plant](./mock_plant) -- Code setting up the local virtual incubator plant.
+- [startup](./startup) -- Code to start and stop the DT services.
 
 ## Running the Digital Twin Locally
 
@@ -27,7 +24,7 @@ This directory contains all things code related.
 
 ### After First-time Setup: Starting the DT Framework
 
-1. Create a [startup.conf](./startup.conf) file in the folder of this readme file. Copy [example_startup.conf](./example_startup.conf) and change if needed. You should not need to change anything for running the DT locally.
+1. Create a [startup.conf](./startup.conf) in this folder. Copy [example_startup.conf](./example_startup.conf) and change if needed. You should not need to change anything for running the DT locally.
 2. Follow the instructions in [./startup/README.md](./startup/README.md)
 3. Recommended: [Run the unit tests](#running-unit-tests)
 4. Recommended: [Run the integration tests](#running-integration-tests)

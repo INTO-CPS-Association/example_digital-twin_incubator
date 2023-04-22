@@ -2,7 +2,7 @@ This is where the code that start the DT services is located.
 
 Each service runs in its own process and has as a corresponding start script.
 
-Before starting any service, make sure you have [docker](https://www.docker.com/products/docker-desktop) installed (see below), and that you have followed the instructions in:
+Before starting any service, make sure you have [docker](https://www.docker.com/products/docker-desktop) installed (see [below](#to-install-docker)), and that you have followed the instructions in:
 1. [Rabbitmq README](../incubator/communication/installation/README.md)
 2. [Influxdb README](../digital_twin/data_access/influxdbserver/README.md)
 
@@ -29,10 +29,4 @@ time           execution_interval  elapsed  heater_on  fan_on  t1     box_air_te
 
 ## To install Docker
 
-1. Download the installer from https://docs.docker.com/docker-for-windows/install/
-2. Before installation, open a PowerShell console as Administrator and run the following command (Reference: https://docs.microsoft.com/en-us/virtualization/hyper-v-on-windows/quick-start/enable-hyper-v):
-```
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-```
-3. Install the Docker with the Installer. 
-Tip: I installed a WSL on my computer which failed the Docker after the installation. So during the installation, I unchecked the WSL relative stuff before finishing the Dock installation. 
+See [Docker Homepage](https://docs.docker.com/desktop/)
