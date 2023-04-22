@@ -21,7 +21,7 @@ class IncubatorDriver:
                  simulate_actuation=True
                  ):
 
-        self.logger = logging.getLogger("Incubator")
+        self.logger = logging.getLogger("IncubatorDriver")
         # Connection info
         self.rabbitmq = Rabbitmq(**rabbit_config)
 
@@ -77,16 +77,18 @@ class IncubatorDriver:
 
     def react_control_signals(self, start):
         heat_cmd = self._try_read_heat_control()
-        self.logger.debug(f"Time to read heat command: {time.time() - start}s")
+        self.logger.debug(f"Elapsed after get heat command: {time.time() - start}s")
         fan_cmd = self._try_read_fan_control()
-        self.logger.debug(f"Time to read fan command: {time.time() - start}s")
+        self.logger.debug(f"Elapsed after get fan command: {time.time() - start}s")
 
         if heat_cmd is not None:
             self.logger.debug(f"Heat command: on={heat_cmd}")
             self._safe_set_actuator(self.heater, heat_cmd)
+            self.logger.debug(f"Elapsed after set heater: {time.time() - start}s")
         if fan_cmd is not None:
             self.logger.debug(f"Fan command: on={fan_cmd}")
             self._safe_set_actuator(self.fan, fan_cmd)
+            self.logger.debug(f"Elapsed after set fan: {time.time() - start}s")
 
     def _safe_set_actuator(self, gpio_led, on: bool):
         if on and gpio_led.is_lit:
@@ -113,6 +115,7 @@ class IncubatorDriver:
         timestamps = [] * n_sensors
         for i in range(n_sensors):
             readings.append(float(self.temperature_sensor[i].read()))
+            self.logger.debug(f"Elapsed after read sensor {i}: {time.time() - start}s")
             timestamps.append(time.time_ns())
 
         timestamp = time.time_ns()
@@ -140,6 +143,7 @@ class IncubatorDriver:
         self.rabbitmq.send_message(ROUTING_KEY_STATE, message)
         self.logger.debug(f"Message sent to {ROUTING_KEY_STATE}.")
         self.logger.debug(message)
+        self.logger.debug(f"Elapsed after msg sent: {time.time() - start}s")
 
     def _try_read_heat_control(self):
         msg = self.rabbitmq.get_message(self.heater_queue_name)
