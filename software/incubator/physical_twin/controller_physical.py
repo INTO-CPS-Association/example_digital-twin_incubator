@@ -20,8 +20,6 @@ class ControllerPhysical:
 
         self.box_air_temperature = None
         self.room_temperature = None
-        self.read_fan_on = None
-        self.read_heater_on = None
 
         self.heater_ctrl = None
         self.fan_ctrl = None
@@ -36,21 +34,7 @@ class ControllerPhysical:
         sensor_room = message['fields']['t3']
         self.box_air_temperature = message['fields']['average_temperature']
         self.room_temperature = sensor_room
-        self.read_fan_on = message["fields"]["fan_on"]
-        self.read_heater_on = message["fields"]["heater_on"]
-
-    def check_consistent_controller_state(self):
-        if self.fan_ctrl is not None:
-            if not (self.read_fan_on == self.fan_ctrl):
-                msg = f"Inconsistent read fan ({self.read_fan_on}) vs last fan command sent ({self.fan_ctrl})."
-                self._l.error(msg)
-                raise AssertionError(msg)
-        if self.heater_ctrl is not None:
-            if not (self.read_heater_on == self.heater_ctrl):
-                msg = f"Inconsistent read heater ({self.read_heater_on}) vs last heater command sent ({self.heater_ctrl})."
-                self._l.error(msg)
-                raise AssertionError(msg)
-
+    
     def safe_protocol(self):
         self._l.debug("Stopping Fan")
         self.fan_ctrl = False
@@ -75,8 +59,7 @@ class ControllerPhysical:
                                 on_message_callback=self.control_loop_callback)
 
     def ctrl_step(self):
-        if not self.read_fan_on:
-            self.fan_ctrl = True
+        self.fan_ctrl = True
 
         if self.box_air_temperature >= 58:
             self._l.error("Temperature exceeds 58, Cleaning up.")
