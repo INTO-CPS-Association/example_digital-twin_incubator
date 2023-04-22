@@ -36,7 +36,7 @@ It is possible to run the digital twin on our computer, with or without a connec
 
 Follow the instructions in [software/README.md](software/README.md).
 
-*You're advised to read carefully all documentation before following the instructions suggested*.
+*You're advised to read carefully all documentation before acting on any instruction*.
 
 ## Repository Maintenance Instructions
 
@@ -45,8 +45,14 @@ We make extensive use of README.md files. Please read them and keep them up to d
 General guidelines:
 1. Run the tests as often as possible.
 2. Create tests as much as possible.
-3. Ask for code reviews (code readable by at least two people is more likely readable by a third)
-4. Organize and document your datasets, and experiments: use the sphinx documents for this.
-5. Beware of large datasets.
-6. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everyone. Discuss with Casper, Kenneth, or Claudio before doing so if you're not sure.
-7. Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
+3. Create code that is testable.
+4. Ask for code reviews (code readable by at least two people is more likely readable by a third)
+5. Organize and document datasets and experiments.
+6. Beware of large datasets. Host them elsewhere if needed, but include a short version of the dataset in the repository.
+7. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everyone. Discuss with Casper, Kenneth, or Claudio before doing so if you're not sure.
+8. We shy away from branches except when they add a substantial amount of functionality. Commit and push responsibly to the main branch, that is, always make sure that:
+   1. That all tests pass (unit tests and integration tests).
+   2. That new code is documented and tested.
+   3. That documentation links are not broken. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md fiels for broken links:
+      1. `Get-ChildItem -Include *.md -Recurse | Foreach {markdown-link-check --config .\markdown_link_check_config.json $_.fullname}`
+9.  Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
