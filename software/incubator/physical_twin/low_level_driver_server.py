@@ -122,9 +122,9 @@ class IncubatorDriver:
                 i = tasks[task]
                 try:
                     data = task.result()
-                    readings.append(float(data))
+                    readings[i] = float(data)
                     self.logger.debug(f"Elapsed after read sensor {i}: {time.time() - start}s")
-                    timestamps.append(time.time_ns())
+                    timestamps[i] = time.time_ns()
                 except Exception as exc:
                     self.logger.error(f"Problem reading sensor {i}: {exc}")
                     raise exc
