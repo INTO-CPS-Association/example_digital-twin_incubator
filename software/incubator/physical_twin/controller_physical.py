@@ -20,8 +20,11 @@ class ControllerPhysical:
 
         self.box_air_temperature = None
         self.room_temperature = None
+        self.read_fan_on = None
+        self.read_heater_on = None
 
         self.heater_ctrl = None
+        self.fan_ctrl = None
         self.current_state = "CoolingDown"
         self.next_time = -1.0
 
@@ -33,6 +36,18 @@ class ControllerPhysical:
         sensor_room = message['fields']['t3']
         self.box_air_temperature = message['fields']['average_temperature']
         self.room_temperature = sensor_room
+        self.read_fan_on = message["fields"]["fan_on"]
+        self.read_heater_on = message["fields"]["heater_on"]
+
+    def check_consistent_controller_state(self):
+        if not (self.read_fan_on == self.fan_ctrl):
+            msg = f"Inconsistent read fan ({self.read_fan_on}) vs last fan command sent ({self.fan_ctrl})."
+            self._l.error(msg)
+            raise AssertionError(msg)
+        if not (self.read_heater_on == self.heater_ctrl):
+            msg = f"Inconsistent read heater ({self.read_heater_on}) vs last heater command sent ({self.heater_ctrl})."
+            self._l.error(msg)
+            raise AssertionError(msg)
 
     def safe_protocol(self):
         self._l.debug("Stopping Fan")
@@ -44,6 +59,7 @@ class ControllerPhysical:
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_HEATER, message={"heater": on})
 
     def _set_fan_on(self, on):
+        self.fan_ctrl = on
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_FAN, message={"fan": on})
 
     def setup(self):
@@ -153,6 +169,8 @@ class ControllerPhysical:
     def control_loop_callback(self, ch, method, properties, body_json):
         self._record_message(body_json)
 
+        self.check_consistent_controller_state()
+
         self.ctrl_step()
 
         self.print_terminal(body_json)
@@ -169,4 +187,6 @@ class ControllerPhysical:
             self._l.warning("Stopping controller")
             self.cleanup()
             raise
+
+
 
