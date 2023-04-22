@@ -12,7 +12,6 @@ CTRL_EXEC_INTERVAL = 3.0
 class IncubatorDriver:
     logger = logging.getLogger("Incubator")
 
-
     def __init__(self,
                  heater,
                  fan,
@@ -73,12 +72,14 @@ class IncubatorDriver:
             raise
 
     def control_step(self, start, exec_interval):
-        self.react_control_signals()
+        self.react_control_signals(start)
         self.read_upload_state(start, exec_interval)
 
-    def react_control_signals(self):
+    def react_control_signals(self, start):
         heat_cmd = self._try_read_heat_control()
+        self.logger.debug(f"Time to read heat command: {time.time() - start}s")
         fan_cmd = self._try_read_fan_control()
+        self.logger.debug(f"Time to read fan command: {time.time() - start}s")
 
         if heat_cmd is not None:
             self.logger.debug(f"Heat command: on={heat_cmd}")
@@ -157,6 +158,7 @@ class IncubatorDriver:
 
 if __name__ == '__main__':
     from incubator.physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
+
     logging.basicConfig(level=logging.INFO)
     config_logger("logging.conf")
     config = load_config("startup.conf")
