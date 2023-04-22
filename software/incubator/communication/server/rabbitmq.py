@@ -2,7 +2,7 @@ import pika
 import logging
 import ssl as ssl_package
 
-from communication.shared.protocol import *
+from incubator.communication.shared.protocol import *
 
 
 class Rabbitmq:

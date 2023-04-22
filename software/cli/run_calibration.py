@@ -4,6 +4,7 @@ from datetime import datetime
 import pytz
 
 from cli.run_plant_simulation import run_plant_simulation
+from incubator.config.config import load_config
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4
 from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
@@ -28,7 +29,8 @@ if __name__ == '__main__':
     start_date_ns = from_s_to_ns(start_date.timestamp())
 
     config_logging(level=logging.WARN)
-    client = RPCClient(ip="localhost")
+    config = load_config("startup.conf")
+    client = RPCClient(**(config["rabbitmq"]))
     client.connect_to_server()
 
     reply = client.invoke_method(ROUTING_KEY_PLANTCALIBRATOR4, "run_calibration",

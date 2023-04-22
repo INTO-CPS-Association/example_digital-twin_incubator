@@ -3,7 +3,7 @@ import unittest
 from filterpy.common import Q_discrete_white_noise
 from filterpy.kalman import KalmanFilter
 
-from tests.cli_mode_test import CLIModeTest
+from incubator.tests.cli_mode_test import CLIModeTest
 import numpy as np
 import matplotlib.pyplot as plt
 

@@ -1,13 +1,12 @@
 import math
 
 import numpy
-import numpy as np
 import pandas
 from scipy import integrate
 
-from communication.shared.protocol import from_ns_to_s
-from config.config import resource_file_path
-from models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
+from incubator.communication.shared.protocol import from_ns_to_s
+from incubator.config.config import resource_file_path
+from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time, convert_to_seconds):

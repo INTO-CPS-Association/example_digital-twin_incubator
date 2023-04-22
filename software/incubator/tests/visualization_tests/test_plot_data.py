@@ -4,18 +4,18 @@ import unittest
 import matplotlib.pyplot as plt
 import pandas
 
-from config.config import resource_file_path
-from data_processing.data_processing import load_data, derive_data
-from models.plant_models.model_functions import run_experiment_four_parameter_model
-from tests.cli_mode_test import CLIModeTest
-from visualization.data_plotting import plot_incubator_data, plotly_incubator_data, show_plotly
+from incubator.config.config import resource_file_path
+from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.models.plant_models.model_functions import run_experiment_four_parameter_model
+from incubator.tests.cli_mode_test import CLIModeTest
+from incubator.visualization.data_plotting import plot_incubator_data, plotly_incubator_data, show_plotly
 
 
 class TestPlotData(CLIModeTest):
 
     def test_plot_data_default_setup(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./datasets/controller_tunning/exp1_ht3_hg2.csv",
+        data, _ = load_data("./incubator/datasets/controller_tunning/exp1_ht3_hg2.csv",
                             desired_timeframe=(- math.inf, math.inf))
 
         plot_incubator_data(data)
@@ -28,8 +28,8 @@ class TestPlotData(CLIModeTest):
 
         time_frame = (1614859007119846022, 1614861060000000000 - 1)
 
-        data, events = load_data("./datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
+                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
                                  desired_timeframe=time_frame,
                                  time_unit=time_unit,
                                  normalize_time=False,
@@ -63,8 +63,8 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_mar_experiment(self):
         time_unit = 'ns'
-        data, events = load_data("./datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
+                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
                                  desired_timeframe=(- math.inf, math.inf),
                                  time_unit=time_unit,
                                  normalize_time=False,

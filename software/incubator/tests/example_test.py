@@ -1,6 +1,6 @@
 import unittest
 
-from tests.cli_mode_test import CLIModeTest
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 class ExampleTestCase(CLIModeTest):

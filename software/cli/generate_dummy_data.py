@@ -10,7 +10,7 @@ from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
 from incubator.config.config import config_logger, load_config
 from incubator.models.plant_models.room_temperature_model import room_temperature
-from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
+from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 
 
 def generate_room_data(influxdb, bucket, org, start_date, end_date):

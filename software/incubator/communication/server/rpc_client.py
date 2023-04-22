@@ -3,9 +3,9 @@ import uuid
 import pika
 import logging
 
-from communication.server.rabbitmq import Rabbitmq
-from communication.server.rpc_server import METHOD_ATTRIBUTE, ARGS_ATTRIBUTE
-from communication.shared.protocol import decode_json
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.communication.server.rpc_server import METHOD_ATTRIBUTE, ARGS_ATTRIBUTE
+from incubator.communication.shared.protocol import decode_json
 
 
 class RPCClient(Rabbitmq):

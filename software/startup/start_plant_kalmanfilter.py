@@ -1,6 +1,6 @@
 from incubator.config.config import config_logger, load_config
 from digital_twin.monitoring.kalman_filter_plant_server import KalmanFilterPlantServer
-from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
+from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 
 
 def start_plant_kalmanfilter(ok_queue=None):

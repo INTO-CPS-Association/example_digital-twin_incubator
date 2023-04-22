@@ -4,7 +4,7 @@ import unittest
 
 from plotly.subplots import make_subplots
 
-from tests.cli_mode_test import CLIModeTest
+from incubator.tests.cli_mode_test import CLIModeTest
 # Standard plotly imports
 import plotly.graph_objects as go
 import numpy as np

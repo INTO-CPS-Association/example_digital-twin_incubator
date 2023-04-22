@@ -10,6 +10,7 @@ from digital_twin.data_access.dbmanager.data_access_parameters import INFLUXDB_U
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
+from incubator.config.config import load_config
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
 from startup.utils.logging_config import config_logging
@@ -38,7 +39,8 @@ def run_plant_simulation(params, start_date, end_date, initial_heat_temperature,
     heater_on = heater_data["_value"].to_numpy().tolist()
     fan_on = fan_data["_value"].to_numpy().tolist()
 
-    client = RPCClient(ip="localhost")
+    config = load_config("startup.conf")
+    client = RPCClient(**(config["rabbitmq"]))
     client.connect_to_server()
 
     sim = client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run", {

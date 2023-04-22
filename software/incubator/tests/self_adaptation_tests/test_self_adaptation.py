@@ -4,20 +4,20 @@ import numpy as np
 from oomodelling import ModelSolver
 import matplotlib.pyplot as plt
 
-from calibration.calibrator import Calibrator
-from interfaces.parametric_controller import IParametricController
-from interfaces.database import IDatabase
-from config.config import load_config
+from incubator.calibration.calibrator import Calibrator
+from incubator.interfaces.parametric_controller import IParametricController
+from incubator.interfaces.database import IDatabase
+from incubator.config.config import load_config
 from digital_twin.simulator.plant_simulator import PlantSimulator4Params
-from models.controller_models.controller_open_loop import ControllerOpenLoop
-from models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
-from models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from models.self_adaptation.self_adaptation_scenario import SelfAdaptationScenario
-from self_adaptation.self_adaptation_manager import SelfAdaptationManager
-from monitoring.kalman_filter_4p import KalmanFilter4P
-from self_adaptation.controller_optimizer import ControllerOptimizer, NoOPControllerOptimizer
-from self_adaptation.supervisor import SupervisorThresholdSM, SupervisorPeriodicSM
-from tests.cli_mode_test import CLIModeTest
+from incubator.models.controller_models.controller_open_loop import ControllerOpenLoop
+from incubator.models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
+from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
+from incubator.models.self_adaptation.self_adaptation_scenario import SelfAdaptationScenario
+from incubator.self_adaptation.self_adaptation_manager import SelfAdaptationManager
+from incubator.monitoring.kalman_filter_4p import KalmanFilter4P
+from incubator.self_adaptation.controller_optimizer import ControllerOptimizer, NoOPControllerOptimizer
+from incubator.self_adaptation.supervisor import SupervisorThresholdSM, SupervisorPeriodicSM
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 class SelfAdaptationTests(CLIModeTest):

@@ -8,14 +8,14 @@ from multiprocessing import Process
 from influxdb_client import InfluxDBClient
 
 from cli.generate_dummy_data import generate_room_data, generate_incubator_exec_data
-from communication.server.rpc_client import RPCClient
-from communication.shared.protocol import from_s_to_ns
+from incubator.communication.server.rpc_client import RPCClient
+from incubator.communication.shared.protocol import from_s_to_ns
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.config.config import config_logger, load_config
 from incubator.tests.cli_mode_test import CLIModeTest
 from mock_plant.mock_connection import MOCK_G_BOX
-from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from startup.start_calibrator import start_calibrator
 from startup.start_controller_physical import start_controller_physical
 from startup.start_controller_physical_open_loop import start_controller_physical_open_loop

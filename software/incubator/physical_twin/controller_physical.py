@@ -3,9 +3,10 @@ import sys
 from datetime import datetime
 import logging
 
-from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
+from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
-from communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
+from incubator.communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
+
 
 class ControllerPhysical:
     def __init__(self, rabbit_config, temperature_desired=35.0, lower_bound=5.0, heating_time=20.0,

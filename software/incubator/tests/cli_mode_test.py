@@ -4,7 +4,8 @@ import unittest
 
 class CLIModeTest(unittest.TestCase):
 
-    def cli_mode(self):
+    @staticmethod
+    def cli_mode():
         """
         Check is the environment variable CLIMODE is defined.
         :return:

@@ -5,8 +5,8 @@ from oomodelling import Model
 import sympy as sp
 import numpy as np
 
-from models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
-from interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
+from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
+from incubator.interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
 
 
 def construct_filter(step_size, std_dev,

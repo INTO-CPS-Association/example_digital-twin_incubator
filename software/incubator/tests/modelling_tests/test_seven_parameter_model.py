@@ -7,15 +7,15 @@ import numpy as np
 import pandas
 from scipy.optimize import leastsq, least_squares
 
-from data_processing.data_processing import load_data, derive_data
-from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from models.plant_models.model_functions import run_experiment_seven_parameter_model, construct_residual, \
+from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.models.plant_models.model_functions import run_experiment_seven_parameter_model, construct_residual, \
     run_experiment_four_parameter_model, run_experiment_two_parameter_model
-from models.plant_models.seven_parameters_model.best_parameters import seven_param_model_params
-from models.plant_models.two_parameters_model.best_parameters import two_param_model_params
-from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
-from tests.cli_mode_test import CLIModeTest
-from visualization.data_plotting import plotly_incubator_data, show_plotly
+from incubator.models.plant_models.seven_parameters_model.best_parameters import seven_param_model_params
+from incubator.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
+from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
+from incubator.tests.cli_mode_test import CLIModeTest
+from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
 
 
 l = logging.getLogger("SevenParameterModelTests")
@@ -42,8 +42,8 @@ class SevenParameterModelTests(CLIModeTest):
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
+                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
@@ -74,8 +74,8 @@ class SevenParameterModelTests(CLIModeTest):
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
+                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
@@ -162,8 +162,8 @@ class SevenParameterModelTests(CLIModeTest):
         tf = 1614867210000000000 + 1 if self.ide_mode() else 1614867211000000000 - 1
 
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, events = load_data("./datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
+                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
                                  desired_timeframe=(-math.inf, tf),
                                  time_unit=time_unit,
                                  normalize_time=False,

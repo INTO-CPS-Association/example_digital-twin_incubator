@@ -7,15 +7,15 @@ import matplotlib.pyplot as plt
 
 from scipy import integrate
 
-from data_processing.data_processing import load_data, derive_data
-from tests.cli_mode_test import CLIModeTest
+from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 class UniformExperimentTests(CLIModeTest):
 
     def test_plot_data_uniform_experiment(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, math.inf))
+        data, _ = load_data("./incubator/datasets/uniform_temperature/unitform_temperature.csv", desired_timeframe=(-math.inf, math.inf))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
@@ -58,7 +58,7 @@ class UniformExperimentTests(CLIModeTest):
 
     def test_show_temperature_sensor_redundant(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./datasets/uniform_temperature/unitform_temperature_better_fan.csv", desired_timeframe=(-math.inf, math.inf))
+        data, _ = load_data("./incubator/datasets/uniform_temperature/unitform_temperature_better_fan.csv", desired_timeframe=(-math.inf, math.inf))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
@@ -76,7 +76,7 @@ class UniformExperimentTests(CLIModeTest):
         data["potential_energy"] = data["avg_temp_kelvin"] * air_mass * air_heat_capacity
         data["potential_energy"] = data["potential_energy"] - data.iloc[0]["potential_energy"]
 
-        fig, (ax1, ax2, ax3, ax5) = plt.subplots(4, 1, sharex=True)
+        fig, (ax1, ax2, ax3, ax5) = plt.subplots(4, 1, sharex='all')
 
         ax1.plot(data["time"], data["t1"], label="t1")
         ax1.plot(data["time"], data["t2"], label="t2")

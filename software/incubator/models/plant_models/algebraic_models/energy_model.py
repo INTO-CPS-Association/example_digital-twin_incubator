@@ -1,6 +1,6 @@
 from oomodelling import Model
 
-from models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
+from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 class EnergyModel(Model):

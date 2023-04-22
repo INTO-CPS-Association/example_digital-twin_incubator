@@ -1,13 +1,15 @@
 import numpy as np
 from scipy.optimize import minimize_scalar
 
-from interfaces.parametric_controller import IParametricController
-from interfaces.database import IDatabase
-from models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
+from incubator.interfaces.parametric_controller import IParametricController
+from incubator.interfaces.database import IDatabase
+from incubator.models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
+
 
 class IControllerOptimizer:
     def optimize_controller(self):
         raise NotImplementedError("For subclasses")
+
 
 class ControllerOptimizer(IControllerOptimizer):
 

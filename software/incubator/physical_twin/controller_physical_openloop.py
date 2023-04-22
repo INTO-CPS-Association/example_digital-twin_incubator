@@ -3,10 +3,10 @@ import sys
 from datetime import datetime
 import logging
 
-from communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
+from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
-from communication.shared.protocol import ROUTING_KEY_UPDATE_CTRL_PARAMS
-from models.controller_models.controller_open_loop import ControllerOpenLoopSM
+from incubator.communication.shared.protocol import ROUTING_KEY_UPDATE_CTRL_PARAMS
+from incubator.models.controller_models.controller_open_loop import ControllerOpenLoopSM
 
 class ControllerPhysicalOpenLoop:
     def __init__(self, rabbit_config,

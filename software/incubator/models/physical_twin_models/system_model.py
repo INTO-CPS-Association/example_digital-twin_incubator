@@ -1,7 +1,7 @@
 from oomodelling import Model
 
-from models.controller_models.controller_model4 import ControllerModel4
-from models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
+from incubator.models.controller_models.controller_model4 import ControllerModel4
+from incubator.models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
 
 
 class SystemModel(Model):

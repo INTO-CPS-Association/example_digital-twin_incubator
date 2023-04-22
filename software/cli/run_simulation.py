@@ -6,8 +6,9 @@ import pytz
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from incubator.communication.server.rpc_client import RPCClient
 from incubator.communication.shared.protocol import from_s_to_ns
+from incubator.config.config import load_config
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
+from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 from startup.utils.logging_config import config_logging
 
 if __name__ == '__main__':
@@ -23,8 +24,8 @@ if __name__ == '__main__':
     start_date_ns = from_s_to_ns(start_date.timestamp())
 
     config_logging(level=logging.WARN)
-    # TODO: This code is broken
-    client = RPCClient(ip="localhost")
+    config = load_config("startup.conf")
+    client = RPCClient(**(config["rabbitmq"]))
     client.connect_to_server()
 
     reply = client.invoke_method(ROUTING_KEY_PTSIMULATOR4, "run_historical", {"start_date": start_date_ns,

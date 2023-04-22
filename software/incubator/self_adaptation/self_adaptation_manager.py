@@ -1,9 +1,9 @@
 import numpy as np
 from oomodelling import Model
 
-from calibration.calibrator import Calibrator
-from self_adaptation.controller_optimizer import IControllerOptimizer
-from interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
+from incubator.calibration.calibrator import Calibrator
+from incubator.self_adaptation.controller_optimizer import IControllerOptimizer
+from incubator.interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
 
 
 class SelfAdaptationManager:

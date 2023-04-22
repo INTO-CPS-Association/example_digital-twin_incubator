@@ -15,7 +15,8 @@ from incubator.models.plant_models.model_functions import create_lookup_table
 
 
 class PlantSimulator4Params:
-    def run_simulation(self, timespan_seconds, initial_box_temperature, initial_heat_temperature,
+    @staticmethod
+    def run_simulation(timespan_seconds, initial_box_temperature, initial_heat_temperature,
                        room_temperature, heater_on,
                        C_air, G_box, C_heater, G_heater):
 

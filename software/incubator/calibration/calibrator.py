@@ -3,17 +3,19 @@ import logging
 import numpy as np
 from scipy.optimize import minimize
 
-from interfaces.database import IDatabase
+from incubator.interfaces.database import IDatabase
 from digital_twin.simulator.plant_simulator import PlantSimulator4Params
 
 
 def compute_error(tracked_solutions, new_state_trajectories):
-    assert len(tracked_solutions) == len(new_state_trajectories), "Solutions and state trajectories appear inconsistent."
+    assert len(tracked_solutions) == len(
+        new_state_trajectories), "Solutions and state trajectories appear inconsistent."
     return np.sum(np.sum(np.power(tracked_solutions - new_state_trajectories, 2)))
 
 
 class Calibrator:
-    def __init__(self, database: IDatabase, plant_simulator: PlantSimulator4Params, conv_xatol, conv_fatol, max_iterations):
+    def __init__(self, database: IDatabase, plant_simulator: PlantSimulator4Params, conv_xatol, conv_fatol,
+                 max_iterations):
         self._l = logging.getLogger("Calibrator")
         self.database = database
         self.plant_simulator = plant_simulator
@@ -38,8 +40,9 @@ class Calibrator:
         def cost(p):
             C_air, G_box = p
             try:
-                sol, model = self.plant_simulator.run_simulation(times, reference_T[0], reference_T_heater[0], room_T, ctrl_signal,
-                                                                C_air, G_box, C_heater, G_heater)
+                sol, model = self.plant_simulator.run_simulation(times, reference_T[0], reference_T_heater[0], room_T,
+                                                                 ctrl_signal,
+                                                                 C_air, G_box, C_heater, G_heater)
 
                 error = compute_error(tracked_solutions, sol.y[1:])
                 return error
@@ -57,8 +60,8 @@ class Calibrator:
         if new_sol.success:
             C_air_new, G_box_new = new_sol.x
             calibrated_sol, _ = self.plant_simulator.run_simulation(times, reference_T[0], reference_T_heater[0],
-                                                                 room_T, ctrl_signal,
-                                                                 C_air_new, G_box_new, C_heater, G_heater)
+                                                                    room_T, ctrl_signal,
+                                                                    C_air_new, G_box_new, C_heater, G_heater)
 
             self.database.store_calibrated_trajectory(times, calibrated_sol.y[1:])
             self.database.store_new_plant_parameters(times[0], C_air_new, G_box_new, C_heater, G_heater)

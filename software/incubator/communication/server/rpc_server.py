@@ -3,7 +3,7 @@ import inspect
 import pika
 import logging
 
-from communication.shared.protocol import decode_json, encode_json
+from incubator.communication.shared.protocol import decode_json, encode_json
 
 METHOD_ATTRIBUTE = "method"
 ARGS_ATTRIBUTE = "args"

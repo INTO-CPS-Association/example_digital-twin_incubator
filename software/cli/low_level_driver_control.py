@@ -1,4 +1,4 @@
-from communication.shared.protocol import ROUTING_KEY_FAN, ROUTING_KEY_HEATER
+from incubator.communication.shared.protocol import ROUTING_KEY_FAN, ROUTING_KEY_HEATER
 from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.config.config import config_logger, load_config
 

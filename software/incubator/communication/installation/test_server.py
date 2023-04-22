@@ -1,7 +1,7 @@
 import logging
 import time
 
-from communication.server.rabbitmq import Rabbitmq
+from incubator.communication.server.rabbitmq import Rabbitmq
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)

@@ -2,9 +2,9 @@ import logging
 import time
 
 # Import parameters and shared stuff
-from communication.server.rabbitmq import Rabbitmq
-from communication.shared.protocol import *
-from config.config import config_logger, load_config
+from incubator.communication.server.rabbitmq import Rabbitmq
+from incubator.communication.shared.protocol import *
+from incubator.config.config import config_logger, load_config
 
 CTRL_EXEC_INTERVAL = 3.0
 
@@ -156,7 +156,7 @@ class IncubatorDriver:
 
 
 if __name__ == '__main__':
-    from physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
+    from incubator.physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
     logging.basicConfig(level=logging.INFO)
     config_logger("logging.conf")
     config = load_config("startup.conf")

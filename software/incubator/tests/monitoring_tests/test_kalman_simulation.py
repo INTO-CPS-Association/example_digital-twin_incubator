@@ -3,9 +3,9 @@ import unittest
 import matplotlib.pyplot as plt
 from oomodelling import ModelSolver
 
-from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from monitoring.kalman_system_model import KalmanSystemModel
-from tests.cli_mode_test import CLIModeTest
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.monitoring.kalman_system_model import KalmanSystemModel
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 class TestKalmanSimulation(CLIModeTest):

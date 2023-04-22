@@ -3,7 +3,7 @@ import math
 
 import pandas
 
-from communication.shared.protocol import from_ns_to_s
+from incubator.communication.shared.protocol import from_ns_to_s
 
 
 def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):

@@ -1,5 +1,5 @@
-from models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
+from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
+from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 class SevenParameterIncubatorPlant(FourParameterIncubatorPlant):

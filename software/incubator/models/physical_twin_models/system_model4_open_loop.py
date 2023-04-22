@@ -1,11 +1,12 @@
 from oomodelling import Model, ModelSolver
 
-from models.controller_models.controller_open_loop import ControllerOpenLoop
-from models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
+from incubator.models.controller_models.controller_open_loop import ControllerOpenLoop
+from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 
 
 class SystemModel4ParametersOpenLoopSimulator:
-    def run_simulation(self, t0, tf,
+    @staticmethod
+    def run_simulation(t0, tf,
                        # Initial state
                        initial_T, initial_T_heater, initial_room_T,
                        # Controller parameters

@@ -19,8 +19,6 @@ This directory contains all things code related.
 4. (Optional) Install pip wheel: `pip install wheel`
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
-6. Make sure the PYTHONPATH [environment variable](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Environment_Variables.html) contains the [incubator](./incubator/) folder: 
-   1. (Powershell) `$Env:PYTHONPATH = "incubator"`
 
 ### After First-time Setup: Starting the DT Framework
 
@@ -38,7 +36,6 @@ To run the unit tests, open a terminal in the directory of this readme file, and
 2. If using powershell, run [./run_tests.ps1](./run_tests.ps1)
 3. Otherwise:
    1. Set environment variable CLIMODE = "ON"
-   2. Set environment variable PYTHONPATH = "incubator"
    3. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
 
 ### Running Integration Tests

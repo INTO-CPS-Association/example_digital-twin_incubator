@@ -25,7 +25,6 @@ class TemperatureSensor:
     def read(self):
         """
         read and parse sensor data file
-        :param path:
         :return:
         """
         value = "U"

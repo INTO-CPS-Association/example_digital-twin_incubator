@@ -5,12 +5,12 @@ from scipy.optimize import leastsq
 import matplotlib.pyplot as plt
 import sympy as sp
 
-from data_processing.data_processing import load_data, derive_data
-from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
-from models.plant_models.model_functions import construct_residual, run_experiment_four_parameter_model, \
+from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.models.plant_models.model_functions import construct_residual, run_experiment_four_parameter_model, \
     run_experiment_two_parameter_model
-from models.plant_models.two_parameters_model.best_parameters import two_param_model_params
-from tests.cli_mode_test import CLIModeTest
+from incubator.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
+from incubator.tests.cli_mode_test import CLIModeTest
 
 
 l = logging.getLogger("SevenParameterModelTests")
@@ -26,7 +26,7 @@ class FourParameterModelTests(CLIModeTest):
 
         params = four_param_model_params
 
-        data, _ = load_data("./datasets/controller_tunning/exp2_ht20_hg30.csv",
+        data, _ = load_data("./incubator/datasets/controller_tunning/exp2_ht20_hg30.csv",
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
@@ -44,7 +44,7 @@ class FourParameterModelTests(CLIModeTest):
     def test_run_experiment_four_parameter_model(self):
         params = four_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./datasets/controller_tunning/exp2_ht20_hg30.csv",
+        data, _ = load_data("./incubator/datasets/controller_tunning/exp2_ht20_hg30.csv",
                                      desired_timeframe=(-math.inf, 1614861060000000000 - 1),
                                      time_unit='ns',
                                      convert_to_seconds=True)
@@ -80,7 +80,7 @@ class FourParameterModelTests(CLIModeTest):
         # If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
         params = four_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./datasets/controller_tunning/exp2_ht20_hg30.csv",
+        data, _ = load_data("./incubator/datasets/controller_tunning/exp2_ht20_hg30.csv",
                                      desired_timeframe=(-math.inf, math.inf))
 
         results_4p, sol_4p = run_experiment_four_parameter_model(data, params)

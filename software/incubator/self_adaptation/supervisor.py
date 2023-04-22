@@ -1,7 +1,7 @@
 import numpy as np
 from oomodelling import Model
 
-from self_adaptation.controller_optimizer import ControllerOptimizer
+from incubator.self_adaptation.controller_optimizer import ControllerOptimizer
 
 
 class ISupervisorSM:

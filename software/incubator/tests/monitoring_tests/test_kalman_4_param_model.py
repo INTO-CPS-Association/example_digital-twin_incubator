@@ -4,14 +4,14 @@ import unittest
 import numpy as np
 import pandas
 
-from config.config import resource_file_path
-from data_processing.data_processing import load_data, derive_data
-from monitoring.kalman_filter_4p import KalmanFilter4P
-from models.plant_models.model_functions import run_experiment_four_parameter_model
-from physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
-from visualization.data_plotting import plotly_incubator_data, show_plotly
-from tests.cli_mode_test import CLIModeTest
-from models.plant_models.four_parameters_model.best_parameters import four_param_model_params
+from incubator.config.config import resource_file_path
+from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.monitoring.kalman_filter_4p import KalmanFilter4P
+from incubator.models.plant_models.model_functions import run_experiment_four_parameter_model
+from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
+from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
+from incubator.tests.cli_mode_test import CLIModeTest
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 
 
 class TestKalmanFilter(CLIModeTest):
@@ -21,12 +21,12 @@ class TestKalmanFilter(CLIModeTest):
 
         # Load the data
         time_unit = 'ns'
-        data, _ = load_data("./datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
+        data, _ = load_data("./incubator/datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
                             desired_timeframe=(- math.inf, math.inf),
                             time_unit=time_unit,
                             normalize_time=False,
                             convert_to_seconds=True)
-        events = pandas.read_csv(resource_file_path("./datasets/lid_opening_experiment_jan_2021/events.csv"))
+        events = pandas.read_csv(resource_file_path("./incubator/datasets/lid_opening_experiment_jan_2021/events.csv"))
         events["timestamp_ns"] = pandas.to_datetime(events["time"], unit=time_unit)
 
         # Inputs to _plant
