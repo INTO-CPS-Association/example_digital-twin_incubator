@@ -157,8 +157,6 @@ class ControllerPhysical:
     def control_loop_callback(self, ch, method, properties, body_json):
         self._record_message(body_json)
 
-        self.check_consistent_controller_state()
-
         self.ctrl_step()
 
         self.print_terminal(body_json)
