@@ -10,7 +10,6 @@ CTRL_EXEC_INTERVAL = 3.0
 
 
 class IncubatorDriver:
-    logger = logging.getLogger("Incubator")
 
     def __init__(self,
                  heater,
@@ -22,6 +21,7 @@ class IncubatorDriver:
                  simulate_actuation=True
                  ):
 
+        self.logger = logging.getLogger("Incubator")
         # Connection info
         self.rabbitmq = Rabbitmq(**rabbit_config)
 
