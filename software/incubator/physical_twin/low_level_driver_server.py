@@ -185,5 +185,17 @@ if __name__ == '__main__':
                                 t3=TemperatureSensor("/sys/bus/w1/devices/10-0008039a977a/w1_slave"),
                                 rabbit_config=config["rabbitmq"],
                                 simulate_actuation=False)
-    incubator.setup()
-    incubator.control_loop()
+    while True:
+        try:
+            incubator.setup()
+            incubator.control_loop(strict_interval=False)
+        except KeyboardInterrupt:
+            exit(0)
+        except Exception as exc:
+            print("Error: ")
+            print(exc)
+            print("Attempting to reconnect...")
+            time.sleep(1.0)
+
+
+
