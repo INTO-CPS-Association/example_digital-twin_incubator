@@ -62,5 +62,8 @@ class IncubatorDataRecorderCSV():
                                on_message_callback=self.read_state)
 
             rabbitmq.start_consuming()
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as exp:
             rabbitmq.close()
+            self.current_file.flush()
+            self.current_file.close()
+            raise exp
