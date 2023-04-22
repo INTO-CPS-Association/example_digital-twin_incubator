@@ -112,8 +112,11 @@ class IncubatorDriver:
 
     def read_upload_state(self, start, exec_interval):
         n_sensors = len(self.temperature_sensor)
-        readings = [] * n_sensors
-        timestamps = [] * n_sensors
+        readings = [None] * n_sensors
+        timestamps = [None] * n_sensors
+
+        assert len(readings) == n_sensors
+        assert len(timestamps) == n_sensors
 
         # Use concurrency to read temp sensors in parallel.
         with concurrent.futures.ThreadPoolExecutor(max_workers=n_sensors) as executor:
@@ -128,6 +131,9 @@ class IncubatorDriver:
                 except Exception as exc:
                     self.logger.error(f"Problem reading sensor {i}: {exc}")
                     raise exc
+
+        assert all([v is not None for v in readings])
+        assert all([ts is not None for ts in timestamps])
 
         timestamp = time.time_ns()
         message = {
@@ -196,6 +202,3 @@ if __name__ == '__main__':
             print(exc)
             print("Attempting to reconnect...")
             time.sleep(1.0)
-
-
-
