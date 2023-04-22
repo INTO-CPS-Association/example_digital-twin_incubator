@@ -40,10 +40,11 @@ class ControllerPhysical:
         self.read_heater_on = message["fields"]["heater_on"]
 
     def check_consistent_controller_state(self):
-        if not (self.read_fan_on == self.fan_ctrl):
-            msg = f"Inconsistent read fan ({self.read_fan_on}) vs last fan command sent ({self.fan_ctrl})."
-            self._l.error(msg)
-            raise AssertionError(msg)
+        if self.fan_ctrl is not None:
+            if not (self.read_fan_on == self.fan_ctrl):
+                msg = f"Inconsistent read fan ({self.read_fan_on}) vs last fan command sent ({self.fan_ctrl})."
+                self._l.error(msg)
+                raise AssertionError(msg)
         if self.heater_ctrl is not None:
             if not (self.read_heater_on == self.heater_ctrl):
                 msg = f"Inconsistent read heater ({self.read_heater_on}) vs last heater command sent ({self.heater_ctrl})."
@@ -52,8 +53,10 @@ class ControllerPhysical:
 
     def safe_protocol(self):
         self._l.debug("Stopping Fan")
+        self.fan_ctrl = False
         self._set_fan_on(False)
         self._l.debug("Stopping Heater")
+        self.heater_ctrl = False
         self._set_heater_on(False)
 
     def _set_heater_on(self, on):
@@ -66,14 +69,15 @@ class ControllerPhysical:
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.safe_protocol()
-        self._l.debug("Starting Fan")
-        self._set_fan_on(True)
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_COSIM_PARAM,
                                 on_message_callback=self.update_parameters)
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
                                 on_message_callback=self.control_loop_callback)
 
     def ctrl_step(self):
+        if not self.read_fan_on:
+            self.fan_ctrl = True
+
         if self.box_air_temperature >= 58:
             self._l.error("Temperature exceeds 58, Cleaning up.")
             self.cleanup()
@@ -180,6 +184,7 @@ class ControllerPhysical:
 
         assert self.heater_ctrl is not None
         self._set_heater_on(self.heater_ctrl)
+        self._set_fan_on(self.fan_ctrl)
 
     def start_control(self):
         try:
