@@ -27,6 +27,7 @@ The original design was made in [tinkercad](https://www.tinkercad.com/things/cxx
 
 ![CAD Model](./figures/incubator_plant.png)
 
+Ongoing development of the cad model is at: [incubator](https://www.tinkercad.com/things/6lOQKeXpeT6-incubator)
 
 ## The Digital Twin
 
