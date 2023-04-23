@@ -1,4 +1,4 @@
-# Experiment with different control parameters
+# Experiment
 
 ## Goal 
 
