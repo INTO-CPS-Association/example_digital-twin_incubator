@@ -4,7 +4,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 from incubator.interfaces.database import IDatabase
-from digital_twin.simulator.plant_simulator import PlantSimulator4Params
+from incubator.simulators.PlantSimulator4Params import PlantSimulator4Params
 
 
 def compute_error(tracked_solutions, new_state_trajectories):

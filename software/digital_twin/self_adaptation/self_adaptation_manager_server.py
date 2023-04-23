@@ -8,7 +8,6 @@ from incubator.calibration.calibrator import Calibrator
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_KF_PLANT_STATE, ROUTING_KEY_KF_UPDATE_PARAMETERS, \
     ROUTING_KEY_SELF_ADAPTATION_STATE, ROUTING_KEY_SELF_ADAPTATION_TRIGGER
 from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data, query_most_recent_fields
-from digital_twin.simulator.plant_simulator import PlantSimulator4Params
 from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.shared.protocol import ROUTING_KEY_STATE, ROUTING_KEY_UPDATE_CTRL_PARAMS, from_s_to_ns, \
     from_ns_to_s
@@ -18,6 +17,7 @@ from incubator.interfaces.updateable_kalman_filter import IUpdateableKalmanFilte
 from incubator.models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
 from incubator.self_adaptation.controller_optimizer import ControllerOptimizer, NoOPControllerOptimizer
 from incubator.self_adaptation.self_adaptation_manager import SelfAdaptationManager
+from incubator.simulators.PlantSimulator4Params import PlantSimulator4Params
 
 
 class SelfAdaptationManagerServer:

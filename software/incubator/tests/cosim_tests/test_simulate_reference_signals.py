@@ -1,8 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from digital_twin.simulator.plant_simulator import PlantSimulator4Params
 from incubator.models.physical_twin_models.system_model4_open_loop import SystemModel4ParametersOpenLoopSimulator
+from incubator.simulators.PlantSimulator4Params import PlantSimulator4Params
 from incubator.tests.cli_mode_test import CLIModeTest
 
 
