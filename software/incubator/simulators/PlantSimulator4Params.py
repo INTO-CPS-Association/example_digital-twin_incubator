@@ -4,12 +4,12 @@ from incubator.models.plant_models.four_parameters_model.four_parameter_model im
 from incubator.models.plant_models.model_functions import create_lookup_table
 import numpy as np
 
+
 class PlantSimulator4Params:
     @staticmethod
     def run_simulation(timespan_seconds, initial_box_temperature, initial_heat_temperature,
                        room_temperature, heater_on,
                        C_air, G_box, C_heater, G_heater):
-
         timetable = np.array(timespan_seconds)
 
         room_temperature_fun = create_lookup_table(timetable, np.array(room_temperature))
@@ -31,9 +31,10 @@ class PlantSimulator4Params:
         controller_step_size = timespan_seconds[1] - timespan_seconds[0]
         # We assume the timeseries is mostly uniform
         for i in range(1, len(timespan_seconds)):
-            assert math.fabs(controller_step_size - (timespan_seconds[i] - timespan_seconds[i-1])) <= controller_step_size/10.0
+            assert math.fabs(
+                controller_step_size - (timespan_seconds[i] - timespan_seconds[i - 1])) <= controller_step_size / 10.0
 
-        sol = ModelSolver().simulate(model, start_t, end_t+controller_step_size,
-                                     controller_step_size, controller_step_size/10.0,
+        sol = ModelSolver().simulate(model, start_t, end_t + controller_step_size,
+                                     controller_step_size, controller_step_size / 10.0,
                                      t_eval=timespan_seconds)
         return sol, model

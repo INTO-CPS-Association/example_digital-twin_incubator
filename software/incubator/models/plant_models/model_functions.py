@@ -6,7 +6,6 @@ from oomodelling.ModelSolver import ModelSolver
 
 import logging
 
-from incubator.data_processing.data_processing import load_data, derive_data
 from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
 from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from incubator.models.plant_models.seven_parameters_model.seven_parameter_model import SevenParameterIncubatorPlant

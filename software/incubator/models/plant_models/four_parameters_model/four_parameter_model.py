@@ -1,5 +1,3 @@
-from oomodelling import Model
-
 from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from incubator.models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
 
