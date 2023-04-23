@@ -70,11 +70,10 @@ class TestsModelling(CLIModeTest):
         if self.ide_mode():
             plt.show()
 
-    def test_check_two_parameter_model_inputs(self):
+    def plot_compare_model_data(self, csv, title):
         params = two_param_model_params
-        # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/calibration_fan_12v/random_on_off_sequences.csv")
-        results, sol = run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL)
+        data, _ = load_data(csv)
+        results, _ = run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL)
 
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
 
@@ -91,26 +90,38 @@ class TestsModelling(CLIModeTest):
         ax2.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
         ax2.legend()
 
-        self.assertTrue(abs(len(results.signals["in_heater_on"]) - len(data["heater_on"]) < 10))
-        comparable_length = min(len(results.signals["in_heater_on"]), len(data["heater_on"]))
-
-        convert_bool = lambda bool_array: [1.0 if b else 0.0 for b in bool_array]
-        sum_squared_error = lambda a, b: sum(((numpy.array(a)[0:comparable_length] - numpy.array(b)[0:comparable_length]) ** 2))
-
-        error_heater_in = sum_squared_error(convert_bool(data["heater_on"]), convert_bool(results.signals["in_heater_on"]))
-        # print(f"error_heater_in={error_heater_in}")
-        self.assertTrue(error_heater_in < 1.0)
-
         ax3.plot(data["time"], data["power_in"], label="power_in")
         ax3.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
         ax3.legend()
 
-        error_power_in = sum_squared_error(data["power_in"], results.signals["power_in"])
-        # print(f"error_power_in={error_power_in}")
-        self.assertTrue(error_power_in < 1.0)
+        plt.title(title)
 
         if self.ide_mode():
             plt.show()
+
+        return results, data
+
+    def test_check_two_parameter_model_inputs(self):
+        results, data = self.plot_compare_model_data(
+            "./incubator/datasets/20200917_calibration_fan_12v/random_on_off_sequences.csv",
+            "random_on_off_sequences"
+        )
+
+        self.assertTrue(abs(len(results.signals["in_heater_on"]) - len(data["heater_on"]) < 10))
+        comparable_length = min(len(results.signals["in_heater_on"]), len(data["heater_on"]))
+
+        convert_bool = lambda bool_array: [1.0 if b else 0.0 for b in bool_array]
+        sum_squared_error = lambda a, b: sum(
+            ((numpy.array(a)[0:comparable_length] - numpy.array(b)[0:comparable_length]) ** 2))
+
+        error_heater_in = sum_squared_error(convert_bool(data["heater_on"]),
+                                            convert_bool(results.signals["in_heater_on"]))
+        # print(f"error_heater_in={error_heater_in}")
+        self.assertTrue(error_heater_in < 1.0)
+
+        error_power_in = sum_squared_error(data["power_in"], results.signals["power_in"])
+        # print(f"error_power_in={error_power_in}")
+        self.assertTrue(error_power_in < 1.0)
 
     def test_show_symbolic_equations(self):
         P_in = sp.symbols("P_in")
