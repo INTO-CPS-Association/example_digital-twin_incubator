@@ -15,7 +15,7 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_data_default_setup(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/controller_tunning/exp1_ht3_hg2.csv",
+        data, _ = load_data("./incubator/datasets/20201221_controller_tunning/exp1_ht3_hg2.csv",
                             desired_timeframe=(- math.inf, math.inf))
 
         plot_incubator_data(data)
