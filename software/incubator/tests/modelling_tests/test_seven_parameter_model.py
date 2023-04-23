@@ -31,19 +31,19 @@ class SevenParameterModelTests(CLIModeTest):
         NEvals = 100 if self.ide_mode() else 1
 
         guess = np.array(seven_param_model_params)
-        guess[0] = guess[0] if self.ide_mode() else guess[0] + 0.1 # Just to make the thing converge
+        guess[0] = guess[0] if self.ide_mode() else guess[0] + 0.1  # Just to make the thing converge
 
         added_cup_event_ts = 1614867211000000000
         first_lid_open_event = 1614861060000000000
 
-        desired_timeframe = (-math.inf, added_cup_event_ts-1)
+        desired_timeframe = (-math.inf, first_lid_open_event-1)
         time_unit = 'ns'
         convert_to_seconds = True
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
@@ -74,8 +74,8 @@ class SevenParameterModelTests(CLIModeTest):
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
@@ -162,8 +162,8 @@ class SevenParameterModelTests(CLIModeTest):
         tf = 1614867210000000000 + 1 if self.ide_mode() else 1614867211000000000 - 1
 
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, events = load_data("./incubator/datasets/lid_opening_experiment_mar_2021/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/lid_opening_experiment_mar_2021/events.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=(-math.inf, tf),
                                  time_unit=time_unit,
                                  normalize_time=False,
