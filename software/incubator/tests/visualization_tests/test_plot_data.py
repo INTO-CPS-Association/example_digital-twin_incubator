@@ -28,7 +28,7 @@ class TestPlotData(CLIModeTest):
 
         time_frame = (1614859007119846022, 1614861060000000000 - 1)
 
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=time_frame,
                                  time_unit=time_unit,
@@ -63,7 +63,7 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_mar_experiment(self):
         time_unit = 'ns'
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=(- math.inf, math.inf),
                                  time_unit=time_unit,

@@ -21,7 +21,7 @@ class TestKalmanFilter(CLIModeTest):
 
         # Load the data
         time_unit = 'ns'
-        data, _ = load_data("./incubator/datasets/20210122_lid_opening_kalman/20210122_lid_opening_kalman.csv",
+        data, _ = load_data("./incubator/datasets/20210122_lid_opening_kalman/lid_opening_experiment_jan_2021.csv",
                             desired_timeframe=(- math.inf, math.inf),
                             time_unit=time_unit,
                             normalize_time=False,

@@ -42,7 +42,7 @@ class SevenParameterModelTests(CLIModeTest):
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
@@ -74,7 +74,7 @@ class SevenParameterModelTests(CLIModeTest):
 
         h = CTRL_EXEC_INTERVAL
 
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
@@ -162,7 +162,7 @@ class SevenParameterModelTests(CLIModeTest):
         tf = 1614867210000000000 + 1 if self.ide_mode() else 1614867211000000000 - 1
 
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/20210321_lid_opening_7pmodel.csv",
+        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=(-math.inf, tf),
                                  time_unit=time_unit,
