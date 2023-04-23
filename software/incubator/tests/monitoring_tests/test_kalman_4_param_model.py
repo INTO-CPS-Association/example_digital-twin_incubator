@@ -21,12 +21,12 @@ class TestKalmanFilter(CLIModeTest):
 
         # Load the data
         time_unit = 'ns'
-        data, _ = load_data("./incubator/datasets/lid_opening_experiment_jan_2021/lid_opening_experiment_jan_2021.csv",
+        data, _ = load_data("./incubator/datasets/20210122_lid_opening_kalman/20210122_lid_opening_kalman.csv",
                             desired_timeframe=(- math.inf, math.inf),
                             time_unit=time_unit,
                             normalize_time=False,
                             convert_to_seconds=True)
-        events = pandas.read_csv(resource_file_path("./incubator/datasets/lid_opening_experiment_jan_2021/events.csv"))
+        events = pandas.read_csv(resource_file_path("./incubator/datasets/20210122_lid_opening_kalman/events.csv"))
         events["timestamp_ns"] = pandas.to_datetime(events["time"], unit=time_unit)
 
         # Inputs to _plant
