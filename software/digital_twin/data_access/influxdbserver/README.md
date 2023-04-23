@@ -65,3 +65,22 @@ But it is left here in case we lose the file [influxdb.zip](./influxdb.zip).
 5. Create dashboards by importing the json files in [dashboards](./dashboards) in the management page http://localhost:8086/
 
 # Common Errors
+
+## Unauthorized API access
+
+If while running `test_server` in [Start influxdb server](#start-influxdb-server), you get an error resembling the following:
+```
+> write_api.write(bucket, org, point)
+(Pdb) config["influxdb"]
+ConfigTree([('url', 'http://localhost:8086'), ('token', '-g7q1xIvZqY8BA82zC7uMmJS1zeTj61SQjDCY40DkY6IpPBpvna2YoQPdSeENiekgVLMd91xA95smSkhhbtO7Q=='), ('org', 'incubator'), ('bucket', 'incubator')])
+influxdb_client.rest.ApiException: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json; charset=utf-8', 'X-Platform-Error-Code': 'unauthorized', 'Date': 'Wed, 31 Aug 2022 09:35:17 GMT', 'Content-Length': '55'})
+HTTP response body: {"code":"unauthorized","message":"unauthorized access"}
+-> write_api.write(bucket, org, point)
+```
+
+Then the cause is the token used in the [startup.conf](../../../startup.conf) needs to be updated.
+To fix open the InfluxDB web management page, go to InfluxDB->Tokens and generate a new token. Then update [startup.conf](../../../startup.conf) with the new token.
+
+Original issue described in [#23](https://github.com/INTO-CPS-Association/example_digital-twin_incubator/issues/23).
