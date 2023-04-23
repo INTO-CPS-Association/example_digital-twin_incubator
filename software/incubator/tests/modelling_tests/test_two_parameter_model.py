@@ -23,7 +23,7 @@ class TestsModelling(CLIModeTest):
 
         # CWD: Example_Digital-Twin_Incubator\software\
 
-        data, _ = load_data("./incubator/datasets/calibration_fan_24v/semi_random_movement.csv",
+        data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
@@ -44,7 +44,7 @@ class TestsModelling(CLIModeTest):
     def test_run_experiment_two_parameter_model(self):
         params = two_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/calibration_fan_24v/semi_random_movement.csv",
+        data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
                                      desired_timeframe=(-math.inf, math.inf))
         results, sol = run_experiment_two_parameter_model(data, params)
 

@@ -37,7 +37,7 @@ class TestsModelling(CLIModeTest):
 
     def test_compare_guesses_with_reality(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/calibration_fan_24v/semi_random_movement.csv",
+        data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
                             time_unit='s',
                             desired_timeframe=(-math.inf, math.inf),
                             normalize_time=False,
