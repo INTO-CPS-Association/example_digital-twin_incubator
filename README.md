@@ -53,7 +53,7 @@ We make extensive use of README.md files. Please read them and keep them up to d
 
 General guidelines:
 1. Run the tests as often as possible.
-2. Create tests as much as possible.
+2. Create tests as much as possible. If the tests are long running, such as calibrations and optimizations, create a version of the test that runs faster (e.g., on a subset of data) when running the tests from the command line. See [example_test.py](./software/incubator/tests/example_test.py).
 3. Create code that is testable.
 4. Ask for code reviews (code readable by at least two people is more likely readable by a third)
 5. Organize and document datasets and experiments.
