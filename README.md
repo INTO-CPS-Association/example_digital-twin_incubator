@@ -20,6 +20,14 @@ The system consists of:
 - A temperature Sensor to monitor the temperature outside the box
 - A controller to communicate with the digital twin, actuate the heat source and the fan and read sensory information from the temperature sensors.
 
+## CAD Model
+
+A .obj file is available at: [figures/incubator_plant.obj](figures/incubator_plant.obj).
+The original design was made in [tinkercad](https://www.tinkercad.com/things/cxxRtjFYdKb-incubatorv20230415)
+
+![CAD Model](./figures/incubator_plant.png)
+
+
 ## The Digital Twin
 
 The DT does the following:
