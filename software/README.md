@@ -36,13 +36,25 @@ To run the unit tests, open a terminal in the directory of this readme file, and
 2. If using powershell, run [./run_tests.ps1](./run_tests.ps1)
 3. Otherwise:
    1. Set environment variable CLIMODE = "ON"
-   3. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
+   2. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
 
 ### Running Integration Tests
 
 Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework) and [run the unit tests](#running-unit-tests) before attempting to run the integration tests.
 
 The script [run_integration_tests.ps1](./run_integration_tests.ps1) contains the instructions.
+
+### Running The Incubator Physical Twin
+
+On the raspberry pi: 
+1. Start the [low_level_driver_server.py](incubator/physical_twin/low_level_driver_server.py)
+   ```powershell 
+   PS software> python -m incubator.physical_twin.low_level_driver_server
+   ```
+2. Start the controller you wish to use. For example the [start_controller_physical.py](startup/start_controller_physical.py) is:
+   ```powershell 
+   PS software> python -m startup.start_controller_physical
+   ```
 
 ## System Architecture
 
