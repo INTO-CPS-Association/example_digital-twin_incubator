@@ -9,7 +9,8 @@ from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from incubator.interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
 
 
-def construct_filter(step_size, std_dev,
+def construct_filter(step_size,
+                     std_dev, Theater_covariance_init, T_covariance_init,
                      C_air_num,
                      G_box_num,
                      C_heater_num,
@@ -93,8 +94,10 @@ def construct_filter(step_size, std_dev,
     f.B = dt_system.B
     f.H = dt_system.C
     # TODO: Externalize this config: these have been configured based on empirical tests.
-    f.P = np.array([[0.0002, 0.],
-                    [0., 0.0002]])
+    # f.P = np.array([[0.0002, 0.],
+    #                 [0., 0.0002]])
+    f.P = np.array([[Theater_covariance_init,   0.],
+                    [0.,                        T_covariance_init]])
     f.R = np.array([[std_dev]])
     f.Q = Q_discrete_white_noise(dim=2, dt=step_size, var=std_dev ** 2)
 
@@ -102,7 +105,7 @@ def construct_filter(step_size, std_dev,
 
 
 class KalmanFilter4P(Model, IUpdateableKalmanFilter):
-    def __init__(self, step_size, std_dev,
+    def __init__(self, step_size, std_dev, Theater_covariance_init, T_covariance_init,
                  C_air,
                  G_box,
                  C_heater,
@@ -116,7 +119,7 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
 
         self.cached_T = initial_box_temperature
         self.cached_T_heater = initial_box_temperature
-        self.filter = construct_filter(step_size, std_dev,
+        self.filter = construct_filter(step_size, std_dev, Theater_covariance_init, T_covariance_init,
                                        C_air, G_box, C_heater, G_heater,
                                        initial_heat_temperature, initial_box_temperature)
 
@@ -129,6 +132,8 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
         # Store these values so they can be used to reinitialize the kalman filter.
         self.step_size = step_size
         self.std_dev = std_dev
+        self.Theater_covariance_init = Theater_covariance_init
+        self.T_covariance_init = T_covariance_init
 
         # Store these parameters so they can be turned into signals and plotted
         self.cached_C_air = C_air
@@ -161,7 +166,8 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
         self.cached_T = self.in_T()
 
         # Reconstruct filter
-        self.filter = construct_filter(self.step_size, self.std_dev,
+        self.filter = construct_filter(self.step_size,
+                                       self.std_dev, self.Theater_covariance_init, self.T_covariance_init,
                                        C_air, G_box, C_heater, G_heater,
                                        self.cached_T_heater, self.cached_T)
 

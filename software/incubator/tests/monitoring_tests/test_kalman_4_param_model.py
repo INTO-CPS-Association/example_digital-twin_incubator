@@ -37,6 +37,7 @@ class TestKalmanFilter(CLIModeTest):
         measurements_T = data["average_temperature"].to_numpy()
 
         std_dev = 0.001
+        Theater_covariance_init = T_covariance_init = 0.0002
 
         params = four_param_model_params
         C_air_num = params[0]
@@ -45,14 +46,14 @@ class TestKalmanFilter(CLIModeTest):
         G_heater_num = params[3]
         initial_room_temperature = 21.0
 
-        f = KalmanFilter4P(data_sample_size, std_dev,
+        f = KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init, T_covariance_init,
                            C_air=C_air_num,
                            G_box=G_box_num,
                            C_heater=C_heater_num,
                            G_heater=G_heater_num,
                            initial_room_temperature=initial_room_temperature,
-                           initial_box_temperature=41.0,
-                           initial_heat_temperature=47.0)
+                           initial_box_temperature=initial_room_temperature,
+                           initial_heat_temperature=initial_room_temperature)
 
         kalman_prediction = []
         for i in range(len(measurements_heater)):

@@ -7,7 +7,8 @@ from incubator.models.plant_models.four_parameters_model.four_parameter_model im
 
 
 class KalmanSystemModel(Model):
-    def __init__(self, step_size, std_dev,
+    def __init__(self, step_size,
+                 std_dev, Theater_covariance_init, T_covariance_init,
                  C_air,
                  G_box,
                  C_heater,
@@ -20,7 +21,7 @@ class KalmanSystemModel(Model):
                                                  C_heater=C_heater,
                                                  G_heater=G_heater)
         self.noise_sensor = NoiseFeedthrough(std_dev)
-        self.kalman = KalmanFilter4P(step_size, std_dev,
+        self.kalman = KalmanFilter4P(step_size, std_dev, Theater_covariance_init, T_covariance_init,
                                      C_air=C_air,
                                      G_box=G_box,
                                      C_heater=C_heater,

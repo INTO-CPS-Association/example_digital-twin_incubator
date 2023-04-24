@@ -36,6 +36,7 @@ class SelfAdaptationTests(CLIModeTest):
         initial_heat_temperature = 47
         initial_room_temperature = 21  # TODO: Add this parameter to config file.
         std_dev = 0.001
+        Theater_covariance_init = T_covariance_init = 0.0002
         step_size = 3.0
         anomaly_threshold = 2.0
         # Time spent before declaring that there is an self_adaptation_manager, after the first time the self_adaptation_manager occurred.
@@ -60,7 +61,7 @@ class SelfAdaptationTests(CLIModeTest):
 
         tf = 6000 if self.ide_mode() else 3000
 
-        kalman = KalmanFilter4P(step_size, std_dev,
+        kalman = KalmanFilter4P(step_size, std_dev, Theater_covariance_init, T_covariance_init,
                                 C_air, G_box_kf, C_heater, G_heater,
                                 initial_room_temperature, initial_heat_temperature, initial_box_temperature)
 

@@ -21,19 +21,25 @@ class KalmanFilterPlantServer:
         self.in_room_T = None
         self.in_T = None
         self.step_size = None
-        self.std_dev = None
         self.T_heater = None
+        self.std_dev = None
+        self.Theater_covariance_init = None
+        self.T_covariance_init = None
 
 
     def setup(self, step_size, std_dev,
               C_air, G_box, C_heater, G_heater,
-              initial_heat_temperature, initial_box_temperature):
+              initial_heat_temperature, initial_box_temperature,
+              Theater_covariance_init, T_covariance_init):
         self.step_size = step_size
+
         self.std_dev = std_dev
+        self.Theater_covariance_init = Theater_covariance_init
+        self.T_covariance_init = T_covariance_init
 
         self.rabbitmq.connect_to_server()
 
-        self.filter = construct_filter(step_size, std_dev,
+        self.filter = construct_filter(step_size, std_dev, Theater_covariance_init, T_covariance_init,
                                        C_air, G_box, C_heater, G_heater,
                                        initial_heat_temperature, initial_box_temperature)
 
@@ -59,7 +65,8 @@ class KalmanFilterPlantServer:
         assert self.step_size is not None
         assert self.T_heater is not None
 
-        self.filter = construct_filter(self.step_size, self.std_dev,
+        self.filter = construct_filter(self.step_size,
+                                       self.std_dev, self.Theater_covariance_init, self.T_covariance_init,
                                        C_air, G_box, C_heater, G_heater,
                                        self.T_heater, self.in_T)
 
