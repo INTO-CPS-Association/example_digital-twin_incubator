@@ -1,3 +1,5 @@
+import time
+
 from incubator.config.config import load_config, config_logger
 from digital_twin.data_access.dbmanager.incubator_state_influx_recorder import IncubatorDataRecorderInflux
 
@@ -16,4 +18,13 @@ def start_influx_data_recorder(ok_queue=None):
 
 
 if __name__ == '__main__':
-    start_influx_data_recorder()
+    while True:
+        try:
+            start_influx_data_recorder()
+        except KeyboardInterrupt:
+            exit(0)
+        except Exception as exc:
+            print("Error: ")
+            print(exc)
+            print("Attempting to reconnect...")
+            time.sleep(1.0)
