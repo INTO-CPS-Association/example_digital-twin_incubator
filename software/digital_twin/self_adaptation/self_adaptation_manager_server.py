@@ -173,7 +173,7 @@ class DatabaseFacade(IDatabase):
 
         time_seconds, results = query_convert_aligned_data(query_api, self.db_bucket, start_date_ns, end_date_ns,
                                                            {
-                                                               "low_level_driver": ["t1",
+                                                               "low_level_driver": ["t3",
                                                                                     "heater_on",
                                                                                     "average_temperature"],
                                                                "kalman_filter_plant": ["T_heater"]
@@ -182,7 +182,7 @@ class DatabaseFacade(IDatabase):
         average_temperature_data = results["low_level_driver"]["average_temperature"]
         heater_data = results["low_level_driver"]["heater_on"]
         heater_temperature_data = results["kalman_filter_plant"]["T_heater"]
-        room_temp_data = results["low_level_driver"]["t1"]
+        room_temp_data = results["low_level_driver"]["t3"]
 
         self._l.debug("Converting data to lists.")
         time_seconds_list = list(time_seconds)
@@ -255,10 +255,10 @@ class DatabaseFacade(IDatabase):
         query_api = self.dbclient.query_api()
         results = query_most_recent_fields(query_api, self.db_bucket, self.start_date_ns, 1,
                                            ["low_level_driver", "kalman_filter_plant"],
-                                           ["t1", "average_temperature", "T_heater"])
+                                           ["t3", "average_temperature", "T_heater"])
         T_heater = results[results["_field"] == "T_heater"]["_value"].iloc[0]
         T = results[(results["_field"] == "average_temperature") & (results["_measurement"] == "low_level_driver")]["_value"].iloc[0]
-        room_T = results[results["_field"] == "t1"]["_value"].iloc[0]
+        room_T = results[results["_field"] == "t3"]["_value"].iloc[0]
         time_s = results["_time"].iloc[0].timestamp()
 
         return time_s, T, T_heater, room_T

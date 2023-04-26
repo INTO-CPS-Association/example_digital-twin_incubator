@@ -27,10 +27,9 @@ class KalmanFilterPlantServer:
         self.T_covariance_init = None
 
 
-    def setup(self, step_size, std_dev,
+    def setup(self, step_size, std_dev, Theater_covariance_init, T_covariance_init,
               C_air, G_box, C_heater, G_heater,
-              initial_heat_temperature, initial_box_temperature,
-              Theater_covariance_init, T_covariance_init):
+              initial_heat_temperature, initial_box_temperature):
         self.step_size = step_size
 
         self.std_dev = std_dev
@@ -72,7 +71,7 @@ class KalmanFilterPlantServer:
 
     def kalman_step(self, ch, method, properties, body_json):
         self.in_heater = 1.0 if body_json["fields"]["heater_on"] else 0.0
-        self.in_room_T = body_json["fields"]["t1"]
+        self.in_room_T = body_json["fields"]["t3"]
 
         self.in_T = body_json["fields"]["average_temperature"]
 

@@ -27,7 +27,7 @@ def run_plant_simulation(params, start_date, end_date, initial_heat_temperature,
 
     db = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
     query_api = db.query_api()
-    room_temp_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "t1")
+    room_temp_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "t3")
     average_temperature_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver",
                                      "average_temperature")
     heater_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "heater_on")
@@ -63,7 +63,7 @@ def run_plant_simulation(params, start_date, end_date, initial_heat_temperature,
             "heater_on": heater_on,
             "fan_on": fan_on,
             "average_temperature": average_temperature,
-            "t1": room_temperature}
+            "t3": room_temperature}
 
     fig = plotly_incubator_data(data,
                                 compare_to={

@@ -60,14 +60,14 @@ def run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
     C_air = params[0]
     G_box = params[1]
 
-    model = TwoParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
+    model = TwoParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["t3"],
                                        initial_box_temperature=data.iloc[0]["average_temperature"],
                                        C_air=C_air, G_box=G_box)
 
     time_range = data["time"].to_numpy()
 
     in_heater_table = create_lookup_table(time_range, data["heater_on"].to_numpy())
-    in_room_temperature = create_lookup_table(time_range, data["t1"].to_numpy())
+    in_room_temperature = create_lookup_table(time_range, data["t3"].to_numpy())
     model.in_heater_on = lambda: in_heater_table(model.time())
     model.in_room_temperature = lambda: in_room_temperature(model.time())
 
@@ -83,7 +83,7 @@ def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
     C_heater = params[2]
     G_heater = params[3]
 
-    model = FourParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["t1"],
+    model = FourParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["T_room"],
                                         initial_box_temperature=data.iloc[0]["average_temperature"],
                                         C_air=C_air, G_box=G_box,
                                         C_heater=C_heater, G_heater=G_heater)
@@ -91,7 +91,7 @@ def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
     time_range = data["time"].to_numpy()
 
     in_heater_table = create_lookup_table(time_range, data["heater_on"].to_numpy())
-    in_room_temperature = create_lookup_table(time_range, data["t1"].to_numpy())
+    in_room_temperature = create_lookup_table(time_range, data["T_room"].to_numpy())
     model.in_heater_on = lambda: in_heater_table(model.time())
     model.in_room_temperature = lambda: in_room_temperature(model.time())
 
@@ -112,7 +112,7 @@ def run_experiment_seven_parameter_model(data, params,
     G_object = params[5]
     G_open_lid = params[6]
 
-    initial_room_temperature = data.iloc[0]["t1"]
+    initial_room_temperature = data.iloc[0]["T_room"]
     initial_box_temperature = data.iloc[0]["average_temperature"]
 
     model = SevenParameterIncubatorPlant(HEATER_VOLTAGE, HEATER_CURRENT,
@@ -127,7 +127,7 @@ def run_experiment_seven_parameter_model(data, params,
 
     in_heater_table = create_lookup_table(time_range, data["heater_on"].to_numpy())
     in_lid_open = create_lookup_table(time_range, data["lid_open"].to_numpy())
-    in_room_temperature = create_lookup_table(time_range, data["t1"].to_numpy())
+    in_room_temperature = create_lookup_table(time_range, data["t3"].to_numpy())
     model.in_heater_on = lambda: in_heater_table(model.time())
     model.in_room_temperature = lambda: in_room_temperature(model.time())
     model.in_lid_open = lambda: in_lid_open(model.time())

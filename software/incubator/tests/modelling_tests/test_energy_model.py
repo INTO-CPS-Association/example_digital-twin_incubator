@@ -57,6 +57,9 @@ class TestsModelling(CLIModeTest):
 
         ModelSolver().simulate(model, t0, tf, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL/10.0, t_eval=data["time"])
 
+        # Rename column to make it compatible with plotly_incubator_data
+        data["T_room"] = data["t1"]
+
         fig = plotly_incubator_data(data,
                                     compare_to={
                                         "T(1)": {

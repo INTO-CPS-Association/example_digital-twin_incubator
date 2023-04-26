@@ -32,8 +32,8 @@ def generate_room_data(influxdb, bucket, org, start_date, end_date):
                 "source": "low_level_driver"
             },
             "fields": {
-                "t1": room_temperature(t),
-                "time_t1": t_ns,
+                "t3": room_temperature(t),
+                "time_t3": t_ns,
             }
         }
 

@@ -47,13 +47,13 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         # Adds one to end_data to ensure that points coinciding with final end data are also captured.
         # See https://github.com/INTO-CPS-Association/example_digital-twin_incubator/issues/20
         time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date, end_date + 1, {
-            "low_level_driver": ["t1"]
+            "low_level_driver": ["t3"]
         })
 
         # Ensure that the start_date and end_date are in the lookup table.
         # We need to do this because the data in the database may not exist at exactly these dates.
         # So we need to interpolate it from the data that exists.
-        room_temperature = results["low_level_driver"]["t1"]
+        room_temperature = results["low_level_driver"]["t3"]
         room_temperature = np.append(np.insert(room_temperature, 0, room_temperature[0]), room_temperature[-1])
 
         time_table = np.append(np.insert(time_seconds, 0, from_ns_to_s(start_date)-controller_comm_step), from_ns_to_s(end_date)+controller_comm_step)

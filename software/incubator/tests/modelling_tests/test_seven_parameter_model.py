@@ -43,10 +43,13 @@ class SevenParameterModelTests(CLIModeTest):
         h = CTRL_EXEC_INTERVAL
 
         data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
+                                 # events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
         T_heater_0 = data.iloc[0]["average_temperature"]
 
@@ -79,6 +82,8 @@ class SevenParameterModelTests(CLIModeTest):
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
         # Isolate sections where the calibration will be run.
         stages = []
@@ -169,6 +174,9 @@ class SevenParameterModelTests(CLIModeTest):
                                  normalize_time=False,
                                  convert_to_seconds=True)
         params = seven_param_model_params
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
         results, sol = run_experiment_seven_parameter_model(data, params, initial_heat_temperature=data.iloc[0]["average_temperature"])
 

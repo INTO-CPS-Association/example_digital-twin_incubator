@@ -26,7 +26,8 @@ class TestPlotData(CLIModeTest):
     def test_plot_data_plotly(self):
         time_unit = 'ns'
 
-        time_frame = (1614859007119846022, 1614861060000000000 - 1)
+        # time_frame = (1614859007119846022, 1614861060000000000 - 1)
+        time_frame = (1614859007119846022, math.inf)
 
         data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
                                  events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
@@ -37,6 +38,9 @@ class TestPlotData(CLIModeTest):
 
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
         params4pmodel = [145.69782402,  # C_air
                          0.79154106,  # G_box
@@ -73,6 +77,9 @@ class TestPlotData(CLIModeTest):
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
 
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+
         params4pmodel = [145.69782402,  # C_air
                          0.79154106,  # G_box
                          227.76228512,  # C_heater
@@ -90,6 +97,37 @@ class TestPlotData(CLIModeTest):
                                     overlay_heater=True,
                                     # show_sensor_temperatures=True,
                                     show_hr_time=True
+                                    )
+
+        if self.ide_mode():
+            show_plotly(fig)
+
+    def test_plot_202304_new_heater(self):
+        time_unit = 'ns'
+        data, events = load_data("./rec_2023-04-22__13_17_04.csv",
+                                 # events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
+                                 desired_timeframe=(- math.inf, math.inf),
+                                 time_unit=time_unit,
+                                 normalize_time=False,
+                                 convert_to_seconds=True)
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        if self.ide_mode():
+            print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
+
+        fig = plotly_incubator_data(data,
+                                    # compare_to={
+                                    #     "T(4)": {
+                                    #         "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
+                                    #         "T": results4p.signals["T"],
+                                    #     }
+                                    # },
+                                    events=events,
+                                    overlay_heater=True,
+                                    # show_sensor_temperatures=True,
+                                    # show_hr_time=True
                                     )
 
         if self.ide_mode():

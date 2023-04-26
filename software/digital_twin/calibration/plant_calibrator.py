@@ -39,11 +39,11 @@ class PlantCalibrator4Params(RPCServer):
 
         time_seconds, results = query_convert_aligned_data(query_api, self._influxdb_bucket, start_date_ns, end_date_ns,
                                                            {
-                                                               "low_level_driver": ["t1", "heater_on",
+                                                               "low_level_driver": ["t3", "heater_on",
                                                                                     "average_temperature"]
                                                            })
 
-        room_temp_data = results["low_level_driver"]["t1"]
+        room_temp_data = results["low_level_driver"]["t3"]
         heater_data = results["low_level_driver"]["heater_on"]
         average_temperature = results["low_level_driver"]["average_temperature"]
 

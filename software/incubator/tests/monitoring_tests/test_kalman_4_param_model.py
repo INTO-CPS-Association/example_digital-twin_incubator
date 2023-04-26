@@ -29,9 +29,13 @@ class TestKalmanFilter(CLIModeTest):
         events = pandas.read_csv(resource_file_path("./incubator/datasets/20210122_lid_opening_kalman/events.csv"))
         events["timestamp_ns"] = pandas.to_datetime(events["time"], unit=time_unit)
 
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+
         # Inputs to _plant
         measurements_heater = np.array([1.0 if b else 0.0 for b in data["heater_on"]])
-        measurements_Troom = data["t1"].to_numpy()
+
+        measurements_Troom = data["T_room"].to_numpy()
 
         # System state
         measurements_T = data["average_temperature"].to_numpy()

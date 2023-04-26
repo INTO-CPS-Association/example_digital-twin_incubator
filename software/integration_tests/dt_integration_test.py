@@ -98,7 +98,7 @@ class StartDTWithDummyData(CLIModeTest):
         # Add one to make influxdb include the stop date.
         # See https://github.com/INTO-CPS-Association/example_digital-twin_incubator/issues/20
         end_date_ns = from_s_to_ns(cls.end_date.timestamp()) + 1
-        room_temp_results = query(query_api, cls.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+        room_temp_results = query(query_api, cls.bucket, start_date_ns, end_date_ns, "low_level_driver", "t3")
 
         number_room_data_points_registered_influxdb = len(room_temp_results["_time"])
         cls.l.debug(f"InfluxDB registered {number_room_data_points_registered_influxdb} dummy samples of room temperature data.")
@@ -126,7 +126,7 @@ class StartDTWithDummyData(CLIModeTest):
         start_date_ns = from_s_to_ns(self.start_date.timestamp())
         end_date_ns = from_s_to_ns(self.end_date.timestamp()) + 1  # Add one to make influxdb include the stop date.
 
-        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t3")
 
         average_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver",
                                      "average_temperature")
@@ -164,7 +164,7 @@ class StartDTWithDummyData(CLIModeTest):
         start_date_ns = from_s_to_ns(self.start_date.timestamp())
         end_date_ns = from_s_to_ns(self.end_date.timestamp()) + 1  # Add one to make influxdb include the stop date.
 
-        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t1")
+        room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t3")
 
         initial_heat_temperature = room_temp_results.iloc[0]["_value"]
 

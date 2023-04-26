@@ -60,10 +60,10 @@ class SampledRealTimePlantModel(Model):
             self.cached_heater_on = heater_on["heater"]
 
         # Read plant temperature and upload it to rabbitmq.
-        t1 = self.plant.in_room_temperature()
+        t3 = self.plant.in_room_temperature()
         avg_temp = self.plant.T()
-        t2 = avg_temp - self.temperature_difference / 2
-        t3 = avg_temp + self.temperature_difference / 2
+        t1 = avg_temp - self.temperature_difference / 2
+        t2 = avg_temp + self.temperature_difference / 2
         self.comm.send_message(routing_key=MOCK_TEMP_T1, message=t1)
         self.comm.send_message(routing_key=MOCK_TEMP_T2, message=t2)
         self.comm.send_message(routing_key=MOCK_TEMP_T3, message=t3)

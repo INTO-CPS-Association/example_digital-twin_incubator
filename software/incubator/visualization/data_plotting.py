@@ -51,9 +51,10 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None
                         x_title=x_title,
                         subplot_titles=titles)
 
+    assert not show_sensor_temperatures
     if show_sensor_temperatures:
-        fig.add_trace(go.Scatter(x=data[time_field], y=data["t2"], name="t2 (right)"), row=1, col=1)
-        fig.add_trace(go.Scatter(x=data[time_field], y=data["t3"], name="t3 (top)"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["t1"], name="t1"), row=1, col=1)
+        fig.add_trace(go.Scatter(x=data[time_field], y=data["t2"], name="t2"), row=1, col=1)
 
     fig.add_trace(go.Scatter(x=data[time_field], y=data["average_temperature"], name="avg_T"), row=1, col=1)
     if overlay_heater:
@@ -78,7 +79,7 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None
             if "T_object" in compare_to[res]:
                 fig.add_trace(go.Scatter(x=compare_to[res][time_field], y=compare_to[res]["T_object"], name=f"T_object({res})"), row=1, col=1)
 
-    fig.add_trace(go.Scatter(x=data[time_field], y=data["t1"], name="room"), row=2, col=1)
+    fig.add_trace(go.Scatter(x=data[time_field], y=data["T_room"], name="room"), row=2, col=1)
 
     next_row = 3
 

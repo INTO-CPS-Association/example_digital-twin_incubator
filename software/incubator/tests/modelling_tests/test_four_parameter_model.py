@@ -30,7 +30,8 @@ class FourParameterModelTests(CLIModeTest):
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
-
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
         h = 6.0
 
         def run_exp(params):
@@ -51,6 +52,9 @@ class FourParameterModelTests(CLIModeTest):
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+
         results, sol = run_experiment_four_parameter_model(data, params)
 
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
@@ -86,6 +90,9 @@ class FourParameterModelTests(CLIModeTest):
         # CWD: Example_Digital-Twin_Incubator\software\
         data, _ = load_data("./incubator/datasets/20201221_controller_tunning/exp2_ht20_hg30.csv",
                                      desired_timeframe=(-math.inf, math.inf))
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
         results_4p, sol_4p = run_experiment_four_parameter_model(data, params)
 

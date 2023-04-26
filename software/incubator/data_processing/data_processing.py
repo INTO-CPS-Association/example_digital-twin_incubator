@@ -23,7 +23,7 @@ def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time
 
     if end_idx <= start_idx:
         print(
-            f"Warning: after trimming ended up with start_idx={start_idx} and end_idx={end_idx}. This results in empty data")
+            f"Warning: after trimming data from {filepath}, ended up with start_idx={start_idx} and end_idx={end_idx}. This results in empty data")
         return None
 
     indices = range(start_idx, end_idx + 1)
@@ -81,7 +81,8 @@ def derive_data(data, events=None):
 
     data["energy_in"] = data.apply(
         lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
-    data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t2, row.t3]), axis=1)
+    if "average_temperature" not in data.columns:
+        data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t1, row.t2]), axis=1)
     zero_kelvin = 273.15
     data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
     air_mass = 0.04  # Kg

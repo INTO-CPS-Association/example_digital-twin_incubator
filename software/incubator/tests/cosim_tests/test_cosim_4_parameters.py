@@ -61,7 +61,7 @@ class CosimulationTests(CLIModeTest):
         data_cosim = pd.DataFrame()
         data_cosim["time"] = m.signals['time']
         data_cosim["average_temperature"] = m.plant.signals['T']
-        data_cosim["t1"] = m.plant.signals['in_room_temperature']
+        data_cosim["T_room"] = m.plant.signals['in_room_temperature']
         data_cosim["heater_on"] = m.plant.signals['in_heater_on']
 
         fig = plotly_incubator_data(data_cosim, overlay_heater=True)
