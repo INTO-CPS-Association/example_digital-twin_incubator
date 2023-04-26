@@ -65,21 +65,17 @@ def run_plant_simulation(params, start_date, end_date, initial_heat_temperature,
             "average_temperature": average_temperature,
             "t3": room_temperature}
 
-    fig = plotly_incubator_data(data,
-                                compare_to={
-                                    "T(4)": {
-                                        "time": time_seconds,
-                                        "T": sim["average_temperature"],
-                                    }
-                                },
-                                heater_T_data={
-                                    "T(4)": {
-                                        "time": time_seconds,
-                                        "T_heater": sim["heater_temperature"],
-                                    }
-                                },
-                                show_actuators=True
-                                )
+    fig = plotly_incubator_data(data, compare_to={
+        "T(4)": {
+            "time": time_seconds,
+            "T": sim["average_temperature"],
+        }
+    }, heater_T_data={
+        "T(4)": {
+            "time": time_seconds,
+            "T_heater": sim["heater_temperature"],
+        }
+    }, show_actuators=True)
     show_plotly(fig)
 
 

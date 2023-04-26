@@ -60,19 +60,13 @@ class TestsModelling(CLIModeTest):
         # Rename column to make it compatible with plotly_incubator_data
         data["T_room"] = data["t1"]
 
-        fig = plotly_incubator_data(data,
-                                    compare_to={
-                                        "T(1)": {
-                                            "time": model.signals["time"],
-                                            "timestamp_ns": model.signals["time"],
-                                            "T": model.signals["T"],
-                                        }
-                                    },
-                                    # events=events,
-                                    overlay_heater=True,
-                                    # show_sensor_temperatures=True,
-                                    show_hr_time=False
-                                    )
+        fig = plotly_incubator_data(data, compare_to={
+            "T(1)": {
+                "time": model.signals["time"],
+                "timestamp_ns": model.signals["time"],
+                "T": model.signals["T"],
+            }
+        }, overlay_heater=True, show_hr_time=False)
 
         if self.ide_mode():
             show_plotly(fig)

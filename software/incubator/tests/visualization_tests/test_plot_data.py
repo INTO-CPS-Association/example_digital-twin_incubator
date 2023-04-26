@@ -48,19 +48,13 @@ class TestPlotData(CLIModeTest):
                          1.92343277]  # G_heater
         results4p, sol = run_experiment_four_parameter_model(data, params4pmodel)
 
-        fig = plotly_incubator_data(data,
-                                    compare_to={
-                                        "T(4)": {
-                                            "time": results4p.signals["time"],
-                                            "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
-                                            "T": results4p.signals["T"],
-                                        }
-                                    },
-                                    events=events,
-                                    overlay_heater=True,
-                                    # show_sensor_temperatures=True,
-                                    show_hr_time=True
-                                    )
+        fig = plotly_incubator_data(data, compare_to={
+            "T(4)": {
+                "time": results4p.signals["time"],
+                "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
+                "T": results4p.signals["T"],
+            }
+        }, events=events, overlay_heater=True, show_hr_time=True)
 
         if self.ide_mode():
             show_plotly(fig)
@@ -86,18 +80,12 @@ class TestPlotData(CLIModeTest):
                          1.92343277]  # G_heater
         results4p, sol = run_experiment_four_parameter_model(data, params4pmodel)
 
-        fig = plotly_incubator_data(data,
-                                    compare_to={
-                                        "T(4)": {
-                                            "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
-                                            "T": results4p.signals["T"],
-                                        }
-                                    },
-                                    events=events,
-                                    overlay_heater=True,
-                                    # show_sensor_temperatures=True,
-                                    show_hr_time=True
-                                    )
+        fig = plotly_incubator_data(data, compare_to={
+            "T(4)": {
+                "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
+                "T": results4p.signals["T"],
+            }
+        }, events=events, overlay_heater=True, show_hr_time=True)
 
         if self.ide_mode():
             show_plotly(fig)
@@ -117,18 +105,7 @@ class TestPlotData(CLIModeTest):
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
 
-        fig = plotly_incubator_data(data,
-                                    # compare_to={
-                                    #     "T(4)": {
-                                    #         "timestamp_ns": pandas.to_datetime(results4p.signals["time"], unit='s'),
-                                    #         "T": results4p.signals["T"],
-                                    #     }
-                                    # },
-                                    events=events,
-                                    overlay_heater=True,
-                                    # show_sensor_temperatures=True,
-                                    # show_hr_time=True
-                                    )
+        fig = plotly_incubator_data(data, events=events, overlay_heater=True)
 
         if self.ide_mode():
             show_plotly(fig)

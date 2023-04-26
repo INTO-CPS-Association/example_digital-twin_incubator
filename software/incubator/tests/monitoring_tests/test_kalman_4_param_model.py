@@ -69,30 +69,25 @@ class TestKalmanFilter(CLIModeTest):
         # Run experiment with _plant, without any filtering, just for comparison.
         results_4p, sol = run_experiment_four_parameter_model(data, params)
 
-        fig = plotly_incubator_data(data,
-                                    compare_to={
-                                        "4pModel": {
-                                            "timestamp_ns": data["timestamp_ns"],
-                                            "T": results_4p.signals["T"],
-                                        },
-                                        "Kalman": {
-                                            "timestamp_ns": data["timestamp_ns"],
-                                            "T": kalman_prediction[:, 1]
-                                        },
-                                    },
-                                    heater_T_data={
-                                        "4pModel": {
-                                            "timestamp_ns": data["timestamp_ns"],
-                                            "T_heater": results_4p.signals["T_heater"],
-                                        },
-                                        "Kalman": {
-                                            "timestamp_ns": data["timestamp_ns"],
-                                            "T_heater": kalman_prediction[:, 0]
-                                        },
-                                    },
-                                    events=events,
-                                    overlay_heater=True,
-                                    show_hr_time=True)
+        fig = plotly_incubator_data(data, compare_to={
+            "4pModel": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T": results_4p.signals["T"],
+            },
+            "Kalman": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T": kalman_prediction[:, 1]
+            },
+        }, heater_T_data={
+            "4pModel": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T_heater": results_4p.signals["T_heater"],
+            },
+            "Kalman": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T_heater": kalman_prediction[:, 0]
+            },
+        }, events=events, overlay_heater=True, show_hr_time=True)
 
         if self.ide_mode():
             show_plotly(fig)

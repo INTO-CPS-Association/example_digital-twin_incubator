@@ -32,7 +32,7 @@ def plot_incubator_data(data):
 
 
 def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None,
-                          overlay_heater=True, show_actuators=False, show_sensor_temperatures=False,
+                          overlay_heater=True, show_actuators=False,
                           show_hr_time=False):
     nRows = 2
     titles = ["Incubator Temperature (°C)", "Room Temperature (°C)"]
@@ -50,11 +50,6 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None
     fig = make_subplots(rows=nRows, cols=1, shared_xaxes=True,
                         x_title=x_title,
                         subplot_titles=titles)
-
-    assert not show_sensor_temperatures
-    if show_sensor_temperatures:
-        fig.add_trace(go.Scatter(x=data[time_field], y=data["t1"], name="t1"), row=1, col=1)
-        fig.add_trace(go.Scatter(x=data[time_field], y=data["t2"], name="t2"), row=1, col=1)
 
     fig.add_trace(go.Scatter(x=data[time_field], y=data["average_temperature"], name="avg_T"), row=1, col=1)
     if overlay_heater:
