@@ -6,17 +6,12 @@ import logging
 from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
 from incubator.communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
-from incubator.models.controller_models.controller_model4 import ControllerModel4SM
+from incubator.models.controller_models.controller_model_sm import ControllerModel4SM
 
 
 class ControllerPhysical:
     def __init__(self, rabbit_config, temperature_desired=35.0, lower_bound=5.0, heating_time=20.0,
                  heating_gap=30.0):
-        self.temperature_desired = temperature_desired
-        self.lower_bound = lower_bound
-        self.heating_time = heating_time
-        self.heating_gap = heating_gap
-
         self._l = logging.getLogger("ControllerPhysical")
 
         self.box_air_temperature = None
@@ -83,7 +78,7 @@ class ControllerPhysical:
             datetime.fromtimestamp(from_ns_to_s(message["time"])), message["fields"]["execution_interval"],
             message["fields"]["elapsed"],
             str(self.heater_ctrl), str(message["fields"]["fan_on"]), self.room_temperature,
-            self.box_air_temperature, self.current_state
+            self.box_air_temperature, self.state_machine.current_state
         ))
 
     def upload_state(self, data):
@@ -97,23 +92,23 @@ class ControllerPhysical:
                 "plant_time": data["time"],
                 "heater_on": self.heater_ctrl,
                 "fan_on": data["fields"]["fan_on"],
-                "current_state": self.current_state,
-                "next_time": self.next_time,
-                "temperature_desired": self.temperature_desired,
-                "lower_bound": self.lower_bound,
-                "heating_time": self.heating_time,
-                "heating_gap": self.heating_gap,
+                "current_state": self.state_machine.current_state,
+                "next_time": self.state_machine.next_time,
+                "temperature_desired": self.state_machine.temperature_desired,
+                "lower_bound": self.state_machine.lower_bound,
+                "heating_time": self.state_machine.heating_time,
+                "heating_gap": self.state_machine.heating_gap,
             }
         }
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_CONTROLLER, message=ctrl_data)
 
     def _safe_update_parameter(self, data, data_key, parameter, type_convert, value_check):
-        assert hasattr(self, parameter)
+        assert hasattr(self.state_machine, parameter)
         if data_key in data:
             new_val = type_convert(data[data_key])
             if value_check(new_val):
                 self._l.debug(f"Updating {parameter} to {new_val}.")
-                setattr(self, parameter, new_val)
+                setattr(self.state_machine, parameter, new_val)
             else:
                 self._l.warning(f"Update of {parameter} to {new_val} failed. Invalid value.")
 
