@@ -6,6 +6,7 @@ import logging
 from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
 from incubator.communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
+from incubator.models.controller_models.controller_model4 import ControllerModel4SM
 
 
 class ControllerPhysical:
@@ -23,8 +24,7 @@ class ControllerPhysical:
 
         self.heater_ctrl = None
         self.fan_ctrl = None
-        self.current_state = "CoolingDown"
-        self.next_time = -1.0
+        self.state_machine = ControllerModel4SM(temperature_desired, lower_bound, heating_time, heating_gap)
 
         self.rabbitmq = Rabbitmq(**rabbit_config)
 
@@ -59,42 +59,14 @@ class ControllerPhysical:
                                 on_message_callback=self.control_loop_callback)
 
     def ctrl_step(self):
-        self.fan_ctrl = True
-
         if self.box_air_temperature >= 58:
             self._l.error("Temperature exceeds 58, Cleaning up.")
             self.cleanup()
-            sys.exit(0)
+            sys.exit(1)
 
-        if self.current_state == "CoolingDown":
-            self._l.debug("current state is: CoolingDown")
-            self.heater_ctrl = False
-            if self.box_air_temperature <= self.temperature_desired - self.lower_bound:
-                self.current_state = "Heating"
-                self.heater_ctrl = True
-                self.next_time = time.time() + self.heating_time
-                return
-        if self.current_state == "Heating":
-            self._l.debug("current state is: Heating")
-            self.heater_ctrl = True
-            if 0 < self.next_time <= time.time():
-                self.current_state = "Waiting"
-                self.heater_ctrl = False
-                self.next_time = time.time() + self.heating_gap
-            return
-        if self.current_state == "Waiting":
-            self._l.debug("current state is: Waiting")
-            self.heater_ctrl = False
-            if 0 < self.next_time <= time.time():
-                if self.box_air_temperature <= self.temperature_desired and self.heating_time > 0:
-                    self.current_state = "Heating"
-                    self.heater_ctrl = True
-                    self.next_time = time.time() + self.heating_time
-                else:
-                    self.current_state = "CoolingDown"
-                    self.heater_ctrl = False
-                    self.next_time = -1.0
-            return
+        self.fan_ctrl = True
+        self.state_machine.step(time.time(), self.box_air_temperature)
+        self.heater_ctrl = self.state_machine.cached_heater_on
 
     def cleanup(self):
         self.safe_protocol()

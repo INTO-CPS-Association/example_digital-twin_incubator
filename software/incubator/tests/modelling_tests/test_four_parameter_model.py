@@ -43,35 +43,39 @@ class FourParameterModelTests(CLIModeTest):
 
     def test_run_experiment_four_parameter_model(self):
         params = four_param_model_params
+
+        # params[0]=0.6*params[0]
+
         # CWD: Example_Digital-Twin_Incubator\software\
         data, _ = load_data("./incubator/datasets/20201221_controller_tunning/exp2_ht20_hg30.csv",
-                                     desired_timeframe=(-math.inf, 1614861060000000000 - 1),
-                                     time_unit='ns',
-                                     convert_to_seconds=True)
+                            time_unit='s',
+                            normalize_time=False,
+                            convert_to_seconds=False)
         results, sol = run_experiment_four_parameter_model(data, params)
 
-        fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        # fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
 
-        ax1.plot(data["time"], data["t1"], label="t1")
-        ax1.plot(data["time"], data["t2"], label="t2")
-        ax1.plot(data["time"], data["t3"], label="t3")
-        ax1.plot(results.signals["time"], results.signals["T"], label="~T(4)")
+        # ax1.plot(data["time"], data["t1"], label="t1")
+        # ax1.plot(data["time"], data["t2"], label="t2")
+        # ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
-        ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
-        ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
+        ax1.plot(results.signals["time"], results.signals["T"], linestyle="dashed", label="~T(4)")
+        # ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
+        # ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
         ax1.legend()
 
         ax2.plot(results.signals["time"], results.signals["T_heater"], label="~T_heater")
         ax2.legend()
 
         ax3.plot(data["time"], data["heater_on"], label="heater_on")
-        ax3.plot(data["time"], data["fan_on"], label="fan_on")
-        ax3.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
+        # ax3.plot(data["time"], data["fan_on"], label="fan_on")
+        # ax3.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
         ax3.legend()
 
-        ax4.plot(data["time"], data["power_in"], label="power_in")
-        ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
-        ax4.legend()
+        # ax4.plot(data["time"], data["power_in"], label="power_in")
+        # ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
+        # ax4.legend()
 
         if self.ide_mode():
             plt.show()

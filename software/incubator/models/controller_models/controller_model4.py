@@ -14,11 +14,11 @@ class ControllerModel4(Model):
 
         self.in_temperature = self.input(lambda: 20.0)
 
-        self.current_state = "CoolingDown"
-        self.next_time = -1.0
-        self.cached_heater_on = False
+        self.state_machine = ControllerModel4SM(temperature_desired, lower_bound, heating_time, heating_gap)
 
-        self.heater_on = self.var(lambda: self.cached_heater_on)
+        self.curr_state_model = self.var(lambda: self.state_machine.current_state)
+
+        self.heater_on = self.var(lambda: self.state_machine.cached_heater_on)
 
         self.save()
 
@@ -27,29 +27,50 @@ class ControllerModel4(Model):
         return super().discrete_step()
 
     def ctrl_step(self):
+        self.state_machine.step(self.time(), self.in_temperature())
+
+
+class ControllerModel4SM:
+    def __init__(self, temperature_desired, lower_bound, heating_time, heating_gap):
+        assert 0 < temperature_desired
+        assert 0 < lower_bound
+        assert 0 < heating_time
+        assert 0 < heating_gap
+
+        self.temperature_desired = temperature_desired
+        self.lower_bound = lower_bound
+        self.heating_time = heating_time
+        self.heating_gap = heating_gap
+
+        self.current_state = "CoolingDown"
+        self.next_time = -1.0
+        self.cached_heater_on = False
+
+    def step(self, time, in_temperature):
         if self.current_state == "CoolingDown":
-            # print("current state is: CoolingDown")
             self.cached_heater_on = False
-            if self.in_temperature() <= self.T_desired - self.lower_bound:
+            if in_temperature <= self.temperature_desired - self.lower_bound:
                 self.current_state = "Heating"
-                self.next_time = self.time() + self.heating_time
+                self.next_time = time + self.heating_time
             return
         if self.current_state == "Heating":
-            # print("current state is: Heating")
             self.cached_heater_on = True
-            if 0 < self.next_time <= self.time():
+            if 0 < self.next_time <= time:
                 self.current_state = "Waiting"
-                self.next_time = self.time() + self.heating_gap
+                self.next_time = time + self.heating_gap
+            elif in_temperature > self.temperature_desired:
+                self.current_state = "CoolingDown"
+                self.next_time = -1.0
             return
         if self.current_state == "Waiting":
-            # print("current state is: Waiting")
             self.cached_heater_on = False
-            if 0 < self.next_time <= self.time():
-                if self.in_temperature() <= self.T_desired:
+            if 0 < self.next_time <= time:
+                if in_temperature <= self.temperature_desired:
                     self.current_state = "Heating"
                     # print("next state is heating from waiting")
-                    self.next_time = self.time() + self.heating_time
+                    self.next_time = time + self.heating_time
                 else:
                     self.current_state = "CoolingDown"
                     self.next_time = -1
             return
+

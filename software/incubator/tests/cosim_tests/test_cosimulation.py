@@ -13,7 +13,13 @@ class CosimulationTests(CLIModeTest):
     def test_run_cosim_2param_model(self):
         m = SystemModel()
 
-        ModelSolver().simulate(m, 0.0, 10, 0.01, 0.001)
+        m.ctrl.T_desired = 38.
+        m.ctrl.lower_bound = 10.
+        m.ctrl.heating_time = 1.
+        m.ctrl.heating_gap = 10.
+        m.plant.C_air = 300.
+
+        ModelSolver().simulate(m, 0.0, 1000, comm_step=3.0, max_solver_step=0.1)
 
         plt.figure()
         plt.plot(m.signals['time'], m.plant.signals['T'])
@@ -21,7 +27,11 @@ class CosimulationTests(CLIModeTest):
         plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
+        plt.figure()
+        plt.step(m.signals['time'], m.ctrl.signals['curr_state_model'])
+
         if self.ide_mode():
+            print(m.ctrl.signals['curr_state_model'])
             plt.show()
 
 
