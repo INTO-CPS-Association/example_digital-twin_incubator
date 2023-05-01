@@ -1,3 +1,4 @@
+import logging
 import time
 
 from incubator.config.config import config_logger, load_config
@@ -6,6 +7,7 @@ from incubator.physical_twin.controller_physical import ControllerPhysical
 
 def start_controller_physical(ok_queue=None):
     config_logger("logging.conf")
+    l = logging.getLogger("start_controller_physical")
     config = load_config("startup.conf")
 
     while True:
@@ -18,9 +20,8 @@ def start_controller_physical(ok_queue=None):
         except KeyboardInterrupt:
             exit(0)
         except Exception as exc:
-            print("Error: ")
-            print(exc)
-            print("Attempting to reconnect...")
+            l.error("The following expection occurred. Attempting to reconnect.")
+            l.error(exc)
             time.sleep(1.0)
 
 
