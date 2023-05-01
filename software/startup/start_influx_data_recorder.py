@@ -7,7 +7,6 @@ from digital_twin.data_access.dbmanager.incubator_state_influx_recorder import I
 
 def start_influx_data_recorder(ok_queue=None):
     config_logger("logging.conf")
-    l = logging.getLogger("start_csv_data_recorder")
     config = load_config("startup.conf")
 
     recorder = IncubatorDataRecorderInflux()
@@ -20,6 +19,7 @@ def start_influx_data_recorder(ok_queue=None):
 
 
 if __name__ == '__main__':
+    l = logging.getLogger("start_csv_data_recorder")
     while True:
         try:
             start_influx_data_recorder()
