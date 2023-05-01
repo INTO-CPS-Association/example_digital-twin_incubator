@@ -22,7 +22,7 @@ This directory contains all things code related.
 
 ### After First-time Setup: Starting the DT Framework
 
-1. Create a [startup.conf](./startup.conf) in this folder. Copy [example_startup.conf](./example_startup.conf) and change if needed. You should not need to change anything for running the DT locally.
+1. Inspect the [startup.conf](./startup.conf) in this folder. You should not need to change anything for running the DT locally.
 2. Follow the instructions in [./startup/README.md](./startup/README.md)
 3. Recommended: [Run the unit tests](#running-unit-tests)
 4. Recommended: [Run the integration tests](#running-integration-tests)
