@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 
-defaultDockerComposeCommand = ["docker-compose", "up", "--detach", "--no-build"]
+defaultDockerComposeCommand = ["docker-compose", "up", "--detach", "--build"]
 
 
 def kill_container(containerName):
@@ -33,7 +33,7 @@ def start(logFilePath, dockerComposeDirectoryPath,
 
     with open(logFilePath, "wt") as f:
         print("Running docker-compose command: " + " ".join(defaultDockerComposeCommand))
-        proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, stdout=f)
+        proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, shell=True, stdout=f)
         if proc.returncode == 0:
             print("docker-compose successful.")
         else:
@@ -48,6 +48,6 @@ def start(logFilePath, dockerComposeDirectoryPath,
                 service_ready = True
             else:
                 attempts -= 1
-                # print("Service is not ready yet. Attempts remaining:" + str(attempts))
+                print("Service is not ready yet. Attempts remaining:" + str(attempts))
                 if attempts > 0:
                     time.sleep(sleepTimeBetweenAttempts)
