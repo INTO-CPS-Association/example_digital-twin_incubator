@@ -21,7 +21,7 @@ def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time
     while end_idx > 0 and csv.iloc[end_idx]["time"] > desired_timeframe[1]:
         end_idx = end_idx - 1
 
-    if end_idx <= start_idx:
+    if end_idx < start_idx:
         print(
             f"Warning: after trimming data from {filepath}, ended up with start_idx={start_idx} and end_idx={end_idx}. This results in empty data")
         return None
