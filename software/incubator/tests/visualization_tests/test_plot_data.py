@@ -29,12 +29,13 @@ class TestPlotData(CLIModeTest):
         # time_frame = (1614859007119846022, 1614861060000000000 - 1)
         time_frame = (1614859007119846022, math.inf)
 
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
-                                 desired_timeframe=time_frame,
-                                 time_unit=time_unit,
-                                 normalize_time=False,
-                                 convert_to_seconds=True)
+        data, events = load_data(
+            "./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
+            events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
+            desired_timeframe=time_frame,
+            time_unit=time_unit,
+            normalize_time=False,
+            convert_to_seconds=True)
 
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
@@ -61,12 +62,13 @@ class TestPlotData(CLIModeTest):
 
     def test_plot_mar_experiment(self):
         time_unit = 'ns'
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
-                                 desired_timeframe=(- math.inf, math.inf),
-                                 time_unit=time_unit,
-                                 normalize_time=False,
-                                 convert_to_seconds=True)
+        data, events = load_data(
+            "./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
+            events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
+            desired_timeframe=(- math.inf, math.inf) if self.ide_mode() else (-math.inf, 1614865029040267775),
+            time_unit=time_unit,
+            normalize_time=False,
+            convert_to_seconds=True)
 
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
@@ -90,14 +92,14 @@ class TestPlotData(CLIModeTest):
         if self.ide_mode():
             show_plotly(fig)
 
-    def test_plot_202304_new_heater(self):
+    def test_plot_20230501_tempeh_batch(self):
         time_unit = 'ns'
-        data, events = load_data("./rec_2023-04-22__13_17_04.csv",
-                                 # events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
-                                 desired_timeframe=(- math.inf, math.inf),
-                                 time_unit=time_unit,
-                                 normalize_time=False,
-                                 convert_to_seconds=True)
+        data, event_data = load_data("incubator/datasets/20230501_tempeh_batch/rec_2023-05-01__08_09_06.csv",
+                                     events="incubator/datasets/20230501_tempeh_batch/events.csv",
+                                     desired_timeframe=(- math.inf, math.inf) if self.ide_mode() else (-math.inf, 1682930497193385696),
+                                     time_unit=time_unit,
+                                     normalize_time=False,
+                                     convert_to_seconds=False)
 
         # Rename column to make data independent of specific tN's
         data.rename(columns={"t3": "T_room"}, inplace=True)
@@ -105,7 +107,26 @@ class TestPlotData(CLIModeTest):
         if self.ide_mode():
             print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
 
-        fig = plotly_incubator_data(data, events=events, overlay_heater=True)
+        fig = plotly_incubator_data(data, events=event_data, overlay_heater=True, show_hr_time=True)
+
+        if self.ide_mode():
+            show_plotly(fig)
+
+    def test_plot_20230501_calibration_empty_system(self):
+        time_unit = 'ns'
+        data, _ = load_data("incubator/datasets/20230501_calibration_empty_system/20230501_calibration_empty_system.csv",
+                                     desired_timeframe=(- math.inf, math.inf),
+                                     time_unit=time_unit,
+                                     normalize_time=False,
+                                     convert_to_seconds=False)
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        if self.ide_mode():
+            print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
+
+        fig = plotly_incubator_data(data, overlay_heater=True, show_hr_time=True)
 
         if self.ide_mode():
             show_plotly(fig)
