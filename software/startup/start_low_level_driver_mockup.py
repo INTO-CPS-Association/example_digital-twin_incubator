@@ -18,7 +18,7 @@ def start_low_level_driver_mockup(ok_queue=None, exec_interval=CTRL_EXEC_INTERVA
     incubator.setup()
     if ok_queue is not None:
         ok_queue.put("OK")
-    incubator.control_loop(exec_interval)
+    incubator.control_loop(exec_interval, strict_interval=False)
 
 
 if __name__ == '__main__':
