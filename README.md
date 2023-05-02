@@ -23,11 +23,10 @@ The system consists of:
 ## CAD Model
 
 A .obj file is available at: [figures/incubator_plant.obj](figures/incubator_plant.obj).
-The original design was made in [tinkercad](https://www.tinkercad.com/things/cxxRtjFYdKb-incubatorv20230415)
 
 ![CAD Model](./figures/incubator_plant.png)
 
-Ongoing development of the cad model is at: [incubator](https://www.tinkercad.com/things/6lOQKeXpeT6-incubator)
+Ongoing development of the cad model is at: [incubator](https://www.tinkercad.com/things/ls1YolyX1fc-incubatorv20230429)
 
 ## The Digital Twin
 
