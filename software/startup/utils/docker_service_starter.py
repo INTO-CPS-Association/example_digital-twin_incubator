@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 
-defaultDockerComposeCommand = ["docker-compose", "up", "--detach", "--build"]
+defaultDockerComposeCommand = ["docker-compose up --detach --build" ]
 
 
 def kill_container(containerName):
@@ -33,7 +33,7 @@ def start(logFilePath, dockerComposeDirectoryPath,
 
     with open(logFilePath, "wt") as f:
         print("Running docker-compose command: " + " ".join(defaultDockerComposeCommand))
-        proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, shell=True, stdout=f)
+        proc = subprocess.run(defaultDockerComposeCommand, cwd=dockerComposeDirectoryPath, shell=True, stdout=f)        
         if proc.returncode == 0:
             print("docker-compose successful.")
         else:
