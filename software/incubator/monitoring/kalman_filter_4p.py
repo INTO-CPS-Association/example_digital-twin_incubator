@@ -14,6 +14,7 @@ def construct_filter(step_size,
                      G_box_num,
                      C_heater_num,
                      G_heater_num,
+                     V_heater_num, I_heater_num,
                      initial_heat_temperature,
                      initial_box_temperature):
     # Parameters
@@ -44,8 +45,8 @@ def construct_filter(step_size,
 
     total_power_box = power_transfer_heat - power_out_box
 
-    der_T = (1.0 / C_air) * (total_power_box)
-    der_T_heater = (1.0 / C_heater) * (total_power_heater)
+    der_T = (1.0 / C_air) * total_power_box
+    der_T_heater = (1.0 / C_heater) * total_power_heater
 
     # Turn above into a CT linear system
     """
@@ -73,8 +74,8 @@ def construct_filter(step_size,
     # Replace constants and get numerical matrices
     def replace_constants(m):
         return np.array(m.subs({
-            V_heater: 12.0,
-            i_heater: 10.45,
+            V_heater: V_heater_num,
+            i_heater: I_heater_num,
             C_air: C_air_num,
             G_box: G_box_num,
             C_heater: C_heater_num,
@@ -95,8 +96,8 @@ def construct_filter(step_size,
     # TODO: Externalize this config: these have been configured based on empirical tests.
     # f.P = np.array([[0.0002, 0.],
     #                 [0., 0.0002]])
-    f.P = np.array([[Theater_covariance_init,   0.],
-                    [0.,                        T_covariance_init]])
+    f.P = np.array([[Theater_covariance_init, 0.],
+                    [0., T_covariance_init]])
     f.R = np.array([[std_dev]])
     f.Q = Q_discrete_white_noise(dim=2, dt=step_size, var=std_dev ** 2)
 
@@ -109,6 +110,7 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
                  G_box,
                  C_heater,
                  G_heater,
+                 V_heater, I_heater,
                  initial_room_temperature=25.0, initial_heat_temperature=25.0, initial_box_temperature=25.0):
         super().__init__()
 
@@ -119,7 +121,7 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
         self.cached_T = initial_box_temperature
         self.cached_T_heater = initial_box_temperature
         self.filter = construct_filter(step_size, std_dev, Theater_covariance_init, T_covariance_init,
-                                       C_air, G_box, C_heater, G_heater,
+                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater,
                                        initial_heat_temperature, initial_box_temperature)
 
         self.out_T = self.var(lambda: self.cached_T)
@@ -160,14 +162,14 @@ class KalmanFilter4P(Model, IUpdateableKalmanFilter):
         self.cached_T = next_x[1, 0]
         return super().discrete_step()
 
-    def update_parameters(self, C_air, G_box, C_heater, G_heater):
+    def update_parameters(self, C_air, G_box, C_heater, G_heater, V_heater, I_heater):
         # Reset output of the KF to the measurement
         self.cached_T = self.in_T()
 
         # Reconstruct filter
         self.filter = construct_filter(self.step_size,
                                        self.std_dev, self.Theater_covariance_init, self.T_covariance_init,
-                                       C_air, G_box, C_heater, G_heater,
+                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater,
                                        self.cached_T_heater, self.cached_T)
 
         # Update parameters, so they can be plotted

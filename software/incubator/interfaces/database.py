@@ -6,7 +6,7 @@ class IDatabase:
     def store_calibrated_trajectory(self, times, calibrated_sol):
         raise NotImplementedError("For subclasses")
 
-    def store_new_plant_parameters(self, start_time_s, C_air_new, G_box_new, C_heater, G_heater):
+    def store_new_plant_parameters(self, start_time_s, C_air_new, G_box_new, C_heater, G_heater, V_heater, I_heater):
         raise NotImplementedError("For subclasses")
 
     def get_plant4_parameters(self):

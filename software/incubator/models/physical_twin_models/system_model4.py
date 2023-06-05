@@ -20,18 +20,13 @@ class SystemModel4Parameters(Model):
         self.ctrl = ControllerModel4(temperature_desired=temperature_desired, heating_time=heating_time,
                                      heating_gap=heating_gap,
                                      lower_bound=lower_bound)
-        self.plant = FourParameterIncubatorPlant(initial_box_temperature=initial_box_temperature,
-                                                 initial_heat_temperature=initial_heat_temperature,
-                                                 C_air=C_air,
-                                                 G_box=G_box,
-                                                 C_heater=C_heater,
-                                                 G_heater=G_heater,
-                                                 initial_heat_voltage=V_heater,
-                                                 initial_heat_current=I_heater)
+        self.plant = FourParameterIncubatorPlant(V_heater, I_heater,
+                                                 initial_box_temperature, initial_box_temperature,
+                                                 initial_heat_temperature,
+                                                 C_air, G_box,
+                                                 C_heater, G_heater)
 
         self.ctrl.in_temperature = self.plant.T
         self.plant.in_heater_on = self.ctrl.heater_on
 
         self.save()
-
-

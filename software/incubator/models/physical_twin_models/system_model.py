@@ -5,11 +5,15 @@ from incubator.models.plant_models.two_parameters_model.two_parameter_model impo
 
 
 class SystemModel(Model):
-    def __init__(self):
+    def __init__(self, initial_heat_voltage, initial_heat_current,
+                 initial_room_temperature, initial_box_temperature,
+                 C_air, G_box):
         super().__init__()
 
         self.ctrl = ControllerModel4()
-        self.plant = TwoParameterIncubatorPlant()
+        self.plant = TwoParameterIncubatorPlant(initial_heat_voltage, initial_heat_current,
+                 initial_room_temperature, initial_box_temperature,
+                 C_air, G_box)
 
         self.ctrl.in_temperature = self.plant.T
         self.plant.in_heater_on = self.ctrl.heater_on

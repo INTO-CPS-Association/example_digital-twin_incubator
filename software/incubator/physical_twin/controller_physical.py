@@ -3,7 +3,7 @@ import sys
 from datetime import datetime
 import logging
 
-from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, decode_json, \
+from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
 from incubator.communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
 from incubator.models.controller_models.controller_model_sm import ControllerModel4SM

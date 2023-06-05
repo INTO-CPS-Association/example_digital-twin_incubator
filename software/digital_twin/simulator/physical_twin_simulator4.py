@@ -7,7 +7,7 @@ from oomodelling import ModelSolver
 
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PTSIMULATOR4
 from digital_twin.data_access.dbmanager.incubator_data_conversion import convert_to_results_db
-from digital_twin.data_access.dbmanager.incubator_data_query import query, query_convert_aligned_data
+from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.models.physical_twin_models.system_model4 import SystemModel4Parameters

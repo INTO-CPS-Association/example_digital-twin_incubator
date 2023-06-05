@@ -10,7 +10,7 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_RECORDER
 from incubator.communication.server.rabbitmq import Rabbitmq
 
 
-class IncubatorDataRecorderInflux():
+class IncubatorDataRecorderInflux:
     def __init__(self):
         self._l = logging.getLogger("IncubatorDataRecorderInflux")
         self.write_api = None

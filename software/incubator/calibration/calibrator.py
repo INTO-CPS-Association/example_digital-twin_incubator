@@ -35,20 +35,21 @@ class Calibrator:
 
         tracked_solutions = np.array([reference_T, reference_T_heater])
 
-        C_air, G_box, C_heater, G_heater = self.database.get_plant4_parameters()
+        C_air, G_box, C_heater, G_heater, V_heater, I_heater = self.database.get_plant4_parameters()
 
         def cost(p):
             C_air, G_box = p
             try:
                 sol, model = self.plant_simulator.run_simulation(times, reference_T[0], reference_T_heater[0], room_T,
                                                                  ctrl_signal,
-                                                                 C_air, G_box, C_heater, G_heater)
+                                                                 C_air, G_box, C_heater, G_heater, V_heater, I_heater)
 
                 error = compute_error(tracked_solutions, sol.y[1:])
                 return error
             except ValueError as e:
                 print("Simulation failed with the following parameters and initial conditions:")
-                print(f"C_air={C_air}, G_box={G_box}, C_heater={C_heater}, G_heater={G_heater}")
+                print(f"C_air={C_air}, G_box={G_box}, C_heater={C_heater}, G_heater={G_heater}, "
+                      f"={V_heater}, I_heater={I_heater}")
                 print(f"T0={reference_T[0]}, T_heater0={reference_T_heater[0]}")
                 raise e
 
@@ -61,10 +62,11 @@ class Calibrator:
             C_air_new, G_box_new = new_sol.x
             calibrated_sol, _ = self.plant_simulator.run_simulation(times, reference_T[0], reference_T_heater[0],
                                                                     room_T, ctrl_signal,
-                                                                    C_air_new, G_box_new, C_heater, G_heater)
+                                                                    C_air_new, G_box_new, C_heater, G_heater,
+                                                                    V_heater, I_heater)
 
             self.database.store_calibrated_trajectory(times, calibrated_sol.y[1:])
-            self.database.store_new_plant_parameters(times[0], C_air_new, G_box_new, C_heater, G_heater)
-            return True, C_air_new, G_box_new, C_heater, G_heater
+            self.database.store_new_plant_parameters(times[0], C_air_new, G_box_new, C_heater, G_heater, V_heater, I_heater)
+            return True, C_air_new, G_box_new, C_heater, G_heater, V_heater, I_heater
         else:
-            return False, C_air, G_box, C_heater, G_heater
+            return False, C_air, G_box, C_heater, G_heater, V_heater, I_heater

@@ -25,12 +25,12 @@ class TestSimulateReferenceSignals(CLIModeTest):
         model = pt_simulator.run_simulation(0.0, 15.0,
                                             initial_T, initial_T_heater, initial_room_T,
                                             5, 10, step_size,
-                                            parameter, parameter, parameter, parameter)
+                                            parameter, parameter, parameter, parameter, parameter, parameter)
 
         sol, plant_model = plant_simulator.run_simulation(model.signals["time"],
                                        initial_T, initial_T_heater,
                                        model.plant.signals['in_room_temperature'], model.ctrl.signals['heater_on'],
-                                       parameter, parameter, parameter, parameter)
+                                       parameter, parameter, parameter, parameter, parameter, parameter)
 
         self.assertEqual(len(model.signals["time"]), len(sol.y[0, :]))
         self.assertGreaterEqual(5, np.sum(np.abs(sol.y[2, :] - np.array(model.plant.signals['T_heater']))))

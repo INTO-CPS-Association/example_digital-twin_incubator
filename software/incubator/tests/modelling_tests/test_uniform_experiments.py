@@ -1,11 +1,8 @@
 import math
 import unittest
 
-import numpy
-
 import matplotlib.pyplot as plt
-import numpy as np
-
+import numpy
 from scipy import integrate
 
 from incubator.data_processing.data_processing import load_data

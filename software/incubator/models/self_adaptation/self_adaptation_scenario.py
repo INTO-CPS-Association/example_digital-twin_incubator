@@ -15,13 +15,13 @@ class SelfAdaptationScenario(Model):
                  G_box,
                  C_heater,
                  G_heater,
+                 V_heater, I_heater,
                  initial_box_temperature,
                  initial_heat_temperature,
                  initial_room_temperature,
                  kalman: KalmanFilter4P,
                  self_adaptation_manager: SelfAdaptationManager,
-                 supervisor_sm: ISupervisorSM,
-                 std_dev
+                 supervisor_sm: ISupervisorSM
                  ):
         super().__init__()
 
@@ -30,7 +30,9 @@ class SelfAdaptationScenario(Model):
                                                             C_air,
                                                             G_box,
                                                             C_heater,
-                                                            G_heater, initial_box_temperature,
+                                                            G_heater,
+                                                            V_heater, I_heater,
+                                                            initial_box_temperature,
                                                             initial_heat_temperature,
                                                             initial_room_temperature)
 

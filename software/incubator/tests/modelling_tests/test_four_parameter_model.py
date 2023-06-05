@@ -1,18 +1,15 @@
 import logging
 import math
 import unittest
-from audioop import max
 
 import numpy as np
-from scipy.optimize import leastsq, least_squares, Bounds
+from scipy.optimize import leastsq, least_squares
 import matplotlib.pyplot as plt
 import sympy as sp
 
 from incubator.data_processing.data_processing import load_data, derive_data
-from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.models.plant_models.model_functions import construct_residual, run_experiment_four_parameter_model, \
     run_experiment_two_parameter_model
-from incubator.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
 from incubator.tests.cli_mode_test import CLIModeTest
 
 l = logging.getLogger("FourParameterModelTests")
@@ -53,7 +50,7 @@ class FourParameterModelTests(CLIModeTest):
 
         residual = construct_residual([run_exp])
 
-        l.info(leastsq(residual, params, maxfev=NEvals))
+        l.info(leastsq(residual, np.array(params), maxfev=NEvals))
 
     def test_calibrate_four_parameter_model_20230501(self):
         NEvals = 500 if self.ide_mode() else 1
@@ -262,8 +259,8 @@ class FourParameterModelTests(CLIModeTest):
 
         total_power_box = power_transfer_heat - power_out_box
 
-        der_T = (1.0 / C_air) * (total_power_box)
-        der_T_heater = (1.0 / C_heater) * (total_power_heater)
+        der_T = (1.0 / C_air) * total_power_box
+        der_T_heater = (1.0 / C_heater) * total_power_heater
 
         # Turn above into a linear system
         """

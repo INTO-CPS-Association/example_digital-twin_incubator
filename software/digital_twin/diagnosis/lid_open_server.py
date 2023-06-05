@@ -4,9 +4,9 @@ from influxdb_client import InfluxDBClient
 from oomodelling import ModelSolver
 from scipy.optimize import least_squares
 
-from incubator.communication.shared.protocol import from_s_to_ns, from_s_to_ns_array
+from incubator.communication.shared.protocol import from_s_to_ns_array
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_LIDOPEN
-from digital_twin.data_access.dbmanager.incubator_data_query import query, query_convert_aligned_data
+from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data
 from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.models.plant_models.seven_parameters_model.seven_parameter_model import SevenParameterIncubatorPlant

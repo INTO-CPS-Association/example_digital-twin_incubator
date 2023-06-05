@@ -5,7 +5,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from scipy.optimize import least_squares
 
 from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBRATOR4, ROUTING_KEY_PLANTSIMULATOR4
-from digital_twin.data_access.dbmanager.incubator_data_query import query, query_convert_aligned_data
+from digital_twin.data_access.dbmanager.incubator_data_query import query_convert_aligned_data
 import numpy as np
 
 from incubator.communication.server.rpc_client import RPCClient

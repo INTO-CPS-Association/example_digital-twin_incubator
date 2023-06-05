@@ -17,21 +17,21 @@ import pandas as pd
 class CosimulationTests(CLIModeTest):
 
     def test_run_cosim_4param_model(self):
-        C_air_num = four_param_model_params[0]
-        G_box_num = four_param_model_params[1]
-        C_heater_num = four_param_model_params[2]
-        G_heater_num = four_param_model_params[3]
-        V_heater_num = four_param_model_params[4]
-        I_heater_num = four_param_model_params[5]
+        C_air = four_param_model_params[0]
+        G_box = four_param_model_params[1]
+        C_heater = four_param_model_params[2]
+        G_heater = four_param_model_params[3]
+        V_heater = four_param_model_params[4]
+        I_heater = four_param_model_params[5]
 
         plt.figure()
 
         def show_trace(heating_time):
-            m = SystemModel4Parameters(C_air=C_air_num,
-                                       G_box=G_box_num,
-                                       C_heater=C_heater_num,
-                                       G_heater=G_heater_num,
-                                       V_heater=V_heater_num, I_heater=I_heater_num,
+            m = SystemModel4Parameters(C_air,
+                                       G_box,
+                                       C_heater,
+                                       G_heater,
+                                       V_heater, I_heater,
                                        heating_time=heating_time, heating_gap=2.0,
                                        temperature_desired=35, initial_box_temperature=22)
             ModelSolver().simulate(m, 0.0, 3000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
@@ -88,6 +88,8 @@ class CosimulationTests(CLIModeTest):
         G_box = config["digital_twin"]["models"]["plant"]["param4"]["G_box"]
         C_heater = config["digital_twin"]["models"]["plant"]["param4"]["C_heater"]
         G_heater = config["digital_twin"]["models"]["plant"]["param4"]["G_heater"]
+        V_heater = config["digital_twin"]["models"]["plant"]["param4"]["V_heater"]
+        I_heater = config["digital_twin"]["models"]["plant"]["param4"]["I_heater"]
         initial_box_temperature = config["digital_twin"]["models"]["plant"]["param4"]["initial_box_temperature"]
         initial_heat_temperature = config["digital_twin"]["models"]["plant"]["param4"]["initial_heat_temperature"]
 
@@ -99,8 +101,11 @@ class CosimulationTests(CLIModeTest):
                                                C_air,
                                                G_box,
                                                C_heater,
-                                               G_heater, initial_box_temperature,
-                                               initial_heat_temperature)
+                                               G_heater,
+                                               V_heater, I_heater,
+                                               initial_box_temperature,
+                                               initial_heat_temperature,
+                                               initial_room_temperature=initial_box_temperature)
             ModelSolver().simulate(m, 0.0, 6000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
             plt.plot(m.signals['time'], m.plant.signals['T'], label=f"NHeating_{n_samples_heating}")

@@ -1,5 +1,3 @@
-import pandas
-
 from incubator.communication.shared.protocol import from_s_to_ns
 
 

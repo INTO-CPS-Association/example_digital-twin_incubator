@@ -28,7 +28,7 @@ class KalmanFilterPlantServer:
 
 
     def setup(self, step_size, std_dev, Theater_covariance_init, T_covariance_init,
-              C_air, G_box, C_heater, G_heater,
+              C_air, G_box, C_heater, G_heater, V_heater, I_heater,
               initial_heat_temperature, initial_box_temperature):
         self.step_size = step_size
 
@@ -39,7 +39,7 @@ class KalmanFilterPlantServer:
         self.rabbitmq.connect_to_server()
 
         self.filter = construct_filter(step_size, std_dev, Theater_covariance_init, T_covariance_init,
-                                       C_air, G_box, C_heater, G_heater,
+                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater,
                                        initial_heat_temperature, initial_box_temperature)
 
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
@@ -55,7 +55,9 @@ class KalmanFilterPlantServer:
         G_box = body_json["G_box"]
         C_heater = body_json["C_heater"]
         G_heater = body_json["G_heater"]
-        self._l.debug(f"Updating kalman filter parameters to: {C_air, G_box, C_heater, G_heater}")
+        V_heater = body_json["V_heater"]
+        I_heater = body_json["I_heater"]
+        self._l.debug(f"Updating kalman filter parameters to: {C_air, G_box, C_heater, G_heater, V_heater, I_heater}")
 
         assert self.in_heater is not None
         assert self.in_room_T is not None
@@ -66,7 +68,7 @@ class KalmanFilterPlantServer:
 
         self.filter = construct_filter(self.step_size,
                                        self.std_dev, self.Theater_covariance_init, self.T_covariance_init,
-                                       C_air, G_box, C_heater, G_heater,
+                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater,
                                        self.T_heater, self.in_T)
 
     def kalman_step(self, ch, method, properties, body_json):

@@ -14,10 +14,8 @@ from digital_twin.communication.rabbitmq_protocol import ROUTING_KEY_PLANTCALIBR
 from digital_twin.data_access.dbmanager.incubator_data_query import query
 from incubator.config.config import config_logger, load_config
 from incubator.tests.cli_mode_test import CLIModeTest
-from mock_plant.mock_connection import MOCK_G_BOX
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from startup.start_calibrator import start_calibrator
-from startup.start_controller_physical import start_controller_physical
 from startup.start_controller_physical_open_loop import start_controller_physical_open_loop
 from startup.start_docker_influxdb import start_docker_influxdb, stop_docker_influxdb
 from startup.start_docker_rabbitmq import start_docker_rabbitmq, stop_docker_rabbitmq
@@ -206,11 +204,9 @@ class StartDTWithDummyData(CLIModeTest):
 
         cls.l.info(f"Closing connection to rabbitmq... ")
         cls.client.close()
-        cls.client = None
 
         cls.l.info(f"Closing connection to influxdb... ")
         cls.influxdb.close()
-        cls.influxdb = None
 
         stop_docker_rabbitmq()
         stop_docker_influxdb()

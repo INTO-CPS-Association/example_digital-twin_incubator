@@ -2,9 +2,9 @@ from oomodelling import Model
 
 
 class TwoParameterIncubatorPlant(Model):
-    def __init__(self, initial_heat_voltage=12.0, initial_heat_current=10.0,
-                 initial_room_temperature=25.0, initial_box_temperature=25.0,
-                 C_air=1.0, G_box=1.0):
+    def __init__(self, initial_heat_voltage, initial_heat_current,
+                 initial_room_temperature, initial_box_temperature,
+                 C_air, G_box):
         super().__init__()
 
         self.in_heater_on = self.input(lambda: False)

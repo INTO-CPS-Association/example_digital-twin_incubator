@@ -9,7 +9,7 @@ class PlantSimulator4Params:
     @staticmethod
     def run_simulation(timespan_seconds, initial_box_temperature, initial_heat_temperature,
                        room_temperature, heater_on,
-                       C_air, G_box, C_heater, G_heater):
+                       C_air, G_box, C_heater, G_heater, V_heater, I_heater):
         timetable = np.array(timespan_seconds)
 
         room_temperature_fun = create_lookup_table(timetable, np.array(room_temperature))
@@ -17,11 +17,14 @@ class PlantSimulator4Params:
         heater_on_fun = create_lookup_table(timetable, np.array(heater_on))
         # heater_on_fun = interpolate.interp1d(timetable, np.array(heater_on))
 
-        model = FourParameterIncubatorPlant(initial_room_temperature=room_temperature[0],
-                                            initial_box_temperature=initial_box_temperature,
-                                            initial_heat_temperature=initial_heat_temperature,
-                                            C_air=C_air, G_box=G_box,
-                                            C_heater=C_heater, G_heater=G_heater)
+        model = FourParameterIncubatorPlant(
+            initial_heat_voltage=V_heater,
+            initial_heat_current=I_heater,
+            initial_room_temperature=room_temperature[0],
+            initial_box_temperature=initial_box_temperature,
+            initial_heat_temperature=initial_heat_temperature,
+            C_air=C_air, G_box=G_box,
+            C_heater=C_heater, G_heater=G_heater)
         model.in_room_temperature = lambda: room_temperature_fun(model.time())
         model.in_heater_on = lambda: heater_on_fun(model.time())
 

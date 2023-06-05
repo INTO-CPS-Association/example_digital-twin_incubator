@@ -2,10 +2,8 @@ import math
 import unittest
 
 import numpy as np
-import pandas
 from matplotlib import pyplot as plt
 
-from incubator.config.config import resource_file_path
 from incubator.data_processing.data_processing import load_timestamped_data
 from incubator.tests.cli_mode_test import CLIModeTest
 

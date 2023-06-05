@@ -2,19 +2,16 @@ import logging
 import math
 import unittest
 
-import numpy
+import matplotlib.pyplot as plt
 import numpy as np
+import sympy as sp
 from scipy import integrate
 from scipy.optimize import leastsq
 
-import matplotlib.pyplot as plt
-
 from incubator.data_processing.data_processing import load_data, derive_data
 from incubator.models.plant_models.model_functions import construct_residual, run_experiment_two_parameter_model
-from incubator.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
 from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 from incubator.tests.cli_mode_test import CLIModeTest
-import sympy as sp
 
 
 class TestsModelling(CLIModeTest):
@@ -47,8 +44,8 @@ class TestsModelling(CLIModeTest):
 
         residual = construct_residual([run_exp])
 
-        if self.ide_mode():
-            print(leastsq(residual, params, maxfev=NEvals))
+        leastsq(residual, np.array(params), maxfev=NEvals)
+
 
     def test_run_experiment_two_parameter_model_20200918(self):
         params = [
@@ -109,8 +106,7 @@ class TestsModelling(CLIModeTest):
 
         residual = construct_residual([run_exp])
 
-        if self.ide_mode():
-            print(leastsq(residual, params, maxfev=NEvals))
+        leastsq(residual, np.array(params), maxfev=NEvals)
 
     def test_run_experiment_two_parameter_model_20230501(self):
         params = [

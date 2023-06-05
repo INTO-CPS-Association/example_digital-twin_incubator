@@ -1,6 +1,4 @@
 import logging
-import math
-
 import pandas
 
 from incubator.communication.shared.protocol import from_ns_to_s

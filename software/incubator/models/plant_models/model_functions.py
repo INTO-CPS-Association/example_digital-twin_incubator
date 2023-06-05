@@ -90,6 +90,7 @@ def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
 
     model = FourParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["T_room"],
                                         initial_box_temperature=data.iloc[0]["average_temperature"],
+                                        initial_heat_temperature=data.iloc[0]["average_temperature"],
                                         C_air=C_air, G_box=G_box,
                                         C_heater=C_heater, G_heater=G_heater,
                                         initial_heat_voltage=V_heater,

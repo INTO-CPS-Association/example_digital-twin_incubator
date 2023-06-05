@@ -1,6 +1,5 @@
 import math
 
-import numpy
 import pandas
 from scipy import integrate
 

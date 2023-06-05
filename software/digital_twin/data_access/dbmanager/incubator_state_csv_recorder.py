@@ -10,7 +10,7 @@ from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.shared.protocol import ROUTING_KEY_STATE
 
 
-class IncubatorDataRecorderCSV():
+class IncubatorDataRecorderCSV:
     def __init__(self, csv_file_path, csv_file_prefix, rollover_limit):
         self._l = logging.getLogger("IncubatorDataRecorderCSV")
         self.csv_file_path = csv_file_path

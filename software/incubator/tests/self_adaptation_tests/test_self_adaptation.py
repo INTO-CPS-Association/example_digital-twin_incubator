@@ -1,6 +1,5 @@
 import math
 
-import numpy as np
 from oomodelling import ModelSolver
 import matplotlib.pyplot as plt
 
@@ -15,7 +14,7 @@ from incubator.models.self_adaptation.self_adaptation_scenario import SelfAdapta
 from incubator.self_adaptation.self_adaptation_manager import SelfAdaptationManager
 from incubator.monitoring.kalman_filter_4p import KalmanFilter4P
 from incubator.self_adaptation.controller_optimizer import ControllerOptimizer, NoOPControllerOptimizer
-from incubator.self_adaptation.supervisor import SupervisorThresholdSM, SupervisorPeriodicSM
+from incubator.self_adaptation.supervisor import SupervisorThresholdSM
 from incubator.simulators.PlantSimulator4Params import PlantSimulator4Params
 from incubator.tests.cli_mode_test import CLIModeTest
 
@@ -32,6 +31,8 @@ class SelfAdaptationTests(CLIModeTest):
         G_box_kf = G_box
         C_heater = config["digital_twin"]["models"]["plant"]["param4"]["C_heater"]
         G_heater = config["digital_twin"]["models"]["plant"]["param4"]["G_heater"]
+        V_heater = config["digital_twin"]["models"]["plant"]["param4"]["V_heater"]
+        I_heater = config["digital_twin"]["models"]["plant"]["param4"]["I_heater"]
         initial_box_temperature = 41
         initial_heat_temperature = 47
         initial_room_temperature = 21  # TODO: Add this parameter to config file.
@@ -62,7 +63,7 @@ class SelfAdaptationTests(CLIModeTest):
         tf = 6000 if self.ide_mode() else 3000
 
         kalman = KalmanFilter4P(step_size, std_dev, Theater_covariance_init, T_covariance_init,
-                                C_air, G_box_kf, C_heater, G_heater,
+                                C_air, G_box_kf, C_heater, G_heater, V_heater, I_heater,
                                 initial_room_temperature, initial_heat_temperature, initial_box_temperature)
 
         database = MockDatabase(step_size)
@@ -84,12 +85,11 @@ class SelfAdaptationTests(CLIModeTest):
                                            wait_til_supervising_timer)
 
         m = SelfAdaptationScenario(n_samples_period, n_samples_heating,
-                                   C_air, G_box, C_heater, G_heater,
+                                   C_air, G_box, C_heater, G_heater, V_heater, I_heater,
                                    initial_box_temperature,
                                    initial_heat_temperature,
                                    initial_room_temperature,
-                                   kalman, anomaly_detector, supervisor,
-                                   std_dev)
+                                   kalman, anomaly_detector, supervisor)
 
         # Inform mock db of plant _plant.
         database.set_models(m.physical_twin.plant, m.physical_twin.ctrl)
@@ -156,6 +156,8 @@ class SelfAdaptationTests(CLIModeTest):
             print("G_box: ", database.G_box)
             print("C_heater: ", database.C_heater)
             print("G_heater: ", database.G_heater)
+            print("V_heater: ", database.V_heater)
+            print("I_heater: ", database.I_heater)
             plt.savefig("simulation_result.pdf")
             plt.show()
 
@@ -184,6 +186,8 @@ class MockDatabase(IDatabase):
     G_box: list[float] = []
     C_heater: list[float] = []
     G_heater: list[float] = []
+    V_heater: list[float] = []
+    I_heater: list[float] = []
     plant_calibration_trajectory_history: list = []
     ctrl_optimal_policy_history: list = []
 
@@ -194,7 +198,8 @@ class MockDatabase(IDatabase):
         self.ctrl_step_size = ctrl_step_size
 
     def set_models(self, plant: FourParameterIncubatorPlant, ctrl: ControllerOpenLoop):
-        assert len(self.C_air) == len(self.G_box) == len(self.C_heater) == len(self.G_heater) == \
+        assert len(self.C_air) == len(self.G_box) == len(self.C_heater) == len(self.G_heater) \
+               == len(self.V_heater) == len(self.I_heater) == \
                len(self.plant_calibration_trajectory_history) == len(self.n_samples_heating) == \
                len(self.n_samples_period) == 0
         self._plant = plant
@@ -203,6 +208,8 @@ class MockDatabase(IDatabase):
         self.G_box.append(plant.G_box())
         self.C_heater.append(plant.C_heater)
         self.G_heater.append(plant.G_heater)
+        self.V_heater.append(plant.in_heater_voltage())
+        self.I_heater.append(plant.in_heater_current())
         self.n_samples_heating.append(ctrl.param_n_samples_heating)
         self.n_samples_period.append(ctrl.param_n_samples_period)
 
@@ -222,14 +229,16 @@ class MockDatabase(IDatabase):
     def store_calibrated_trajectory(self, times, calibrated_sol):
         self.plant_calibration_trajectory_history.append((times, calibrated_sol))
 
-    def store_new_plant_parameters(self, start_time_s, C_air_new, G_box_new, C_heater, G_heater):
+    def store_new_plant_parameters(self, start_time_s, C_air_new, G_box_new, C_heater, G_heater, V_heater, I_heater):
         self.C_air.append(C_air_new)
         self.G_box.append(G_box_new)
         self.C_heater.append(C_heater)
         self.G_heater.append(G_heater)
+        self.V_heater.append(V_heater)
+        self.I_heater.append(I_heater)
 
     def get_plant4_parameters(self):
-        return self.C_air[-1], self.G_box[-1], self.C_heater[-1], self.G_heater[-1]
+        return self.C_air[-1], self.G_box[-1], self.C_heater[-1], self.G_heater[-1], self.V_heater[-1], self.I_heater[-1]
 
     def get_plant_snapshot(self):
         return self._plant.time(), self._plant.T(), self._plant.T_heater(), self._plant.in_room_temperature()

@@ -33,7 +33,7 @@ class ControllerOptimizer(IControllerOptimizer):
         time_s, T, T_heater, room_T = self.database.get_plant_snapshot()
 
         # Get system parameters
-        C_air, G_box, C_heater, G_heater = self.database.get_plant4_parameters()
+        C_air, G_box, C_heater, G_heater, V_heater, I_heater = self.database.get_plant4_parameters()
 
         time_til_steady_state = time_s + 3000  # Obtained from empirical experiments
 
@@ -46,7 +46,7 @@ class ControllerOptimizer(IControllerOptimizer):
 
             model = self.pt_simulator.run_simulation(time_s, time_til_steady_state, T, T_heater, room_T,
                                                      n_samples_heating_guess, n_samples_period, controller_step_size,
-                                                     C_air, G_box, C_heater, G_heater)
+                                                     C_air, G_box, C_heater, G_heater, V_heater, I_heater)
             # Error is how far from the desired temperature the simulation is, for a few seconds in steady state.
             range_T_for_error = np.array(model.plant.signals['T'][-100:-1])
             error = np.sum(np.power(range_T_for_error - self.desired_temperature, 2))
@@ -68,7 +68,6 @@ class ControllerOptimizer(IControllerOptimizer):
         ca = cost(0)
         cb = cost(n_samples_heating)
         cc = cost(n_samples_period)
-        n_samples_heating_new = None
         if not (cb < ca and cb < cc):
             if ca < cc:
                 assert ca <= cb and ca < cc
@@ -91,7 +90,7 @@ class ControllerOptimizer(IControllerOptimizer):
         # Store predicted simulation, for debugging purposes
         model = self.pt_simulator.run_simulation(time_s, time_til_steady_state, T, T_heater, room_T,
                                                  n_samples_heating_new, n_samples_period, controller_step_size,
-                                                 C_air, G_box, C_heater, G_heater)
+                                                 C_air, G_box, C_heater, G_heater, V_heater, I_heater)
         self.database.store_controller_optimal_policy(model.signals['time'],
                                                       model.plant.signals['T'],
                                                       model.plant.signals['T_heater'],

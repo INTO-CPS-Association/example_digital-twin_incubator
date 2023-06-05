@@ -1,22 +1,19 @@
 import logging
 import math
 import unittest
-from copy import copy
 
 import numpy as np
 import pandas
-from scipy.optimize import leastsq, least_squares
+from scipy.optimize import least_squares
 
 from incubator.data_processing.data_processing import load_data, derive_data
 from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.models.plant_models.model_functions import run_experiment_seven_parameter_model, construct_residual, \
     run_experiment_four_parameter_model, run_experiment_two_parameter_model
 from incubator.models.plant_models.seven_parameters_model.best_parameters import seven_param_model_params
-from incubator.models.plant_models.two_parameters_model.best_parameters import two_param_model_params
 from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 from incubator.tests.cli_mode_test import CLIModeTest
 from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
-
 
 l = logging.getLogger("SevenParameterModelTests")
 

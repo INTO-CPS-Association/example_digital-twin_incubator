@@ -43,18 +43,27 @@ class TestKalmanFilter(CLIModeTest):
         std_dev = 0.001
         Theater_covariance_init = T_covariance_init = 0.0002
 
-        params = four_param_model_params
-        C_air_num = params[0]
-        G_box_num = params[1]
-        C_heater_num = params[2]
-        G_heater_num = params[3]
+        params = [
+            177.62927865,  # C_air
+            0.77307655,  # G_box
+            239.61236331,  # C_heater
+            2.31872819,  # G_heater
+            12.16,  # V_heater
+            10.45,  # I_heater
+        ]
+        C_air = params[0]
+        G_box = params[1]
+        C_heater = params[2]
+        G_heater = params[3]
+        V_heater = params[4]
+        I_heater = params[5]
         initial_room_temperature = 21.0
 
         f = KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init, T_covariance_init,
-                           C_air=C_air_num,
-                           G_box=G_box_num,
-                           C_heater=C_heater_num,
-                           G_heater=G_heater_num,
+                           C_air,
+                           G_box,
+                           C_heater,
+                           G_heater, V_heater, I_heater,
                            initial_room_temperature=initial_room_temperature,
                            initial_box_temperature=initial_room_temperature,
                            initial_heat_temperature=initial_room_temperature)

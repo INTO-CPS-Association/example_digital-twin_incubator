@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas
 
-from incubator.config.config import resource_file_path
 from incubator.data_processing.data_processing import load_data, derive_data
 from incubator.models.plant_models.model_functions import run_experiment_four_parameter_model
 from incubator.tests.cli_mode_test import CLIModeTest

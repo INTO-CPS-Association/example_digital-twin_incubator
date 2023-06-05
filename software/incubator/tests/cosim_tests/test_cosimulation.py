@@ -11,7 +11,10 @@ from incubator.tests.cli_mode_test import CLIModeTest
 class CosimulationTests(CLIModeTest):
 
     def test_run_cosim_2param_model(self):
-        m = SystemModel()
+        m = SystemModel(
+            initial_heat_voltage=12.0, initial_heat_current=10.0,
+            initial_room_temperature=21.0, initial_box_temperature=21.0,
+            C_air=1.0, G_box=1.0)
 
         m.ctrl.T_desired = 38.
         m.ctrl.lower_bound = 10.

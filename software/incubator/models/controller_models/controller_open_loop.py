@@ -35,7 +35,7 @@ class ControllerOpenLoop(Model):
         self.cached_heater_on = False
 
 
-class ControllerOpenLoopSM():
+class ControllerOpenLoopSM:
     def __init__(self,
                  n_samples_period,  # Total number of samples considered
                  n_samples_heating,  # Number of samples (out of n_samples_period) that the heater is on.
