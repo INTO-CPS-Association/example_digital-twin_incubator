@@ -26,6 +26,6 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             exit(0)
         except Exception as exc:
-            l.error("The following expection occurred. Attempting to reconnect.")
+            l.error("The following exception occurred. Attempting to reconnect.")
             l.error(exc)
             time.sleep(1.0)

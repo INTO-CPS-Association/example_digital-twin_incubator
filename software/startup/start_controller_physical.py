@@ -20,7 +20,7 @@ def start_controller_physical(ok_queue=None):
         except KeyboardInterrupt:
             exit(0)
         except Exception as exc:
-            l.error("The following expection occurred. Attempting to reconnect.")
+            l.error("The following exception occurred. Attempting to reconnect.")
             l.error(exc)
             time.sleep(1.0)
 

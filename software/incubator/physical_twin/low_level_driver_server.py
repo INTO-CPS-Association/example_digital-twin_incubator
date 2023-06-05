@@ -181,7 +181,7 @@ if __name__ == '__main__':
     from incubator.physical_twin.sensor_actuator_layer import Heater, Fan, TemperatureSensor
 
     config_logger("logging.conf")
-    l = logging.getLogger("start_csv_data_recorder")
+    l = logging.getLogger("low_level_driver_server")
     config = load_config("startup.conf")
 
     incubator = IncubatorDriver(heater=Heater(12),
@@ -198,6 +198,6 @@ if __name__ == '__main__':
         except KeyboardInterrupt:
             exit(0)
         except Exception as exc:
-            l.error("The following expection occurred. Attempting to reconnect.")
+            l.error("The following exception occurred. Attempting to reconnect.")
             l.error(exc)
             time.sleep(1.0)
