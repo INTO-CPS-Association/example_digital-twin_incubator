@@ -39,7 +39,8 @@ class FourParameterModelTests(CLIModeTest):
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
-        data = derive_data(data, V_heater=params[4], I_Heater=params[5], avg_function=lambda row: np.mean([row.t2, row.t3]))
+        data = derive_data(data, V_heater=params[4], I_Heater=params[5],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
 
         # Rename column to make data independent of specific tN's
         data.rename(columns={"t1": "T_room"}, inplace=True)
@@ -206,7 +207,12 @@ class FourParameterModelTests(CLIModeTest):
 
         results_4p, sol_4p = run_experiment_four_parameter_model(data, params)
 
-        params = two_param_model_params
+        params = [
+            616.56464029,  # C_air
+            0.65001889,  # G_box
+            12.0,  # V_heater
+            10.0,  # I_heater
+        ]
 
         results_2p, sol_2p = run_experiment_two_parameter_model(data, params)
 

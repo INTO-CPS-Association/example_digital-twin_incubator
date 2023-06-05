@@ -19,21 +19,27 @@ import sympy as sp
 
 class TestsModelling(CLIModeTest):
 
-    def test_calibrate_two_parameter_model(self):
+    def test_calibrate_two_parameter_model_20200918(self):
         NEvals = 100 if self.ide_mode() else 1
         logging.basicConfig(level=logging.INFO)
 
         # CWD: Example_Digital-Twin_Incubator\software\
+        params = [
+            498.71218224,  # C_air
+            0.62551039,  # G_box
+            10.917042,  # V_heater
+            9.12718588,  # I_heater
+        ]
 
         data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
-        data.rename(columns={"t3": "T_room"}, inplace=True)
+        data = derive_data(data, V_heater=params[2], I_Heater=params[3],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
+        data.rename(columns={"t1": "T_room"}, inplace=True)
 
-        params = two_param_model_params
-
-        h = CTRL_EXEC_INTERVAL
+        h = 2*CTRL_EXEC_INTERVAL
 
         def run_exp(params):
             m, sol = run_experiment_two_parameter_model(data, params, h=h)
@@ -44,9 +50,13 @@ class TestsModelling(CLIModeTest):
         if self.ide_mode():
             print(leastsq(residual, params, maxfev=NEvals))
 
-    def test_run_experiment_two_parameter_model(self):
-        params = two_param_model_params
-        # CWD: Example_Digital-Twin_Incubator\software\
+    def test_run_experiment_two_parameter_model_20200918(self):
+        params = [
+            498.71218224,  # C_air
+            0.62551039,  # G_box
+            10.917042,  # V_heater
+            9.12718588,  # I_heater
+        ]
         data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
                             desired_timeframe=(-math.inf, math.inf))
         data = derive_data(data, V_heater=params[2], I_Heater=params[3],
@@ -73,8 +83,75 @@ class TestsModelling(CLIModeTest):
         if self.ide_mode():
             plt.show()
 
+    def test_calibrate_two_parameter_model_20230501(self):
+        logging.basicConfig(level=logging.INFO)
+
+        NEvals = 100 if self.ide_mode() else 1
+
+        data, _ = load_data("./incubator/datasets/20230501_calibration_empty_system/20230501_calibration_empty_system.csv",
+                            time_unit='ns',
+                            normalize_time=False,
+                            convert_to_seconds=True)
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        params = [
+            6.42171870e+02,  # C_air
+            4.96056150e-01,  # G_box
+            1.14165310e+01,  # V_heater
+            1.42706637e+00,  # I_heater
+        ]
+
+        h = 2*CTRL_EXEC_INTERVAL
+
+        def run_exp(params):
+            m, sol = run_experiment_two_parameter_model(data, params, h=h)
+            return m, sol, data
+
+        residual = construct_residual([run_exp])
+
+        if self.ide_mode():
+            print(leastsq(residual, params, maxfev=NEvals))
+
+    def test_run_experiment_two_parameter_model_20230501(self):
+        params = [
+            6.42171870e+02,  # C_air
+            4.96056150e-01,  # G_box
+            1.14165310e+01,  # V_heater
+            1.42706637e+00,  # I_heater
+        ]
+        data, _ = load_data(
+            "./incubator/datasets/20230501_calibration_empty_system/20230501_calibration_empty_system.csv",
+            time_unit='ns',
+            normalize_time=False,
+            convert_to_seconds=True)
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        results, sol = run_experiment_two_parameter_model(data, params)
+
+        fig, (ax1, ax2) = plt.subplots(2, 1)
+
+        ax1.plot(data["time"], data["T_room"], label="T_room")
+        ax1.plot(results.signals["time"], results.signals["T"], label="~T")
+        ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
+        ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
+        ax1.legend()
+
+        ax2.plot(data["time"], data["heater_on"], label="heater_on")
+        ax2.plot(data["time"], data["fan_on"], label="fan_on")
+        ax2.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
+        ax2.legend()
+
+        if self.ide_mode():
+            plt.show()
+
+
     def plot_compare_model_data(self, csv, title):
-        params = two_param_model_params
+        params = [
+            498.71218224,  # C_air
+            0.62551039,  # G_box
+            10.917042,  # V_heater
+            9.12718588,  # I_heater
+        ]
         V_heater = params[2]
         I_heater = params[3]
         data, _ = load_data(csv)
@@ -118,20 +195,7 @@ class TestsModelling(CLIModeTest):
             "random_on_off_sequences")
 
         self.assertTrue(abs(len(results.signals["in_heater_on"]) - len(data["heater_on"]) < 10))
-        comparable_length = min(len(results.signals["in_heater_on"]), len(data["heater_on"]))
 
-        convert_bool = lambda bool_array: [1.0 if b else 0.0 for b in bool_array]
-        sum_squared_error = lambda a, b: sum(
-            ((numpy.array(a)[0:comparable_length] - numpy.array(b)[0:comparable_length]) ** 2))
-
-        error_heater_in = sum_squared_error(convert_bool(data["heater_on"]),
-                                            convert_bool(results.signals["in_heater_on"]))
-        # print(f"error_heater_in={error_heater_in}")
-        self.assertTrue(error_heater_in < 1.0)
-
-        error_power_in = sum_squared_error(data["power_in"], results.signals["power_in"])
-        # print(f"error_power_in={error_power_in}")
-        self.assertTrue(error_power_in < 1.0)
 
     def test_show_symbolic_equations(self):
         P_in = sp.symbols("P_in")

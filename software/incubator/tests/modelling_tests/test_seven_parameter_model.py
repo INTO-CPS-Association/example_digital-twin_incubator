@@ -88,7 +88,14 @@ class SevenParameterModelTests(CLIModeTest):
 
         results_4, sol_4 = run_experiment_four_parameter_model(data, four_param_model_params)
 
-        results_2p, sol_2p = run_experiment_two_parameter_model(data, two_param_model_params)
+        two_param_params = [
+            616.56464029,  # C_air
+            0.65001889,  # G_box
+            12.0,  # V_heater
+            10.0,  # I_heater
+        ]
+
+        results_2p, sol_2p = run_experiment_two_parameter_model(data, two_param_params)
 
         l.info(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
 

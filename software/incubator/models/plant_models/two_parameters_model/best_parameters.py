@@ -1,6 +1,6 @@
 two_param_model_params = [
-    616.56464029,   # C_air
-    0.65001889,      # G_box
-    12.0,      # V_heater
-    10.0,      # I_heater
-]
+        6.42171870e+02,  # C_air
+        4.96056150e-01,  # G_box
+        1.14165310e+01,  # V_heater
+        1.42706637e+00,  # I_heater
+    ]

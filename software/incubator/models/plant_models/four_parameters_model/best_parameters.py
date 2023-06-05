@@ -1,9 +1,8 @@
 four_param_model_params = [
-                               177.62927865,  # C_air
-                               0.77307655,  # G_box
-                               239.61236331,  # C_heater
-                               2.31872819,  # G_heater
-                               12.16,  # V_heater
-                               1.54,  # I_heater
-                           ]
-
+            267.55929458,  # C_air
+            0.5763498,  # G_box
+            329.25376821,  # C_heater
+            1.67053237,  # G_heater
+            12.15579391,  # V_heater
+            1.53551347  # I_heater
+        ]
