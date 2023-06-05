@@ -47,7 +47,8 @@ class SevenParameterModelTests(CLIModeTest):
                                  desired_timeframe=desired_timeframe, time_unit=time_unit,
                                  normalize_time=False,
                                  convert_to_seconds=convert_to_seconds)
-
+        data = derive_data(data, V_heater=guess[7], I_Heater=guess[8],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
         # Rename column to make data independent of specific tN's
         data.rename(columns={"t1": "T_room"}, inplace=True)
 
@@ -64,102 +65,6 @@ class SevenParameterModelTests(CLIModeTest):
         l.info(f"Cost: {sol.cost}")
         l.info(f"Params: {sol.x}")
 
-
-    def test_calibrate_seven_parameter_model_stages(self):
-
-        NEvals = 50 if self.ide_mode() else 1
-
-        NStages = 8 if self.ide_mode() else 1
-
-        desired_timeframe = (-math.inf, math.inf)
-        time_unit = 'ns'
-        convert_to_seconds = True
-
-        h = CTRL_EXEC_INTERVAL
-
-        data, events = load_data("./incubator/datasets/20210321_lid_opening_7pmodel/lid_opening_experiment_mar_2021.csv",
-                                 events="./incubator/datasets/20210321_lid_opening_7pmodel/events.csv",
-                                 desired_timeframe=desired_timeframe, time_unit=time_unit,
-                                 normalize_time=False,
-                                 convert_to_seconds=convert_to_seconds)
-        # Rename column to make data independent of specific tN's
-        data.rename(columns={"t1": "T_room"}, inplace=True)
-
-        # Isolate sections where the calibration will be run.
-        stages = []
-        next_stage_start = 0
-        next_stage_end = 0
-        next_stage_lid_open = False
-        for idx, row in data.iterrows():
-            start_new_stage = ((not next_stage_lid_open) and row["lid_open"] > 0.5) or \
-                              (next_stage_lid_open and row["lid_open"] < 0.5)
-            if start_new_stage:
-                stages.append((next_stage_lid_open, next_stage_start, next_stage_end))
-                next_stage_start = next_stage_end + 1
-                next_stage_end = next_stage_start
-                next_stage_lid_open = row["lid_open"] > 0.5
-            else:
-                next_stage_end += 1
-
-        # Run calibration for each section sequentially.
-        experiments = []
-        for i in range(min(NStages, len(stages))):
-            (lid_open, start, end) = stages[i]
-            if i == 0:
-                T_heater_0 = data.iloc[0]["average_temperature"]
-                last_params = seven_param_model_params
-            else:
-                # Run last experiment and get T_heater final.
-                (last_data_stage, last_params, last_T_heater_0) = experiments[-1]
-                m, sol = run_experiment_seven_parameter_model(last_data_stage, last_params, last_T_heater_0, h=h)
-                T_heater_0 = m.signals["T_heater"][-1]
-
-            # Filter data to range
-            data_stage = data.iloc[range(start, end)]
-
-            # Get best parameters so far from the experiment
-            params = copy(last_params)
-
-            if lid_open:
-                def run_exp_lid(param_lid):
-                    params[6] = param_lid[0]
-                    m, sol = run_experiment_seven_parameter_model(data_stage, params, T_heater_0, h=h)
-                    return m, sol, data_stage
-
-                residual = construct_residual([run_exp_lid])
-                sol = least_squares(residual, np.array([params[6]]), max_nfev=NEvals)
-
-                params[6] = sol.x[0]
-
-                l.info(f"Calibration for stage {i} with lid open done.")
-            else:
-                def run_exp_nolid(params_nolid):
-                    params[0] = params_nolid[0]
-                    params[1] = params_nolid[1]
-                    params[2] = params_nolid[2]
-                    params[3] = params_nolid[3]
-                    m, sol = run_experiment_seven_parameter_model(data_stage, params, T_heater_0, h=h)
-                    return m, sol, data_stage
-
-                residual = construct_residual([run_exp_nolid])
-                sol = least_squares(residual, np.array([params[i] for i in range(4)]), max_nfev=NEvals)
-
-                params[0] = sol.x[0]
-                params[1] = sol.x[1]
-                params[2] = sol.x[2]
-                params[3] = sol.x[3]
-
-                l.info(f"Calibration for stage {i} with no lid open done.")
-
-            l.info(f"Cost: {sol.cost}")
-            l.info(f"Params: {sol.x}")
-
-            experiments.append((data_stage, params, T_heater_0))
-
-        l.info(f"Calibration done. Final results:")
-        (_, last_params, _) = experiments[-1]
-        l.info(last_params)
-
     def test_run_experiment_seven_parameter_model(self):
         time_unit = 'ns'
 
@@ -174,7 +79,8 @@ class SevenParameterModelTests(CLIModeTest):
                                  normalize_time=False,
                                  convert_to_seconds=True)
         params = seven_param_model_params
-
+        data = derive_data(data, V_heater=params[7], I_Heater=params[8],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
         # Rename column to make data independent of specific tN's
         data.rename(columns={"t1": "T_room"}, inplace=True)
 

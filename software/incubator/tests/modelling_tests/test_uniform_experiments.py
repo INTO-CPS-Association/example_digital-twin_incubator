@@ -4,10 +4,11 @@ import unittest
 import numpy
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from scipy import integrate
 
-from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.data_processing.data_processing import load_data
 from incubator.tests.cli_mode_test import CLIModeTest
 
 
@@ -15,7 +16,8 @@ class UniformExperimentTests(CLIModeTest):
 
     def test_plot_data_uniform_experiment(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/20200712_uniform_temperature/uniform_temperature.csv", desired_timeframe=(-math.inf, math.inf))
+        data, _ = load_data("./incubator/datasets/20200712_uniform_temperature/uniform_temperature.csv",
+                            desired_timeframe=(-math.inf, math.inf))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
@@ -58,7 +60,8 @@ class UniformExperimentTests(CLIModeTest):
 
     def test_show_temperature_sensor_redundant(self):
         # CWD: Example_Digital-Twin_Incubator\software\
-        data, _ = load_data("./incubator/datasets/20200712_uniform_temperature/uniform_temperature_better_fan.csv", desired_timeframe=(-math.inf, math.inf))
+        data, _ = load_data("./incubator/datasets/20200712_uniform_temperature/uniform_temperature_better_fan.csv",
+                            desired_timeframe=(-math.inf, math.inf))
 
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 

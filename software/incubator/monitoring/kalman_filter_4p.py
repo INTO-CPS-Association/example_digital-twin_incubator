@@ -5,7 +5,6 @@ from oomodelling import Model
 import sympy as sp
 import numpy as np
 
-from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from incubator.interfaces.updateable_kalman_filter import IUpdateableKalmanFilter
 
 
@@ -74,8 +73,8 @@ def construct_filter(step_size,
     # Replace constants and get numerical matrices
     def replace_constants(m):
         return np.array(m.subs({
-            V_heater: HEATER_VOLTAGE,
-            i_heater: HEATER_CURRENT,
+            V_heater: 12.0,
+            i_heater: 10.45,
             C_air: C_air_num,
             G_box: G_box_num,
             C_heater: C_heater_num,

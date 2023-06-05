@@ -5,7 +5,7 @@ import numpy as np
 import pandas
 
 from incubator.config.config import resource_file_path
-from incubator.data_processing.data_processing import load_data, derive_data
+from incubator.data_processing.data_processing import load_data
 from incubator.monitoring.kalman_filter_4p import KalmanFilter4P
 from incubator.models.plant_models.model_functions import run_experiment_four_parameter_model
 from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL

@@ -1,10 +1,9 @@
 from oomodelling import Model
 
-from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 class EnergyModel(Model):
-    def __init__(self, initial_heat_voltage=HEATER_VOLTAGE, initial_heat_current=HEATER_CURRENT,
+    def __init__(self, initial_heat_voltage, initial_heat_current,
                  C_air=700,  # j kg^-1 °K^-1
                  Volume = 0.03,  # m^3
                  T0 = 20.0  # °C

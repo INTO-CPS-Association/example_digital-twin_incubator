@@ -6,7 +6,6 @@ from scipy import integrate
 
 from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.config.config import resource_file_path
-from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 
 
 def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time, convert_to_seconds):
@@ -40,14 +39,20 @@ def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time
 
     return csv
 
-def load_data(filepath, events=None, desired_timeframe=(- math.inf, math.inf), time_unit='s', normalize_time=True, convert_to_seconds=False):
+
+def load_data(filepath,
+              events=None,
+              desired_timeframe=(- math.inf, math.inf),
+              time_unit='s',
+              normalize_time=True,
+              convert_to_seconds=False):
     data = load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time, convert_to_seconds)
     event_data = None
     if events is not None:
         assert not normalize_time, "Not allowed to normalize data with events."
         event_data = load_timestamped_data(events, desired_timeframe, time_unit, normalize_time, convert_to_seconds)
 
-    return derive_data(data, events=event_data), event_data
+    return data, event_data
 
 
 def convert_time_s_to_ns(timeseries):
@@ -76,13 +81,15 @@ def convert_event_to_signal(time, events, categories, start):
     return signal
 
 
-def derive_data(data, events=None):
-    data["power_in"] = data.apply(lambda row: HEATER_VOLTAGE * HEATER_CURRENT if row.heater_on else 0.0, axis=1)
+def derive_data(data, V_heater, I_Heater, avg_function=None, events=None):
+    if "average_temperature" not in data.columns:
+        if avg_function is None:
+            raise ValueError("A function to calculate the average temperature is needed but none was provided.")
+        data["average_temperature"] = data.apply(avg_function, axis=1)
+    data["power_in"] = data.apply(lambda row: V_heater * I_Heater if row.heater_on else 0.0, axis=1)
 
     data["energy_in"] = data.apply(
         lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
-    if "average_temperature" not in data.columns:
-        data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t1, row.t2]), axis=1)
     zero_kelvin = 273.15
     data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
     air_mass = 0.04  # Kg
@@ -93,11 +100,10 @@ def derive_data(data, events=None):
 
     if events is not None:
         lid_events = events.loc[(events["code"] == "lid_close") | (events["code"] == "lid_open")]
-        data["lid_open"] = convert_event_to_signal(data["time"], lid_events, categories={"lid_close": 0.0, "lid_open": 1.0},
-                                                  start="lid_close")
+        data["lid_open"] = convert_event_to_signal(data["time"], lid_events,
+                                                   categories={"lid_close": 0.0, "lid_open": 1.0},
+                                                   start="lid_close")
     else:
         data["lid_open"] = 0.0
 
     return data
-
-

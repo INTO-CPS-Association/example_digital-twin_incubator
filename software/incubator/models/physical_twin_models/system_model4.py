@@ -9,6 +9,8 @@ class SystemModel4Parameters(Model):
                  G_box,
                  C_heater,
                  G_heater,
+                 V_heater,
+                 I_heater,
                  lower_bound=10, heating_time=20, heating_gap=30,
                  temperature_desired=35,
                  initial_box_temperature=35,
@@ -23,7 +25,9 @@ class SystemModel4Parameters(Model):
                                                  C_air=C_air,
                                                  G_box=G_box,
                                                  C_heater=C_heater,
-                                                 G_heater=G_heater)
+                                                 G_heater=G_heater,
+                                                 initial_heat_voltage=V_heater,
+                                                 initial_heat_current=I_heater)
 
         self.ctrl.in_temperature = self.plant.T
         self.plant.in_heater_on = self.ctrl.heater_on

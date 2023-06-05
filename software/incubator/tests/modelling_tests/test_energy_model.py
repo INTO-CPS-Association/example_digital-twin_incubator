@@ -1,10 +1,11 @@
 import math
 import unittest
 
+import numpy as np
 from matplotlib import pyplot as plt
 from oomodelling import ModelSolver
 
-from incubator.data_processing.data_processing import load_data
+from incubator.data_processing.data_processing import load_data, derive_data
 from incubator.models.plant_models.algebraic_models.energy_model import EnergyModel
 from incubator.models.plant_models.model_functions import create_lookup_table
 from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
@@ -43,9 +44,12 @@ class TestsModelling(CLIModeTest):
                             normalize_time=False,
                             convert_to_seconds=False)
 
-        model = EnergyModel(
-            # initial_heat_current=0.6,
-            T0=25.0)
+        initial_heat_voltage = 12.0
+        initial_heat_current = 10.0
+
+        data = derive_data(data, initial_heat_voltage, initial_heat_current, avg_function=lambda row: np.mean([row.t2, row.t3]))
+
+        model = EnergyModel(initial_heat_voltage, initial_heat_current, T0=25.0)
 
         time_range = data["time"].to_numpy()
 

@@ -5,6 +5,8 @@ seven_param_model_params = [512.13460895,  # C_air
                             1.0,  # C_object
                             1.0,  # G_object
                             14.3873949,  # G_open_lid
+                            12.0,  # V_heater
+                            10.45  # I_heater
                             ]
 
 # seven_param_model_params = [337.3098155210202,  # C_air

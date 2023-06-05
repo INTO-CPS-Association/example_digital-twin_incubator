@@ -1,10 +1,8 @@
 from oomodelling import Model
 
-from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
-
 
 class TwoParameterIncubatorPlant(Model):
-    def __init__(self, initial_heat_voltage=HEATER_VOLTAGE, initial_heat_current=HEATER_CURRENT,
+    def __init__(self, initial_heat_voltage=12.0, initial_heat_current=10.0,
                  initial_room_temperature=25.0, initial_box_temperature=25.0,
                  C_air=1.0, G_box=1.0):
         super().__init__()

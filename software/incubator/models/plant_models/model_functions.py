@@ -7,7 +7,6 @@ from oomodelling.ModelSolver import ModelSolver
 import logging
 
 from incubator.models.plant_models.four_parameters_model.four_parameter_model import FourParameterIncubatorPlant
-from incubator.models.plant_models.globals import HEATER_VOLTAGE, HEATER_CURRENT
 from incubator.models.plant_models.seven_parameters_model.seven_parameter_model import SevenParameterIncubatorPlant
 from incubator.models.plant_models.two_parameters_model.two_parameter_model import TwoParameterIncubatorPlant
 from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
@@ -59,34 +58,14 @@ def create_lookup_table(time_range, data):
 def run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
     C_air = params[0]
     G_box = params[1]
+    V_heater = params[2]
+    I_heater = params[3]
 
-    model = TwoParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["t3"],
+    model = TwoParameterIncubatorPlant(initial_heat_voltage=V_heater,
+                                       initial_heat_current=I_heater,
+                                       initial_room_temperature=data.iloc[0]["T_room"],
                                        initial_box_temperature=data.iloc[0]["average_temperature"],
                                        C_air=C_air, G_box=G_box)
-
-    time_range = data["time"].to_numpy()
-
-    in_heater_table = create_lookup_table(time_range, data["heater_on"].to_numpy())
-    in_room_temperature = create_lookup_table(time_range, data["t3"].to_numpy())
-    model.in_heater_on = lambda: in_heater_table(model.time())
-    model.in_room_temperature = lambda: in_room_temperature(model.time())
-
-    t0 = data.iloc[0]["time"]
-    tf = data.iloc[-1]["time"]
-    sol = ModelSolver().simulate(model, t0, tf, h, h/100.0, t_eval=data["time"])
-    return model, sol
-
-
-def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
-    C_air = params[0]
-    G_box = params[1]
-    C_heater = params[2]
-    G_heater = params[3]
-
-    model = FourParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["T_room"],
-                                        initial_box_temperature=data.iloc[0]["average_temperature"],
-                                        C_air=C_air, G_box=G_box,
-                                        C_heater=C_heater, G_heater=G_heater)
 
     time_range = data["time"].to_numpy()
 
@@ -97,7 +76,35 @@ def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
 
     t0 = data.iloc[0]["time"]
     tf = data.iloc[-1]["time"]
-    sol = ModelSolver().simulate(model, t0, tf, h, h/10.0, t_eval=time_range)
+    sol = ModelSolver().simulate(model, t0, tf, h, h / 100.0, t_eval=data["time"])
+    return model, sol
+
+
+def run_experiment_four_parameter_model(data, params, h=CTRL_EXEC_INTERVAL):
+    C_air = params[0]
+    G_box = params[1]
+    C_heater = params[2]
+    G_heater = params[3]
+    V_heater = params[4]
+    I_heater = params[5]
+
+    model = FourParameterIncubatorPlant(initial_room_temperature=data.iloc[0]["T_room"],
+                                        initial_box_temperature=data.iloc[0]["average_temperature"],
+                                        C_air=C_air, G_box=G_box,
+                                        C_heater=C_heater, G_heater=G_heater,
+                                        initial_heat_voltage=V_heater,
+                                        initial_heat_current=I_heater)
+
+    time_range = data["time"].to_numpy()
+
+    in_heater_table = create_lookup_table(time_range, data["heater_on"].to_numpy())
+    in_room_temperature = create_lookup_table(time_range, data["T_room"].to_numpy())
+    model.in_heater_on = lambda: in_heater_table(model.time())
+    model.in_room_temperature = lambda: in_room_temperature(model.time())
+
+    t0 = data.iloc[0]["time"]
+    tf = data.iloc[-1]["time"]
+    sol = ModelSolver().simulate(model, t0, tf, h, h / 10.0, t_eval=time_range)
     return model, sol
 
 
@@ -111,11 +118,13 @@ def run_experiment_seven_parameter_model(data, params,
     C_object = params[4]
     G_object = params[5]
     G_open_lid = params[6]
+    V_heater = params[7]
+    I_heater = params[8]
 
     initial_room_temperature = data.iloc[0]["T_room"]
     initial_box_temperature = data.iloc[0]["average_temperature"]
 
-    model = SevenParameterIncubatorPlant(HEATER_VOLTAGE, HEATER_CURRENT,
+    model = SevenParameterIncubatorPlant(V_heater, I_heater,
                                          initial_room_temperature, initial_box_temperature,
                                          initial_heat_temperature,
                                          C_air, G_box,
@@ -134,7 +143,7 @@ def run_experiment_seven_parameter_model(data, params,
 
     t0 = data.iloc[0]["time"]
     tf = data.iloc[-1]["time"]
-    sol = ModelSolver().simulate(model, t0, tf, h, h/10.0, t_eval=data["time"])
+    sol = ModelSolver().simulate(model, t0, tf, h, h / 10.0, t_eval=data["time"])
     return model, sol
 
 

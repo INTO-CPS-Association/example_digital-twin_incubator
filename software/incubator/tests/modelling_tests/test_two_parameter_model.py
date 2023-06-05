@@ -3,6 +3,8 @@ import math
 import unittest
 
 import numpy
+import numpy as np
+from scipy import integrate
 from scipy.optimize import leastsq
 
 import matplotlib.pyplot as plt
@@ -27,6 +29,7 @@ class TestsModelling(CLIModeTest):
                             time_unit='s',
                             normalize_time=False,
                             convert_to_seconds=False)
+        data.rename(columns={"t3": "T_room"}, inplace=True)
 
         params = two_param_model_params
 
@@ -45,12 +48,16 @@ class TestsModelling(CLIModeTest):
         params = two_param_model_params
         # CWD: Example_Digital-Twin_Incubator\software\
         data, _ = load_data("./incubator/datasets/20200918_calibration_fan_24V/semi_random_movement.csv",
-                                     desired_timeframe=(-math.inf, math.inf))
+                            desired_timeframe=(-math.inf, math.inf))
+        data = derive_data(data, V_heater=params[2], I_Heater=params[3],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+
         results, sol = run_experiment_two_parameter_model(data, params)
 
-        fig, (ax1, ax2, ax4) = plt.subplots(3, 1)
+        fig, (ax1, ax2) = plt.subplots(2, 1)
 
-        ax1.plot(data["time"], data["t1"], label="t1")
+        ax1.plot(data["time"], data["T_room"], label="T_room")
         ax1.plot(data["time"], data["t2"], label="t2")
         ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(results.signals["time"], results.signals["T"], label="~T")
@@ -63,21 +70,25 @@ class TestsModelling(CLIModeTest):
         ax2.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
         ax2.legend()
 
-        ax4.plot(data["time"], data["power_in"], label="power_in")
-        ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
-        ax4.legend()
-
         if self.ide_mode():
             plt.show()
 
     def plot_compare_model_data(self, csv, title):
         params = two_param_model_params
+        V_heater = params[2]
+        I_heater = params[3]
         data, _ = load_data(csv)
+        data = derive_data(data, V_heater, I_heater, avg_function=lambda row: np.mean([row.t2, row.t3]))
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+        data["power_in"] = data.apply(lambda row: V_heater * I_heater if row.heater_on else 0.0, axis=1)
+        data["energy_in"] = data.apply(
+            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
+
         results, _ = run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL)
 
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
 
-        ax1.plot(data["time"], data["t1"], label="t1")
+        ax1.plot(data["time"], data["T_room"], label="T_room")
         ax1.plot(data["time"], data["t2"], label="t2")
         ax1.plot(data["time"], data["t3"], label="t3")
         ax1.plot(results.signals["time"], results.signals["T"], label="~T")
@@ -104,8 +115,7 @@ class TestsModelling(CLIModeTest):
     def test_check_two_parameter_model_inputs(self):
         results, data = self.plot_compare_model_data(
             "./incubator/datasets/20200917_calibration_fan_12v/random_on_off_sequences.csv",
-            "random_on_off_sequences"
-        )
+            "random_on_off_sequences")
 
         self.assertTrue(abs(len(results.signals["in_heater_on"]) - len(data["heater_on"]) < 10))
         comparable_length = min(len(results.signals["in_heater_on"]), len(data["heater_on"]))
@@ -152,6 +162,7 @@ class TestsModelling(CLIModeTest):
 
         if self.ide_mode():
             print(f"dT_dt = {dT_dt}")
+
 
 if __name__ == '__main__':
     unittest.main()
