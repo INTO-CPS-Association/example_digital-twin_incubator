@@ -25,6 +25,7 @@ class SampledRealTimePlantModel(Model):
             initial_heat_current=I_heater,
             initial_box_temperature=initial_box_temperature,
             initial_heat_temperature=initial_heat_temperature,
+            initial_room_temperature=initial_box_temperature,
             C_air=C_air,
             G_box=G_box,
             C_heater=C_heater,
