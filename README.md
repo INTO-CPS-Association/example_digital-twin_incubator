@@ -3,8 +3,33 @@
 This is a case study of an Incubator with the purpose of understanding the steps and processes involved in developing a digital twin system.
 This incubator is an insulated container with the ability to keep a temperature and heat, but not cool.
 
-To understand what a digital twin is, we recommend you read the following paper:
-Feng, Hao, Cláudio Gomes, Casper Thule, Kenneth Lausdahl, Alexandros Iosifidis, and Peter Gorm Larsen. “Introduction to Digital Twin Engineering.” In 2021 Annual Modeling and Simulation Conference (ANNSIM), 1–12. Fairfax, VA, USA: IEEE, 2021. https://doi.org/10.23919/ANNSIM52504.2021.9552135.
+To understand what a digital twin is, we recommend you read/watch one or more of the following resources:
+- Feng, Hao, Cláudio Gomes, Casper Thule, Kenneth Lausdahl, Alexandros Iosifidis, and Peter Gorm Larsen. “Introduction to Digital Twin Engineering.” In 2021 Annual Modeling and Simulation Conference (ANNSIM), 1–12. Fairfax, VA, USA: IEEE, 2021. https://doi.org/10.23919/ANNSIM52504.2021.9552135.
+- [Claudio's presentation at Aarhus IT](https://videos.ida.dk/media/Introduction+to+Digital+Twin+Engineering+with+Cl%C3%A1udio+%C3%82ngelo+Gon%C3%A7alves+Gomes%2C+Aarhus+Universitet/1_7r1j05g8/256930613)
+
+## Contents
+1. [About this Document](#about-this-document)
+2. [Overview of the Documentation](#overview-of-the-documentation)
+
+## About this Document
+
+**Goal:** The goal of this document is to provide users with a basic overview of the digital twin incubator and enabled them to run it on their computers.
+
+**Audience:** This documentation is targeted at users who are acquainted with running programs from the command line and are able to install [python](https://www.python.org/) and run python scripts.
+
+## Overview of the Documentation
+
+The documentation is all contained into a single document for simplicity and ease of maintenance.
+If the user wishes to see the documentation in some other format then we recommend cloning this repository and using [Pandoc](https://pandoc.org/) to convert the documentation into another format.
+
+### Searching
+
+Searching the documentation can be done by using the browser search function or using Github's search feature on top of the screen.
+
+## Our Concept of Digital Twin
+
+A digital twin is a software system that supports the operation of a cps (called the physical twin).
+So the following documentation describes the physical twin first and then the digital twin.
 
 ## The Incubator Physical Twin
 
@@ -13,38 +38,105 @@ The overall purpose of the system is to reach a certain temperature within a box
 ![Incubator](figures/system.svg)
 
 The system consists of:
-- A Styrofoam box in order to have an insulated container.
-- A heat source to heat up the content within the Styrofoam box.
-- A fan to distribute the heating within the box
-- A temperature sensor to monitor the temperature within the box
-- A temperature Sensor to monitor the temperature outside the box
-- A controller to communicate with the digital twin, actuate the heat source and the fan and read sensory information from the temperature sensors.
+- 1x Styrofoam box in order to have an insulated container.
+- 1x heat source to heat up the content within the Styrofoam box.
+- 1x fan to distribute the heating within the box
+- 2x temperature sensor to monitor the temperature within the box
+- 1x temperature Sensor to monitor the temperature outside the box
+- 1x controller to actuate the heat source and the fan and read sensory information from the temperature sensors, and communicate with the digital twin.
 
-## CAD Model
+
+## Terminology
+
+- **Plant** -- we use the term in the traditional control systems sense. The plant refers to the box contents, the heater, the sensor, and the fan. Basically it is the stuff that the controller is sensing and actuating on.
+- **Controller** -- To control this responsibility is to decide when to turn on/off the heater.
+- **Low Level Driver** --- This refers to the component that decouples the controller from the plant. It forms a layer that abstracts away from the details of how the actuators and sensors work and enables us to run the whole system locally on a computer without the need to connect to a real plant.
+
+### CAD Model
 
 A .obj file is available at: [figures/incubator_plant.obj](figures/incubator_plant.obj).
 
 ![CAD Model](./figures/incubator_plant.png)
 
-Ongoing development of the cad model is at: [incubator](https://www.tinkercad.com/things/ls1YolyX1fc-incubatorv20230429)
+Ongoing development of the cad model is at 
+[incubator](https://www.tinkercad.com/things/ls1YolyX1fc-incubatorv20230429)
+
+### Dynamic Models
+
+TODO
+
+### Running The Incubator Physical Twin
+
+On the raspberry pi: 
+1. Start the [low_level_driver_server.py](software/incubator/physical_twin/low_level_driver_server.py)
+   ```powershell 
+   PS software> python -m incubator.physical_twin.low_level_driver_server
+   ```
+2. Start the controller you wish to use. For example the [start_controller_physical.py](software/startup/start_controller_physical.py) is:
+   ```powershell 
+   PS software> python -m startup.start_controller_physical
+   ```
 
 ## The Digital Twin
 
-The DT does the following:
+The DT follows a service based architecture, with different services communicating with each other via a [RabbitMQ message exchange](https://www.rabbitmq.com/).
+Each service is started with a python script, and most services refer to [startup.conf](software/startup.conf) for their configuration.
 
-1. Continuously monitor the assumptions made about the system and its model. This is essential for safety and a pre-condition to everything else. For instance: the uniform temperature assumption should hold whenever the fan is operating and the heating is turned off. This is a basic assumption that we make when answering what if questions. If that does not hold, it might mean the fan has stopped working.
-2. Continuously compare the system behavior with the predictions of the models. E.g., when the heating element is turned on for 5 seconds, the temperature should reach 35 degrees within the next 30 seconds and then slowly go down to 25 degrees within 5 minutes.
-3. Re-calibrate when 2 no longer holds (in this case, finds the new parameter for the element being warmed inside, for example, a glass of water).
-4. Possibly re-tunes the controller to optimize the behavior under the newly calibrated model. E.g., instead of turning the heating element for 5 seconds, it now only turns it for 3 seconds, to reach the same 35 degrees within the next 30 seconds.
-5. Answers what-if questions: Suppose you want to turn off the heating element for some hours (maybe due to power loss or some other intervention). Is there anything that you can do to keep the temperature inside the box within range? Maybe place a bottle of hot water? If so, how warm must the water be?
+The code that starts the services is in [software/startup](software/startup).
+It is possible to start all services from the same script [start_all_services.py](software/startup/start_all_services.py) or each service individually.
+
+The services (and their starting scripts) currently implemented are:
+- [incubator_realtime_mockup](software/startup/start_incubator_realtime_mockup.py) -- implements a real time plant simulation mockup so that the whole digital twin system can be run locally on any computer without the need to connect to an external physical twin. When using a real physical twin this service is not started.
+- [low_level_driver_mockup](software/startup/start_low_level_driver_mockup.py) -- This instantiates a low level driver service that is wired to work with a real time plant simulator mockup. When using a real physical twin this service is not started.
+- [influx_data_recorder](software/startup/start_influx_data_recorder.py) -- the service listens to a particular topic from RabbitMQ records the messages into the time series database [InfluxDB](https://portal.influxdata.com/downloads/)
+- [plant_kalmanfilter](software/startup/start_plant_kalmanfilter.py) -- This service estimates the full state of the system and is used as a basis for anomaly detection.
+- [plant_simulator](software/startup/start_plant_simulator.py) -- The service can run simulations based on the data from the time series database with different conditions for the plant model.
+- [simulator](software/startup/start_simulator.py) -- This service can run simulations of the controller and plant system from data based on the data from the time series databases with different conditions.
+- [calibrator](software/startup/start_calibrator.py) -- The service can use data from the time series database to estimate the parameters of the plant model.
+- [controller_physical](software/startup/start_controller_physical.py) -- this service implements the controller.
+- [supervisor](software/startup/start_supervisor.py) -- This service can periodically retune the controller.
+- [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) -- the service implements the self-adaptation which checks whether the physical characteristics of the plant have changed and can trigger a recalibration as well as controller tuning when that happens.
 
 ### Running the Digital Twin
 
 It is possible to run the digital twin on our computer, with or without a connection to the physical twin.
 
-Follow the instructions in [software/README.md](software/README.md).
+*You're advised to read carefully all documentation before acting on any instruction.*
 
-*You're advised to read carefully all documentation before acting on any instruction*.
+#### First-time Setup
+1. Open terminal in this folder.
+2. (Optional) Create a virtual environment: `python -m venv venv`
+3. (Optional) Activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 
+   1. Windows Powershell:`.\venv\Scripts\Activate.ps1` 
+   2. Linux/Mac: `source venv/bin/activate`
+4. (Optional) Install pip wheel: `pip install wheel`
+5. Install dependencies:
+   1. `pip install -r ./requirements.txt`
+
+#### After First-time Setup: Starting the DT Framework
+
+1. Inspect the [startup.conf](./software/startup.conf) in this folder. You should not need to change anything for running the DT locally.
+2. Follow the instructions in [./startup/README.md](./software/startup/README.md)
+3. Recommended: [Run the unit tests](#running-unit-tests)
+4. Recommended: [Run the integration tests](#running-integration-tests)
+
+#### Running Unit Tests
+
+Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework)
+
+To run the unit tests, open a terminal in the directory of this readme file, and
+1. Activate virtual environment
+2. If using powershell, run [./run_tests.ps1](./software/run_tests.ps1)
+3. Otherwise:
+   1. Set environment variable CLIMODE = "ON"
+   2. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
+
+#### Running Integration Tests
+
+Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework) and [run the unit tests](#running-unit-tests) before attempting to run the integration tests.
+
+The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) contains the instructions.
+
 
 ## Repository Maintenance Instructions
 
