@@ -16,11 +16,16 @@ To understand what a digital twin is, we recommend you read/watch one or more of
 - [Terminology](#terminology)
 - [Our Concept of Digital Twin](#our-concept-of-digital-twin)
 - [The Incubator Physical Twin](#the-incubator-physical-twin)
+  - [Hardware Overview](#hardware-overview)
+    - [Raspberry Pi GPIO connections](#raspberry-pi-gpio-connections)
+    - [Temperature Sensor Mapping](#temperature-sensor-mapping)
+    - [Connecting to the Raspberry PI](#connecting-to-the-raspberry-pi)
   - [CAD Model](#cad-model)
   - [Dynamic Models](#dynamic-models)
   - [Running The Incubator Physical Twin](#running-the-incubator-physical-twin)
 - [The Digital Twin](#the-digital-twin)
   - [System Architecture](#system-architecture)
+    - [Self-Adaptation](#self-adaptation)
   - [Datasets and Experiment Reports](#datasets-and-experiment-reports)
   - [Running the Digital Twin](#running-the-digital-twin)
     - [First-time Setup](#first-time-setup)
@@ -66,12 +71,62 @@ The overall purpose of the system is to reach a certain temperature within a box
 ![Incubator](figures/system.svg)
 
 The system consists of:
-- 1x Styrofoam box in order to have an insulated container.
+- 1x Styrofoam box in order to have an insulated container
 - 1x heat source to heat up the content within the Styrofoam box.
 - 1x fan to distribute the heating within the box
 - 2x temperature sensor to monitor the temperature within the box
 - 1x temperature Sensor to monitor the temperature outside the box
 - 1x controller to actuate the heat source and the fan and read sensory information from the temperature sensors, and communicate with the digital twin.
+
+## Hardware Overview
+Hardware Elements
+- 3 temperature sensors of the type DS18S20
+- 1 heat bed of the type RepRap PCB Heat bed MK2a (improved design)
+  - Dimensions (Heat Bed): 200mm x 200mm
+  - Resistance: 0.9 - 1.1 Ohms 
+  - Operating voltage: 12 Volts
+  - Operating current: 11 - 13 Amps
+- 1 Fan 24V 92x25 B 87,4m³/h 34dBA - https://elektronik-lavpris.dk/files/sup2/EE92252B1-A99_D09023340G-00.pdf - https://elektronik-lavpris.dk/p122514/ee92252b1-a99-fan-24v-92x25-b-874m-h-34dba/
+- Raspberry Pie starter kit
+  - Raspberry Pi 4 Model B - 4 GB - https://www.raspberrypi.org/documentation/hardware/raspberrypi/bcm2711/rpi_DATA_2711_1p0_preliminary.pdf
+  - 6GB Micro SD - Class A1 - Med NOOBS
+  - Officiel Raspberry Pi USB-C Strømforsyning – EU – 5V 3A - Sort
+  - Officiel Raspberry Pi 7" Touchscreen Display
+  - SmartiPi Touch 2 - Case til Raspberry Pi 7" Touchscreen Display 
+  - USB Micro SD Kortlæser
+- Thermo box - Climapor thermokasse m/låg t/Eurokasse 54,5x35x18 cm
+- Custom Printed Circuit Board Electronics. You can find more information [here](./software/docs/electronics/doc/doc.pdf).
+
+### Raspberry Pi GPIO connections
+- GPIO 12: PWM Heater 
+- GPIO 13: PWM Fan
+- GPIO 4: 1-wire temperature sensors
+
+### Temperature Sensor Mapping
+In order to read a temperature from the temperature sensors multiple IDs can be found in `/sys/bus/w1/devices/`.
+
+So to read a value from a sensor, one can do: `cat /sys/bus/w1/devices/10-0008039ad4ee/w1_slave`.
+
+Each ID in the `/sys/bus/w1/devices` folder correspond to a particular sensor. Follow the wires of the temperature sensors, and you will find a paper label with a number on it.
+The ID to number mapping is:
+
+ID to Sensor Number Mapping:
+
+| ID              | Sensor Number |
+|-----------------|:-------------:|
+| 10-0008039ad4ee |       1       |
+| 10-0008039b25c1 |       2       |
+| 10-0008039a977a |       3       |
+
+### Connecting to the Raspberry PI
+
+Easiest way to connect is to use VNC Viewer, as the pi runs a VNC server.
+Contact [claudio](mailto:claudio.gomes@ece.au.dk) for help in this step.
+
+Alternatively, it is possible to connect to the raspberry pi via a local network: the Pi outputs a Wifi network with the name incubator. 
+The password is located physically on the Pi.
+
+Once connected, one can SSH to the PI. The username and password is also physically located on the Pi.
 
 ## CAD Model
 
@@ -120,7 +175,42 @@ The services (and their starting scripts) currently implemented are:
 
 ## System Architecture
 
-Read the documentation in [README.md](./software/docs/README.md)
+We use the [C4 Model](https://c4model.com/) to document the software architecture.
+
+![L0_Communication](software/docs/images/L0_Communication.svg)
+
+All communication goes through the RabbitMQ server, even the communication between the Controller and Plant.
+The Controller communicates with the Plant by listening and sending RabbitMQ messages to the [low_level_driver_server.py](./software/incubator/physical_twin/low_level_driver_server.py).
+
+Anyone else interested in this communication, such as the digital twin, can listen to it as well.
+
+### Self-Adaptation
+
+The most complex behavior is the self-adaptation, as it involves most implemented DT components.
+
+This is introduced in the following paper, which we recommend you read:
+- Feng, Hao, Cláudio Gomes, Santiago Gil, Peter H. Mikkelsen, Daniella Tola, Peter Gorm Larsen, and Michael Sandberg. “Integration Of The Mape-K Loop In Digital Twins.” In 2022 Annual Modeling and Simulation Conference (ANNSIM), 102–13. San Diego, CA, USA: IEEE, 2022. https://doi.org/10.23919/ANNSIM55834.2022.9859489.
+- *Note that diagrams in the paper are likely outdated. Updated diagrams are shown below*
+
+The main components and their dependencies are:
+
+![L1_main_dependencies](./software/docs/images/L1_main_dependencies.svg)
+
+Legend:
+- [MQ] - Communication happens via RabbitMQ messages.
+- [API] - Communication happens via method call.
+
+The following shows the main stages involved in a self-adaptation:
+
+![MAPEK_Loop](./software/docs/images/MAPEK_Loop.svg)
+
+In particular, these are followed by the SelfAdaptationManager:
+
+![self_adaptation_state_machine](./software/docs/images/self_adaptation_state_machine.svg)
+
+The following diagram shows the main interactions between the main entities that participate in the self-adaptation process. It is assumed that an anomaly has occurred due to the lid being open.
+
+![self_adaptation_sequence](./software/docs/images/self_adaptation_sequence.svg)
 
 ## Datasets and Experiment Reports
 
@@ -246,12 +336,17 @@ General guidelines:
 5. Organize and document datasets and experiments.
 6. Beware of large datasets. Host them elsewhere if needed, but include a short version of the dataset in the repository.
 7. Don't be afraid of reorganizing the code and repo if you think that's necessary. This is an ongoing learning process for everyone. Discuss with Casper, Kenneth, or Claudio before doing so if you're not sure.
-8. We shy away from branches except when they add a substantial amount of functionality. Commit and push responsibly to the main branch, that is, always make sure that:
+8. We shy away from branches except when they add a substantial amount of functionality. 
+9. Commit and push responsibly to the main branch, that is, always make sure that:
    1. That all tests pass (unit tests and integration tests).
    2. That new code is documented and tested.
-   3. That documentation links are not broken. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md files for broken links:
-      1. `Get-ChildItem -Include *.md -Recurse | Foreach {markdown-link-check --config .\markdown_link_check_config.json $_.fullname}`
-9.  Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
+   3. That documentation links are not broken. 
+      1. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md files for broken links:
+         ```powershell
+         Get-ChildItem -Include *.md -Recurse | Foreach {markdown-link-check --config .\markdown_link_check_config.json $_.fullname}
+         ```
+      2. If relevant, regenerate the [Table of Contents](#contents), either by hand or (recommended) using [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) or some other utility.
+10. Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
 
 ## Code Organization
 
