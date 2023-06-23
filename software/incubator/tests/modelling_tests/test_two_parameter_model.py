@@ -79,6 +79,7 @@ class TestsModelling(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
     def test_calibrate_two_parameter_model_20230501(self):
         logging.basicConfig(level=logging.INFO)
@@ -139,6 +140,7 @@ class TestsModelling(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
 
     def plot_compare_model_data(self, csv, title):
@@ -182,6 +184,8 @@ class TestsModelling(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+
+        plt.close(fig)
 
         return results, data
 

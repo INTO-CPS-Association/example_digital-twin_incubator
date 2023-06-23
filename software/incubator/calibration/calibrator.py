@@ -53,7 +53,7 @@ class Calibrator:
                 print(f"T0={reference_T[0]}, T_heater0={reference_T_heater[0]}")
                 raise e
 
-        new_sol = minimize(cost, np.array([C_air, G_box]), method='Nelder-Mead', bounds=[(150.0, 1e4), (0.7, 1e4)],
+        new_sol = minimize(cost, np.array([C_air, G_box]), method='Nelder-Mead', bounds=[(150.0, 1e4), (0.1, 1e4)],
                            options={'xatol': self.conv_xatol, 'fatol': self.conv_fatol, 'maxiter': self.max_iterations})
 
         assert new_sol.success, new_sol.message

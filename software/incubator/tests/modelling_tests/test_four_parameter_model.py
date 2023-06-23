@@ -134,6 +134,8 @@ class FourParameterModelTests(CLIModeTest):
         if self.ide_mode():
             plt.show()
 
+        plt.close(fig)
+
     def test_run_experiment_four_parameter_model_20230501(self):
         params = [267.55929458,  # C_air
                   0.5763498,  # G_box
@@ -183,6 +185,7 @@ class FourParameterModelTests(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
     def test_run_experiment_compare_models(self):
         # If you run this experiment with the C_heater=1e-2 and G_heater=1e-2, then you will get the two models being mostly equivalent.
@@ -229,6 +232,7 @@ class FourParameterModelTests(CLIModeTest):
         if self.ide_mode():
             plt.show()
             data.to_csv("exported_exp2_ht20_hg30.csv", sep=',')
+        plt.close(fig)
 
     def test_show_symbolic_equations(self):
         # Parameters

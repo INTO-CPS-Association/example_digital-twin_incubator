@@ -22,19 +22,21 @@ class TestsModelling(CLIModeTest):
         tf = 5.0
         sol = ModelSolver().simulate(model, t0, tf, 0.1, 0.01)
 
-        plt.figure()
+        fig1 = plt.figure()
 
         plt.plot(model.signals["time"], model.signals["T"], label="T")
         plt.legend()
 
-
-        plt.figure()
+        fig2 = plt.figure()
 
         plt.plot(model.signals["time"], model.signals["energy"], label="T")
         plt.legend()
 
         if self.ide_mode():
             plt.show()
+
+        plt.close(fig1)
+        plt.close(fig2)
 
     def test_compare_guesses_with_reality(self):
         # CWD: Example_Digital-Twin_Incubator\software\

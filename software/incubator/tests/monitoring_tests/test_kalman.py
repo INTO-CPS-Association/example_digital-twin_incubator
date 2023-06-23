@@ -48,7 +48,7 @@ class TestKalmanFilter(CLIModeTest):
         kalman_prediction = np.array(kalman_prediction).squeeze(2)
         assert kalman_prediction.shape == (Nsamples, 2)
 
-        plt.figure()
+        fig = plt.figure()
         plt.plot(time, model_noise)
         # plt.plot(time, gaussian_noise)
         plt.plot(time, kalman_prediction[:, 0], label="~position")
@@ -59,6 +59,7 @@ class TestKalmanFilter(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
 
 

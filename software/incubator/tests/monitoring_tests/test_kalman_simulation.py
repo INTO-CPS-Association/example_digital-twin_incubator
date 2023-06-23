@@ -42,21 +42,24 @@ class TestKalmanSimulation(CLIModeTest):
 
         ModelSolver().simulate(m, 0.0, 800, step_size, step_size/10.0)
 
-        plt.figure()
+        fig1 = plt.figure()
         plt.plot(m.signals['time'], m.noise_sensor.signals['y'], label="sensor T")
         # plt.plot(m.signals['time'], m.plant.signals['T'], label="real T")
         plt.plot(m.signals['time'], m.kalman.signals['out_T'], label="kalman T")
         plt.legend()
 
-        plt.figure()
+        fig2 = plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
-        plt.figure()
+        fig3 = plt.figure()
         plt.plot(m.signals['time'], m.plant.signals['T_heater'], label="T_heater")
         plt.plot(m.signals['time'], m.kalman.signals['out_T_heater'], label="kalman T_heater")
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig1)
+        plt.close(fig2)
+        plt.close(fig3)
 
 
 if __name__ == '__main__':

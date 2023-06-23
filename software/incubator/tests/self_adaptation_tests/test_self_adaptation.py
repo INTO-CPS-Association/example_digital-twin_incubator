@@ -160,6 +160,7 @@ class SelfAdaptationTests(CLIModeTest):
             print("I_heater: ", database.I_heater)
             plt.savefig("simulation_result.pdf")
             plt.show()
+        plt.close()
 
 
 class MockController(IParametricController):

@@ -19,10 +19,12 @@ class TestPlotData(CLIModeTest):
                             desired_timeframe=(- math.inf, math.inf))
         data = derive_data(data, V_heater=12.0, I_Heater=10.45,
                            avg_function=lambda row: np.mean([row.t2, row.t3]))
-        plot_incubator_data(data)
+        fig = plot_incubator_data(data)
 
         if self.ide_mode():
             plt.show()
+
+        plt.close(fig)
 
     def test_plot_data_plotly(self):
         time_unit = 'ns'

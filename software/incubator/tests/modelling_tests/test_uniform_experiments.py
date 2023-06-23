@@ -55,6 +55,8 @@ class UniformExperimentTests(CLIModeTest):
         if self.ide_mode():
             plt.show()
 
+        plt.close(fig)
+
     def test_show_temperature_sensor_redundant(self):
         # CWD: Example_Digital-Twin_Incubator\software\
         data, _ = load_data("./incubator/datasets/20200712_uniform_temperature/uniform_temperature_better_fan.csv",
@@ -106,6 +108,7 @@ class UniformExperimentTests(CLIModeTest):
         if self.ide_mode():
             # plt.savefig("uniform_experiments.svg")
             plt.show()
+        plt.close(fig)
 
 
 if __name__ == '__main__':

@@ -30,6 +30,8 @@ def plot_incubator_data(data):
     ax5.plot(data["time"], data["potential_energy"], label="potential_energy")
     ax5.legend()
 
+    return fig
+
 
 def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None,
                           overlay_heater=True, show_actuators=False,

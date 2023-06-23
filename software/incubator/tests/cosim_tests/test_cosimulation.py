@@ -24,18 +24,21 @@ class CosimulationTests(CLIModeTest):
 
         ModelSolver().simulate(m, 0.0, 1000, comm_step=3.0, max_solver_step=0.1)
 
-        plt.figure()
+        fig1 = plt.figure()
         plt.plot(m.signals['time'], m.plant.signals['T'])
 
-        plt.figure()
+        fig2 = plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['heater_on'])
 
-        plt.figure()
+        fig3 = plt.figure()
         plt.step(m.signals['time'], m.ctrl.signals['curr_state_model'])
 
         if self.ide_mode():
             print(m.ctrl.signals['curr_state_model'])
             plt.show()
+        plt.close(fig1)
+        plt.close(fig2)
+        plt.close(fig3)
 
 
 if __name__ == '__main__':

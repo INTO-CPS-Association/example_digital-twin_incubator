@@ -24,7 +24,7 @@ class CosimulationTests(CLIModeTest):
         V_heater = four_param_model_params[4]
         I_heater = four_param_model_params[5]
 
-        plt.figure()
+        fig = plt.figure()
 
         def show_trace(heating_time):
             m = SystemModel4Parameters(C_air,
@@ -47,6 +47,7 @@ class CosimulationTests(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
     def test_fine_tune_controller(self):
         C_air_num = four_param_model_params[0]
@@ -93,7 +94,7 @@ class CosimulationTests(CLIModeTest):
         initial_box_temperature = config["digital_twin"]["models"]["plant"]["param4"]["initial_box_temperature"]
         initial_heat_temperature = config["digital_twin"]["models"]["plant"]["param4"]["initial_heat_temperature"]
 
-        plt.figure()
+        fig = plt.figure()
 
         def show_trace(n_samples_heating, n_samples_period):
             m = SystemModel4ParametersOpenLoop(n_samples_period,
@@ -121,6 +122,7 @@ class CosimulationTests(CLIModeTest):
 
         if self.ide_mode():
             plt.show()
+        plt.close(fig)
 
 
 if __name__ == '__main__':

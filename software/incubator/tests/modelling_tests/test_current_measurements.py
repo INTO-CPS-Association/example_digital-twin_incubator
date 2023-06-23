@@ -17,7 +17,7 @@ class TestCurrentMeasurements(CLIModeTest):
                                     normalize_time=False,
                                     convert_to_seconds=False)
 
-        plt.figure()
+        fig = plt.figure()
 
         plt.plot(csv["timestamp_ns"], csv["current"], label="I(A)")
         plt.plot(csv["timestamp_ns"], [np.average(csv["current"]) for _ in csv["timestamp_ns"]], label="Average")
@@ -26,6 +26,7 @@ class TestCurrentMeasurements(CLIModeTest):
         if self.ide_mode():
             print(f'Average is {np.round(np.average(csv["current"]), 2)} A')
             plt.show()
+        plt.close(fig)
 
 
 if __name__ == '__main__':
