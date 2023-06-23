@@ -20,6 +20,8 @@ To understand what a digital twin is, we recommend you read/watch one or more of
   - [Dynamic Models](#dynamic-models)
   - [Running The Incubator Physical Twin](#running-the-incubator-physical-twin)
 - [The Digital Twin](#the-digital-twin)
+  - [System Architecture](#system-architecture)
+  - [Datasets and Experiment Reports](#datasets-and-experiment-reports)
   - [Running the Digital Twin](#running-the-digital-twin)
     - [First-time Setup](#first-time-setup)
     - [After First-time Setup: Starting the DT Framework](#after-first-time-setup-starting-the-dt-framework)
@@ -29,8 +31,7 @@ To understand what a digital twin is, we recommend you read/watch one or more of
   - [RabbitMQ Setup](#rabbitmq-setup)
   - [InfluxDB Setup](#influxdb-setup)
 - [Repository Maintenance Instructions](#repository-maintenance-instructions)
-
-
+  - [Code Organization](#code-organization)
 
 # About this Document
 
@@ -117,6 +118,14 @@ The services (and their starting scripts) currently implemented are:
 - [supervisor](software/startup/start_supervisor.py) -- This service can periodically retune the controller.
 - [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) -- the service implements the self-adaptation which checks whether the physical characteristics of the plant have changed and can trigger a recalibration as well as controller tuning when that happens.
 
+## System Architecture
+
+Read the documentation in [README.md](./software/docs/README.md)
+
+## Datasets and Experiment Reports
+
+See [incubator/datasets](./software/incubator/datasets/README.md)
+
 ## Running the Digital Twin
 
 It is possible to run the digital twin on our computer, with or without a connection to the physical twin.
@@ -187,7 +196,39 @@ The following instructions were used to configure these services in the first ti
 
 ## RabbitMQ Setup
 
-[Rabbitmq README](software/incubator/communication/installation/README.md)
+To start the RabbitMQ server, run the following in [software/incubator/communication/installation](software/incubator/communication/installation):
+``` Powershell
+# start and install rabbitmq container
+PS software\incubator\communication\installation> docker-compose up --detach --build
+[MACOS: docker compose up --detach --build]
+
+# Check logs of rabbitmq-server
+PS software\incubator\communication\installation> docker logs rabbitmq-server
+
+# Run script to test server (assumes you have correct environment)
+cd [RepoRoot]\software\
+[Activate virtual environment]
+PS software> python -m incubator.communication.installation.test_server
+
+# Stop and remove the server
+PS software> docker-compose down -v
+[MACOS: docker compose down -v]
+```
+
+The script should produce:
+```
+Sending message...
+Message sent.
+Retrieving message. Received message is {'text': '321'}
+```
+
+More information about the [Dockerfile](software/incubator/communication/installation/Dockerfile):
+https://hub.docker.com/_/rabbitmq
+
+Management of local RabbitMQ:
+1. Start RabbitMQ server
+2. Open http://localhost:15672/ on your browser.
+3. User and pass configuration are stored in [rabbitmq.conf](software/incubator/communication/installation/rabbitmq.conf) and passed to the container through the [Dockerfile](software/incubator/communication/installation/Dockerfile)
 
 ## InfluxDB Setup
 
@@ -211,3 +252,13 @@ General guidelines:
    3. That documentation links are not broken. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md files for broken links:
       1. `Get-ChildItem -Include *.md -Recurse | Foreach {markdown-link-check --config .\markdown_link_check_config.json $_.fullname}`
 9.  Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
+
+## Code Organization
+
+The [software](software) directory contains all things code related.
+- [cli](./software/cli) -- Contains code to communicate with the running DT components.
+- [digital_twin](./software/digital_twin) -- Code that forms the digital twin.
+- [incubator](./software/incubator) -- Code that implements the physical twin, models, and datasets
+- [integration_tests](./software/integration_tests) -- Code to run integration tests.
+- [mock_plant](./software/mock_plant) -- Code setting up the local virtual incubator plant.
+- [startup](./software/startup) -- Code to start and stop the DT services.
