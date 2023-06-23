@@ -11,6 +11,6 @@ Requirements for a good dataset:
       1. Hardware
       2. Controller parameters (if relevant)
    3. An experiment log, with optional pictures.
-   4. There should be a test that loads and displays a relevant portion of the data.
+   4. There should be a unit test that loads and displays a relevant portion of the data.
    5. A discussion of the results obtained, containing plots and all that.
-3. Must contain one or more csv file containing the full dataset. If more than one csv, then the README file most describe what each file means. 
+3. Must contain one or more csv file containing the full dataset. If more than one csv, then the README file must describe what each file means. 
