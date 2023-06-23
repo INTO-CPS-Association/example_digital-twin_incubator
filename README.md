@@ -79,11 +79,11 @@ On the raspberry pi:
 
 ## The Digital Twin
 
-The DT follows a service based architecture, with different services communicating with each other via a [RabbitMQ message exchange](https://www.rabbitmq.com/).
-Each service is started with a python script, and most services refer to [startup.conf](software/startup.conf) for their configuration.
+The DT follows a service based architecture, with different services communicating with each other via a [RabbitMQ message exchange](https://www.rabbitmq.com/) running on a [docker](https://www.docker.com/products/docker-desktop) container.
+Each service is started with a python script, and most services refer to [software/startup.conf](software/startup.conf) for their configuration.
 
 The code that starts the services is in [software/startup](software/startup).
-It is possible to start all services from the same script [start_all_services.py](software/startup/start_all_services.py) or each service individually.
+It is possible to start all services from the same script [software/startup/start_all_services.py](software/startup/start_all_services.py) or each service individually.
 
 The services (and their starting scripts) currently implemented are:
 - [incubator_realtime_mockup](software/startup/start_incubator_realtime_mockup.py) -- implements a real time plant simulation mockup so that the whole digital twin system can be run locally on any computer without the need to connect to an external physical twin. When using a real physical twin this service is not started.
@@ -104,31 +104,53 @@ It is possible to run the digital twin on our computer, with or without a connec
 *You're advised to read carefully all documentation before acting on any instruction.*
 
 #### First-time Setup
-1. Open terminal in this folder.
+1. Open terminal in [software](software).
 2. (Optional) Create a virtual environment: `python -m venv venv`
-3. (Optional) Activate the virtual environment (there are multiple possible activate scripts. Pick the one for you command line interface.): 
+3. (Optional) Activate the virtual environment (there are multiple possible activate scripts. Pick the one for your terminal.): 
    1. Windows Powershell:`.\venv\Scripts\Activate.ps1` 
    2. Linux/Mac: `source venv/bin/activate`
 4. (Optional) Install pip wheel: `pip install wheel`
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
+6. Install [docker](https://www.docker.com/products/docker-desktop) installed (see [Docker Homepage](https://docs.docker.com/desktop/))
+
 
 #### After First-time Setup: Starting the DT Framework
 
 1. Inspect the [startup.conf](./software/startup.conf) in this folder. You should not need to change anything for running the DT locally.
-2. Follow the instructions in [./startup/README.md](./software/startup/README.md)
-3. Recommended: [Run the unit tests](#running-unit-tests)
-4. Recommended: [Run the integration tests](#running-integration-tests)
+2. Make sure docker is running. 
+3. Run
+   ```bash
+   software$ python -m startup.start_all_services
+   ```
+4. After starting all services successfully, the controller service will start producing output that looks like the following:
+   ````
+   time           execution_interval  elapsed  heater_on  fan_on   room   box_air_temperature  state 
+   19/11 16:17:59  3.00                0.01     True       False   10.70  19.68                Heating
+   19/11 16:18:02  3.00                0.03     True       True    10.70  19.57                Heating
+   19/11 16:18:05  3.00                0.01     True       True    10.70  19.57                Heating
+   19/11 16:18:08  3.00                0.01     True       True    10.69  19.47                Heating
+   19/11 16:18:11  3.00                0.01     True       True    10.69  19.41                Heating
+   ````
+5. Login to http://localhost:8086/ (or more generally http://[Influxdb_IP]:8086/) to see the influxdb management page, were you can create dashboards to see the data produced by the incubator. The login details are:
+   - user=`incubator`
+   - password=`incubator`
+6. Login http://localhost:15672/ to see the RabbitMQ management page. The login details are:
+   - user=`incubator`
+   - password=`incubator`
+7. See [Diagnosing Startup Errors](#diagnosing-startup-errors) in case you encounter problems
+8. Recommended: [Run the unit tests](#running-unit-tests)
+9. Recommended: [Run the integration tests](#running-integration-tests)
 
 #### Running Unit Tests
 
 Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework)
 
-To run the unit tests, open a terminal in the directory of this readme file, and
+To run the unit tests, open a terminal in [software](software), and
 1. Activate virtual environment
 2. If using powershell, run [./run_tests.ps1](./software/run_tests.ps1)
 3. Otherwise:
-   1. Set environment variable CLIMODE = "ON"
+   1. Set environment variable `CLIMODE = "ON"`
    2. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
 
 #### Running Integration Tests
@@ -137,6 +159,19 @@ Make sure you can successfully [start the DT framework](#after-first-time-setup-
 
 The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) contains the instructions.
 
+## Diagnosing Startup Errors
+
+If any errors show up during the startup process, check that the RabbitMQ server and InfluxDB are being correctly started. 
+
+The following instructions were used to configure these services in the first time and may help you test them:
+
+### RabbitMQ Setup
+
+[Rabbitmq README](software/incubator/communication/installation/README.md)
+
+### InfluxDB Setup
+
+[Influxdb README](software/digital_twin/data_access/influxdbserver/README.md)
 
 ## Repository Maintenance Instructions
 
@@ -153,6 +188,6 @@ General guidelines:
 8. We shy away from branches except when they add a substantial amount of functionality. Commit and push responsibly to the main branch, that is, always make sure that:
    1. That all tests pass (unit tests and integration tests).
    2. That new code is documented and tested.
-   3. That documentation links are not broken. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md fiels for broken links:
+   3. That documentation links are not broken. Use for example, [markdown-link-check](https://github.com/tcort/markdown-link-check) to check all md files for broken links:
       1. `Get-ChildItem -Include *.md -Recurse | Foreach {markdown-link-check --config .\markdown_link_check_config.json $_.fullname}`
 9.  Much more on https://github.com/HugoMatilla/The-Pragmatic-Programmer
