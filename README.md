@@ -7,31 +7,58 @@ To understand what a digital twin is, we recommend you read/watch one or more of
 - Feng, Hao, Cláudio Gomes, Casper Thule, Kenneth Lausdahl, Alexandros Iosifidis, and Peter Gorm Larsen. “Introduction to Digital Twin Engineering.” In 2021 Annual Modeling and Simulation Conference (ANNSIM), 1–12. Fairfax, VA, USA: IEEE, 2021. https://doi.org/10.23919/ANNSIM52504.2021.9552135.
 - [Claudio's presentation at Aarhus IT](https://videos.ida.dk/media/Introduction+to+Digital+Twin+Engineering+with+Cl%C3%A1udio+%C3%82ngelo+Gon%C3%A7alves+Gomes%2C+Aarhus+Universitet/1_7r1j05g8/256930613)
 
-## Contents
-1. [About this Document](#about-this-document)
-2. [Overview of the Documentation](#overview-of-the-documentation)
+# Contents
+- [Example Digital Twin: The Incubator](#example-digital-twin-the-incubator)
+- [Contents](#contents)
+- [About this Document](#about-this-document)
+- [Overview of the Documentation](#overview-of-the-documentation)
+  - [Searching](#searching)
+- [Terminology](#terminology)
+- [Our Concept of Digital Twin](#our-concept-of-digital-twin)
+- [The Incubator Physical Twin](#the-incubator-physical-twin)
+  - [CAD Model](#cad-model)
+  - [Dynamic Models](#dynamic-models)
+  - [Running The Incubator Physical Twin](#running-the-incubator-physical-twin)
+- [The Digital Twin](#the-digital-twin)
+  - [Running the Digital Twin](#running-the-digital-twin)
+    - [First-time Setup](#first-time-setup)
+    - [After First-time Setup: Starting the DT Framework](#after-first-time-setup-starting-the-dt-framework)
+    - [Running Unit Tests](#running-unit-tests)
+    - [Running Integration Tests](#running-integration-tests)
+- [Diagnosing Startup Errors](#diagnosing-startup-errors)
+  - [RabbitMQ Setup](#rabbitmq-setup)
+  - [InfluxDB Setup](#influxdb-setup)
+- [Repository Maintenance Instructions](#repository-maintenance-instructions)
 
-## About this Document
+
+
+# About this Document
 
 **Goal:** The goal of this document is to provide users with a basic overview of the digital twin incubator and enabled them to run it on their computers.
 
 **Audience:** This documentation is targeted at users who are acquainted with running programs from the command line and are able to install [python](https://www.python.org/) and run python scripts.
 
-## Overview of the Documentation
+# Overview of the Documentation
 
 The documentation is all contained into a single document for simplicity and ease of maintenance.
 If the user wishes to see the documentation in some other format then we recommend cloning this repository and using [Pandoc](https://pandoc.org/) to convert the documentation into another format.
 
-### Searching
+## Searching
 
 Searching the documentation can be done by using the browser search function or using Github's search feature on top of the screen.
 
-## Our Concept of Digital Twin
+# Terminology
+
+- **Plant** -- we use the term in the traditional control systems sense. The plant refers to the box contents, the heater, the sensor, and the fan. Basically it is the stuff that the controller is sensing and actuating on.
+- **Controller** -- To control this responsibility is to decide when to turn on/off the heater.
+- **Low Level Driver** --- This refers to the component that decouples the controller from the plant. It forms a layer that abstracts away from the details of how the actuators and sensors work and enables us to run the whole system locally on a computer without the need to connect to a real plant.
+
+# Our Concept of Digital Twin
 
 A digital twin is a software system that supports the operation of a cps (called the physical twin).
 So the following documentation describes the physical twin first and then the digital twin.
 
-## The Incubator Physical Twin
+# The Incubator Physical Twin
 
 The overall purpose of the system is to reach a certain temperature within a box and keep the temperature regardless of content.
 
@@ -45,14 +72,7 @@ The system consists of:
 - 1x temperature Sensor to monitor the temperature outside the box
 - 1x controller to actuate the heat source and the fan and read sensory information from the temperature sensors, and communicate with the digital twin.
 
-
-## Terminology
-
-- **Plant** -- we use the term in the traditional control systems sense. The plant refers to the box contents, the heater, the sensor, and the fan. Basically it is the stuff that the controller is sensing and actuating on.
-- **Controller** -- To control this responsibility is to decide when to turn on/off the heater.
-- **Low Level Driver** --- This refers to the component that decouples the controller from the plant. It forms a layer that abstracts away from the details of how the actuators and sensors work and enables us to run the whole system locally on a computer without the need to connect to a real plant.
-
-### CAD Model
+## CAD Model
 
 A .obj file is available at: [figures/incubator_plant.obj](figures/incubator_plant.obj).
 
@@ -61,11 +81,11 @@ A .obj file is available at: [figures/incubator_plant.obj](figures/incubator_pla
 Ongoing development of the cad model is at 
 [incubator](https://www.tinkercad.com/things/ls1YolyX1fc-incubatorv20230429)
 
-### Dynamic Models
+## Dynamic Models
 
 TODO
 
-### Running The Incubator Physical Twin
+## Running The Incubator Physical Twin
 
 On the raspberry pi: 
 1. Start the [low_level_driver_server.py](software/incubator/physical_twin/low_level_driver_server.py)
@@ -77,7 +97,7 @@ On the raspberry pi:
    PS software> python -m startup.start_controller_physical
    ```
 
-## The Digital Twin
+# The Digital Twin
 
 The DT follows a service based architecture, with different services communicating with each other via a [RabbitMQ message exchange](https://www.rabbitmq.com/) running on a [docker](https://www.docker.com/products/docker-desktop) container.
 Each service is started with a python script, and most services refer to [software/startup.conf](software/startup.conf) for their configuration.
@@ -97,13 +117,13 @@ The services (and their starting scripts) currently implemented are:
 - [supervisor](software/startup/start_supervisor.py) -- This service can periodically retune the controller.
 - [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) -- the service implements the self-adaptation which checks whether the physical characteristics of the plant have changed and can trigger a recalibration as well as controller tuning when that happens.
 
-### Running the Digital Twin
+## Running the Digital Twin
 
 It is possible to run the digital twin on our computer, with or without a connection to the physical twin.
 
 *You're advised to read carefully all documentation before acting on any instruction.*
 
-#### First-time Setup
+### First-time Setup
 1. Open terminal in [software](software).
 2. (Optional) Create a virtual environment: `python -m venv venv`
 3. (Optional) Activate the virtual environment (there are multiple possible activate scripts. Pick the one for your terminal.): 
@@ -115,7 +135,7 @@ It is possible to run the digital twin on our computer, with or without a connec
 6. Install [docker](https://www.docker.com/products/docker-desktop) installed (see [Docker Homepage](https://docs.docker.com/desktop/))
 
 
-#### After First-time Setup: Starting the DT Framework
+### After First-time Setup: Starting the DT Framework
 
 1. Inspect the [startup.conf](./software/startup.conf) in this folder. You should not need to change anything for running the DT locally.
 2. Make sure docker is running. 
@@ -142,7 +162,7 @@ It is possible to run the digital twin on our computer, with or without a connec
 8. Recommended: [Run the unit tests](#running-unit-tests)
 9. Recommended: [Run the integration tests](#running-integration-tests)
 
-#### Running Unit Tests
+### Running Unit Tests
 
 Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework)
 
@@ -153,27 +173,27 @@ To run the unit tests, open a terminal in [software](software), and
    1. Set environment variable `CLIMODE = "ON"`
    2. Run tests: `python -m unittest discover -v incubator/tests -p "*.py"`
 
-#### Running Integration Tests
+### Running Integration Tests
 
 Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework) and [run the unit tests](#running-unit-tests) before attempting to run the integration tests.
 
 The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) contains the instructions.
 
-## Diagnosing Startup Errors
+# Diagnosing Startup Errors
 
 If any errors show up during the startup process, check that the RabbitMQ server and InfluxDB are being correctly started. 
 
 The following instructions were used to configure these services in the first time and may help you test them:
 
-### RabbitMQ Setup
+## RabbitMQ Setup
 
 [Rabbitmq README](software/incubator/communication/installation/README.md)
 
-### InfluxDB Setup
+## InfluxDB Setup
 
 [Influxdb README](software/digital_twin/data_access/influxdbserver/README.md)
 
-## Repository Maintenance Instructions
+# Repository Maintenance Instructions
 
 We make extensive use of README.md files. Please read them and keep them up to date.
 
