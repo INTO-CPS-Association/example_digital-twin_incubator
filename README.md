@@ -44,6 +44,7 @@ To understand what a digital twin is, we recommend you read/watch one or more of
 - [Repository Maintenance Instructions](#repository-maintenance-instructions)
   - [Code Organization](#code-organization)
 
+
 # About this Document
 
 **Goal:** The goal of this document is to provide users with a basic overview of the digital twin incubator and enabled them to run it on their computers.
@@ -145,7 +146,13 @@ Ongoing development of the cad model is at
 
 ## Dynamic Models
 
-TODO
+Most models are implemented using the [oomodellingpython](https://gitlab.au.dk/clagms/oomodellingpython/) package.
+
+Models can be organized as plant models, [controller models](software/incubator/models/controller_models), or physical twin models (the later couple plant and controller together):
+- Controller Models: we have implemented multiple controller models but only document the following:
+  - [controller_model4](software/incubator/models/controller_models/controller_model4.py) -- This is like a [bang bang controller](https://en.wikipedia.org/wiki/Bang%E2%80%93bang_control) which tries to keep the temperature within an upper and lower bound.
+- Plant Models: we have implemented multiple plant models but document the following:
+  - [four_parameter_model](software/incubator/models/plant_models/four_parameters_model/four_parameter_model.py) --- this model represents the average temperature dynamics inside the box considering both the heater and the air as heat accumulating entities.
 
 ## Running The Incubator Physical Twin
 
