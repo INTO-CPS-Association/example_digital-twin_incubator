@@ -153,6 +153,8 @@ Models can be organized as plant models, [controller models](software/incubator/
   - [controller_model4](software/incubator/models/controller_models/controller_model4.py) -- This is like a [bang bang controller](https://en.wikipedia.org/wiki/Bang%E2%80%93bang_control) which tries to keep the temperature within an upper and lower bound.
 - Plant Models: we have implemented multiple plant models but document the following:
   - [four_parameter_model](software/incubator/models/plant_models/four_parameters_model/four_parameter_model.py) --- this model represents the average temperature dynamics inside the box considering both the heater and the air as heat accumulating entities.
+- [Physical Twin Models](software/incubator/models/physical_twin_models):
+  -  [system_model4](software/incubator/models/physical_twin_models/system_model4.py) --- this model couples the controller_model4 model and the four_parameter_model.
 
 ## Running The Incubator Physical Twin
 
