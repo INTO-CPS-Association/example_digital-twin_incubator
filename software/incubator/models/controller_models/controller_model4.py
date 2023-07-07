@@ -20,6 +20,8 @@ class ControllerModel4(Model):
 
         self.curr_state_model = self.var(lambda: self.state_machine.current_state)
 
+        self.actuator_effort = self.var(lambda: self.state_machine.actuator_effort)
+
         self.heater_on = self.var(lambda: self.state_machine.cached_heater_on)
 
         self.save()
