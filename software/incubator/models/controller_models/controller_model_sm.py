@@ -13,6 +13,7 @@ class ControllerModel4SM:
         self.current_state = "CoolingDown"
         self.next_time = -1.0
         self.cached_heater_on = False
+        self.actuator_effort = 0
 
     def step(self, time, in_temperature):
         if self.current_state == "CoolingDown":
@@ -20,6 +21,7 @@ class ControllerModel4SM:
             if in_temperature <= self.temperature_desired - self.lower_bound:
                 self.current_state = "Heating"
                 self.cached_heater_on = True
+                self.actuator_effort += 1
                 self.next_time = time + self.heating_time
             return
         if self.current_state == "Heating":
@@ -27,10 +29,12 @@ class ControllerModel4SM:
             if 0 < self.next_time <= time:
                 self.current_state = "Waiting"
                 self.cached_heater_on = False
+                self.actuator_effort += 1
                 self.next_time = time + self.heating_gap
             elif in_temperature > self.temperature_desired:
                 self.current_state = "CoolingDown"
                 self.cached_heater_on = False
+                self.actuator_effort += 1
                 self.next_time = -1.0
             return
         if self.current_state == "Waiting":
@@ -39,6 +43,7 @@ class ControllerModel4SM:
                 if in_temperature <= self.temperature_desired:
                     self.current_state = "Heating"
                     self.cached_heater_on = True
+                    self.actuator_effort += 1
                     self.next_time = time + self.heating_time
                 else:
                     self.current_state = "CoolingDown"
