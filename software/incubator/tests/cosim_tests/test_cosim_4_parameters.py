@@ -32,8 +32,9 @@ class CosimulationTests(CLIModeTest):
                                        C_heater,
                                        G_heater,
                                        V_heater, I_heater,
-                                       heating_time=heating_time, heating_gap=2.0,
-                                       temperature_desired=35, initial_box_temperature=22)
+                                       lower_bound=10, heating_time=heating_time, heating_gap=2.0,
+                                       temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
+                                       initial_room_temperature=22)
             ModelSolver().simulate(m, 0.0, 3000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
             plt.plot(m.signals['time'], m.plant.signals['T'], label=f"Trial_{heating_time}")
@@ -63,8 +64,9 @@ class CosimulationTests(CLIModeTest):
                                    G_heater=G_heater_num,
                                    V_heater=V_heater_num,
                                    I_heater=I_heater_num,
-                                   heating_time=20.0, heating_gap=30.0,
-                                   temperature_desired=35, initial_box_temperature=22)
+                                   lower_bound=10, heating_time=10.0, heating_gap=2.0,
+                                   temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
+                                   initial_room_temperature=22)
         ModelSolver().simulate(m, 0.0, 3000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
         # Convert cosim data into a dataframe

@@ -11,6 +11,7 @@ from digital_twin.data_access.dbmanager.incubator_data_query import query_conver
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.models.physical_twin_models.system_model4 import SystemModel4Parameters
+from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.models.plant_models.model_functions import create_lookup_table
 
 
@@ -59,13 +60,17 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         time_table = np.append(np.insert(time_seconds, 0, from_ns_to_s(start_date)-controller_comm_step), from_ns_to_s(end_date)+controller_comm_step)
         in_room_temperature_table = create_lookup_table(time_table, room_temperature)
 
+        V_heater = four_param_model_params[4]
+        I_heater = four_param_model_params[5]
+
         model = SystemModel4Parameters(C_air,
                                        G_box,
                                        C_heater,
-                                       G_heater,
+                                       G_heater, V_heater, I_heater,
                                        lower_bound, heating_time, heating_gap, temperature_desired,
                                        initial_box_temperature,
-                                       initial_heat_temperature)
+                                       initial_heat_temperature,
+                                       room_temperature[0])
 
         # Wire the lookup table to the _plant
         model.plant.in_room_temperature = lambda: in_room_temperature_table(model.time())
