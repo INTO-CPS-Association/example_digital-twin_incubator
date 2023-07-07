@@ -12,13 +12,13 @@ class SystemModel4Parameters(Model):
                  V_heater,
                  I_heater,
                  lower_bound, heating_time, heating_gap,
-                 temperature_desired,
+                 max_temperature_desired,
                  initial_box_temperature,
                  initial_heat_temperature,
                  initial_room_temperature):
         super().__init__()
 
-        self.ctrl = ControllerModel4(temperature_desired=temperature_desired, heating_time=heating_time,
+        self.ctrl = ControllerModel4(temperature_desired=max_temperature_desired, heating_time=heating_time,
                                      heating_gap=heating_gap,
                                      lower_bound=lower_bound)
         self.plant = FourParameterIncubatorPlant(V_heater, I_heater,

@@ -33,7 +33,7 @@ class CosimulationTests(CLIModeTest):
                                        G_heater,
                                        V_heater, I_heater,
                                        lower_bound=10, heating_time=heating_time, heating_gap=2.0,
-                                       temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
+                                       max_temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
                                        initial_room_temperature=22)
             ModelSolver().simulate(m, 0.0, 3000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
@@ -65,7 +65,7 @@ class CosimulationTests(CLIModeTest):
                                    V_heater=V_heater_num,
                                    I_heater=I_heater_num,
                                    lower_bound=10, heating_time=10.0, heating_gap=2.0,
-                                   temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
+                                   max_temperature_desired=35, initial_box_temperature=22, initial_heat_temperature=22,
                                    initial_room_temperature=22)
         ModelSolver().simulate(m, 0.0, 3000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
