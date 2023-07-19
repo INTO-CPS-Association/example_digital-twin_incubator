@@ -18,10 +18,10 @@ def construct_filter(step_size,
                      initial_heat_temperature,
                      initial_box_temperature):
     # Parameters
-    C_air = sp.symbols("C_air")  # Specific heat capacity
-    G_box = sp.symbols("G_box")  # Specific heat capacity
-    C_heater = sp.symbols("C_heater")  # Specific heat capacity
-    G_heater = sp.symbols("G_heater")  # Specific heat capacity
+    C_air = sp.symbols("C_air")
+    G_box = sp.symbols("G_box")
+    C_heater = sp.symbols("C_heater")
+    G_heater = sp.symbols("G_heater")
 
     # Constants
     V_heater = sp.symbols("V_heater")
