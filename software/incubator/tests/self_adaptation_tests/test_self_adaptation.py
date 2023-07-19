@@ -158,7 +158,7 @@ class SelfAdaptationTests(CLIModeTest):
             print("G_heater: ", database.G_heater)
             print("V_heater: ", database.V_heater)
             print("I_heater: ", database.I_heater)
-            plt.savefig("simulation_result.pdf")
+            # plt.savefig("simulation_result.pdf")
             plt.show()
         plt.close()
 
