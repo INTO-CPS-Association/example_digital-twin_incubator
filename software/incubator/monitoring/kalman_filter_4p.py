@@ -93,9 +93,6 @@ def construct_filter(step_size,
     f.F = dt_system.A
     f.B = dt_system.B
     f.H = dt_system.C
-    # TODO: Externalize this config: these have been configured based on empirical tests.
-    # f.P = np.array([[0.0002, 0.],
-    #                 [0., 0.0002]])
     f.P = np.array([[Theater_covariance_init, 0.],
                     [0., T_covariance_init]])
     f.R = np.array([[std_dev]])
