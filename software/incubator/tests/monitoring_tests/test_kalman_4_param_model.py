@@ -81,7 +81,7 @@ class TestKalmanFilter(CLIModeTest):
         fig = plotly_incubator_data(data, compare_to={
             "4pModel": {
                 "timestamp_ns": data["timestamp_ns"],
-                "T": results_4p.signals["T"],
+                "T": sol.y[1, :],
             },
             "Kalman": {
                 "timestamp_ns": data["timestamp_ns"],
@@ -90,7 +90,7 @@ class TestKalmanFilter(CLIModeTest):
         }, heater_T_data={
             "4pModel": {
                 "timestamp_ns": data["timestamp_ns"],
-                "T_heater": results_4p.signals["T_heater"],
+                "T_heater": sol.y[2, :],
             },
             "Kalman": {
                 "timestamp_ns": data["timestamp_ns"],
