@@ -34,7 +34,7 @@ def load_timestamped_data(filepath, desired_timeframe, time_unit, normalize_time
     # Convert time
     if convert_to_seconds and time_unit != 's':
         assert time_unit == 'ns', "Other time units not supported."
-        csv["time"] = convert_time_s_to_ns(csv["time"])
+        csv["time"] = convert_from_ns_to_s(csv["time"])
 
     return csv
 
@@ -54,7 +54,7 @@ def load_data(filepath,
     return data, event_data
 
 
-def convert_time_s_to_ns(timeseries):
+def convert_from_ns_to_s(timeseries):
     return timeseries.map(lambda time_ns: from_ns_to_s(time_ns))
 
 
