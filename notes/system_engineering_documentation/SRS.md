@@ -68,16 +68,16 @@ The stakeholders
 
 ## Requirement Traceability Matrix 
 
-| Project Name |  | Business Area | |
-|--------------|--|---------------|-|
-| Project manager |  | Business Analysts lead |  |
-| QAlead | | Target implementation date | |
+| Project Name | | Business Area | |
+|--------------|-|---------------|-|
+| Project manager || Business Analysts lead ||
+| QA lead || Target implementation date ||
 
 | Req. id | FURBS category | Req. Description | Use-Case reference | Design document reference | Test case reference | User acceptance validation | comments |  
 |---------|----------------|------------------|--------------------|---------------------------|---------------------|----------------------------|-------------|
 | FR1 | F | Heat at temperature about 37 degrees |
-| FR2 | F | Detect if the lid on 
-| FR3 | F |
+| FR2 | F | Detect if the lid on the incubator is open |
+| FR3 | F | 
 | FR4 | F |
 | FR5 | F |
 | FR6 | F |
