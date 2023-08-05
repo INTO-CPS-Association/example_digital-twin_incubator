@@ -27,17 +27,20 @@ def run_kf(measurements_heater: ndarray, measurements_Troom: ndarray, measuremen
         reset_trigger - Encode the condition that went through will cause this function to reset the KF.
     """
     assert len(measurements_heater) == len(measurements_Troom) == len(measurements_T)
-    prediction = []
-    prediction.append(np.array([[measurements_T[0]], [measurements_T[0]]]))
+    prediction = [np.array([[measurements_T[0]], [measurements_T[0]]])]
     kf = factory(measurements_heater[0], measurements_Troom[0], measurements_T[0], prediction)
+    resets = [1.]
     for i in range(len(measurements_heater)-1):
         x = kf.kalman_step(measurements_heater[i], measurements_Troom[i], measurements_T[i])
         prediction.append(x)
         if reset_trigger(measurements_T[i], x[1, 0]):
             kf = factory(measurements_heater[i], measurements_Troom[i], measurements_T[i], prediction)
+            resets.append(1.)
+        else:
+            resets.append(0.)
     prediction = np.array(prediction).squeeze(2)
-    assert len(prediction) == len(measurements_heater)
-    return prediction
+    assert len(prediction) == len(measurements_heater) == len(resets)
+    return prediction, resets
 
 
 class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
@@ -51,7 +54,7 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
         Shows an example of fault diagnosis that is implemented by resetting
         the kalman filters when the discrepancy is detected.
 
-        The hypothesis is that the resetting accelerates convergence.
+        The idea is to use the frequency of resets on a common filters in order to assess which mode the system is in.
         """
         data_sample_size = CTRL_EXEC_INTERVAL
 
@@ -101,7 +104,7 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
                                   initial_box_temperature=current_measurement_T,
                                   initial_heat_temperature=initial_heat_temperature)
 
-        closed_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+        closed_lid_kalman_prediction, resets_closed_lid = run_kf(measurements_heater, measurements_Troom, measurements_T,
                                               create_closed_lid_kf,
                                               lambda measured_T, predicted_T:
                                                 abs(measured_T - predicted_T) > reset_trigger_threshold
@@ -123,20 +126,34 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
                                   initial_box_temperature=current_measurement_T,
                                   initial_heat_temperature=initial_heat_temperature)
 
-        open_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+        open_lid_kalman_prediction, resets_open_lid = run_kf(measurements_heater, measurements_Troom, measurements_T,
                                             create_open_lid_kf,
                                             lambda measured_T, predicted_T:
                                                 abs(measured_T - predicted_T) > reset_trigger_threshold
                                             )
 
-        fig = plotly_incubator_data(data, compare_to={
+        # Compute lid open diagnosis with some simple thumb rules:
+        # This is the real equivalent of the Boolean operation
+        #   lid_open = (not resets_open_lid) and resets_closed_lid
+        # Except that some smoothing is applied to eliminate noise
+
+        def smooth(signal):
+            n_samples_window = 6
+            return np.convolve(signal, np.ones(n_samples_window), 'valid') / n_samples_window
+
+        resets_open_lid_array = smooth(np.array(resets_open_lid))
+
+        lid_open_diagnoses = [True if v < 0.15 else False for v in resets_open_lid_array]
+
+        fig = plotly_incubator_data(data, show_actuators=True, compare_to={
             "Kalman_ClosedLid": {
                 "timestamp_ns": data["timestamp_ns"],
-                "T": closed_lid_kalman_prediction[:, 1]
+                "T": closed_lid_kalman_prediction[:, 1],
+                "in_lid_open": lid_open_diagnoses
             },
             "Kalman_OpenLid": {
                 "timestamp_ns": data["timestamp_ns"],
-                "T": open_lid_kalman_prediction[:, 1]
+                "T": open_lid_kalman_prediction[:, 1],
             },
         }, heater_T_data={
             "Kalman_ClosedLid": {
@@ -203,7 +220,7 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
                                   initial_box_temperature=current_measurement_T,
                                   initial_heat_temperature=initial_heat_temperature)
 
-        closed_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+        closed_lid_kalman_prediction, _ = run_kf(measurements_heater, measurements_Troom, measurements_T,
                                               create_closed_lid_kf,
                                               lambda measured_T, predicted_T: False
                                               )
@@ -224,7 +241,7 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
                                   initial_box_temperature=current_measurement_T,
                                   initial_heat_temperature=initial_heat_temperature)
 
-        open_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+        open_lid_kalman_prediction, _ = run_kf(measurements_heater, measurements_Troom, measurements_T,
                                             create_open_lid_kf,
                                             lambda measured_T, predicted_T: False
                                             )
