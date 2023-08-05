@@ -92,7 +92,7 @@ def construct_filter(step_size,
                     [initial_box_temperature]])  # T at t=0
     f.F = dt_system.A
     f.B = dt_system.B
-    f.H = dt_system.C
+    f.H = C_num  #  dt_system.C
     f.P = np.array([[Theater_covariance_init, 0.],
                     [0., T_covariance_init]])
     f.R = np.array([[std_dev]])
