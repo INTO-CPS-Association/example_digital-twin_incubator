@@ -17,13 +17,26 @@ from incubator.tests.cli_mode_test import CLIModeTest
 from incubator.visualization.data_plotting import plotly_incubator_data, show_plotly
 
 
-def run_kf(kf: KalmanFilter4P, measurements_heater: ndarray, measurements_Troom: ndarray, measurements_T: ndarray):
+def run_kf(measurements_heater: ndarray, measurements_Troom: ndarray, measurements_T: ndarray,
+           factory, reset_trigger):
+    """
+    Runs a kalman filter
+
+    Parameters:
+        factory - Constructs a Kalman filter, given a measurement and previous predictions
+        reset_trigger - Encode the condition that went through will cause this function to reset the KF.
+    """
+    assert len(measurements_heater) == len(measurements_Troom) == len(measurements_T)
     prediction = []
-    for i in range(len(measurements_heater)):
+    prediction.append(np.array([[measurements_T[0]], [measurements_T[0]]]))
+    kf = factory(measurements_heater[0], measurements_Troom[0], measurements_T[0], prediction)
+    for i in range(len(measurements_heater)-1):
         x = kf.kalman_step(measurements_heater[i], measurements_Troom[i], measurements_T[i])
         prediction.append(x)
-
+        if reset_trigger(measurements_T[i], x[1, 0]):
+            kf = factory(measurements_heater[i], measurements_Troom[i], measurements_T[i], prediction)
     prediction = np.array(prediction).squeeze(2)
+    assert len(prediction) == len(measurements_heater)
     return prediction
 
 
@@ -33,9 +46,115 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
     each tuned to a model of a different system operating mode.
     """
 
+    def test_fault_diagnosis_by_resetting_kalman_filters(self):
+        """
+        Shows an example of fault diagnosis that is implemented by resetting
+        the kalman filters when the discrepancy is detected.
+
+        The hypothesis is that the resetting accelerates convergence.
+        """
+        data_sample_size = CTRL_EXEC_INTERVAL
+
+        # Load the data
+        time_unit = 'ns'
+        data, _ = load_data("./incubator/datasets/20210122_lid_opening_kalman/lid_opening_experiment_jan_2021.csv",
+                            desired_timeframe=(-math.inf, math.inf),
+                            time_unit=time_unit,
+                            normalize_time=False,
+                            convert_to_seconds=True)
+        events = pandas.read_csv(resource_file_path("./incubator/datasets/20210122_lid_opening_kalman/events.csv"))
+        events["timestamp_ns"] = pandas.to_datetime(events["time"], unit=time_unit)
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t1": "T_room"}, inplace=True)
+
+        # Inputs to _plant
+        measurements_heater = np.array([1.0 if b else 0.0 for b in data["heater_on"]])
+
+        measurements_Troom = data["T_room"].to_numpy()
+
+        # System state
+        measurements_T = data["average_temperature"].to_numpy()
+
+        std_dev = 0.0001
+        Theater_covariance_init = T_covariance_init = 0.0002
+
+        C_air = 177.62927865
+        G_box = 0.77307655
+        C_heater = 239.61236331
+        G_heater = 2.31872819
+        V_heater = 12.16
+        I_heater = 10.45
+
+        reset_trigger_threshold = 3.0
+
+        def create_closed_lid_kf(current_measurement_heater, current_measurement_Troom, current_measurement_T,
+                                 prediction):
+            initial_heat_temperature = current_measurement_T if not prediction else prediction[-1][0, 0]
+            return KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init,
+                                  T_covariance_init,
+                                  C_air,
+                                  G_box,
+                                  C_heater,
+                                  G_heater, V_heater, I_heater,
+                                  initial_room_temperature=current_measurement_Troom,
+                                  initial_box_temperature=current_measurement_T,
+                                  initial_heat_temperature=initial_heat_temperature)
+
+        closed_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+                                              create_closed_lid_kf,
+                                              lambda measured_T, predicted_T:
+                                                abs(measured_T - predicted_T) > reset_trigger_threshold
+                                              )
+
+        std_dev = 0.0001
+        Theater_covariance_init = T_covariance_init = 0.0002
+
+        def create_open_lid_kf(current_measurement_heater, current_measurement_Troom, current_measurement_T,
+                               prediction):
+            initial_heat_temperature = current_measurement_T if not prediction else prediction[-1][0, 0]
+            return KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init,
+                                  T_covariance_init,
+                                  C_air,
+                                  G_box*20.0, # Mimics effect of open lid.
+                                  C_heater,
+                                  G_heater, V_heater, I_heater,
+                                  initial_room_temperature=current_measurement_Troom,
+                                  initial_box_temperature=current_measurement_T,
+                                  initial_heat_temperature=initial_heat_temperature)
+
+        open_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+                                            create_open_lid_kf,
+                                            lambda measured_T, predicted_T:
+                                                abs(measured_T - predicted_T) > reset_trigger_threshold
+                                            )
+
+        fig = plotly_incubator_data(data, compare_to={
+            "Kalman_ClosedLid": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T": closed_lid_kalman_prediction[:, 1]
+            },
+            "Kalman_OpenLid": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T": open_lid_kalman_prediction[:, 1]
+            },
+        }, heater_T_data={
+            "Kalman_ClosedLid": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T_heater": closed_lid_kalman_prediction[:, 0]
+            },
+            "Kalman_OpenLid": {
+                "timestamp_ns": data["timestamp_ns"],
+                "T_heater": open_lid_kalman_prediction[:, 0]
+            },
+        }, events=events, overlay_heater=True, show_hr_time=True)
+
+        if self.ide_mode():
+            show_plotly(fig)
+
     def test_illustrate_unsuccessful_fault_diagnosis_with_kalman_filter(self):
         """
-        Shows an example of full diagnosis that is not successful because the
+        Shows an example of fault diagnosis that is not successful because the
         Kalman filters are not converging fast enough to the correct dynamics.
         """
         data_sample_size = CTRL_EXEC_INTERVAL
@@ -70,32 +189,45 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
         G_heater = 2.31872819
         V_heater = 12.16
         I_heater = 10.45
-        initial_room_temperature = 21.0
 
-        closed_lid_kf = KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init, T_covariance_init,
-                                       C_air,
-                                       G_box,
-                                       C_heater,
-                                       G_heater, V_heater, I_heater,
-                                       initial_room_temperature=initial_room_temperature,
-                                       initial_box_temperature=initial_room_temperature,
-                                       initial_heat_temperature=initial_room_temperature)
+        def create_closed_lid_kf(current_measurement_heater, current_measurement_Troom, current_measurement_T,
+                                 prediction):
+            initial_heat_temperature = current_measurement_T if not prediction else prediction[-1][0, 0]
+            return KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init,
+                                  T_covariance_init,
+                                  C_air,
+                                  G_box,
+                                  C_heater,
+                                  G_heater, V_heater, I_heater,
+                                  initial_room_temperature=current_measurement_Troom,
+                                  initial_box_temperature=current_measurement_T,
+                                  initial_heat_temperature=initial_heat_temperature)
 
-        closed_lid_kalman_prediction = run_kf(closed_lid_kf, measurements_heater, measurements_Troom, measurements_T)
+        closed_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+                                              create_closed_lid_kf,
+                                              lambda measured_T, predicted_T: False
+                                              )
 
         std_dev = 0.0001
         Theater_covariance_init = T_covariance_init = 0.02
 
-        open_lid_kf = KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init, T_covariance_init,
-                                     C_air,
-                                     G_box*20, # Lid open is roughly equivalent to this. See calibration tests below.
-                                     C_heater,
-                                     G_heater, V_heater, I_heater,
-                                     initial_room_temperature=initial_room_temperature,
-                                     initial_box_temperature=initial_room_temperature,
-                                     initial_heat_temperature=initial_room_temperature)
+        def create_open_lid_kf(current_measurement_heater, current_measurement_Troom, current_measurement_T,
+                               prediction):
+            initial_heat_temperature = current_measurement_T if not prediction else prediction[-1][0, 0]
+            return KalmanFilter4P(data_sample_size, std_dev, Theater_covariance_init,
+                                  T_covariance_init,
+                                  C_air,
+                                  G_box*20.0, # Mimics effect of open lid.
+                                  C_heater,
+                                  G_heater, V_heater, I_heater,
+                                  initial_room_temperature=current_measurement_Troom,
+                                  initial_box_temperature=current_measurement_T,
+                                  initial_heat_temperature=initial_heat_temperature)
 
-        open_lid_kalman_prediction = run_kf(open_lid_kf, measurements_heater, measurements_Troom, measurements_T)
+        open_lid_kalman_prediction = run_kf(measurements_heater, measurements_Troom, measurements_T,
+                                            create_open_lid_kf,
+                                            lambda measured_T, predicted_T: False
+                                            )
 
         fig = plotly_incubator_data(data, compare_to={
             "Kalman_ClosedLid": {
@@ -137,7 +269,7 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
 
         data, _ = load_data(
             "./incubator/datasets/20210122_lid_opening_kalman/lid_opening_experiment_jan_2021.csv",
-            desired_timeframe=(1611327598000000000, 1611327658000000000), # Only open lid data
+            desired_timeframe=(1611327598000000000, 1611327658000000000),  # Only open lid data
             time_unit='ns',
             normalize_time=False,
             convert_to_seconds=True)
@@ -154,8 +286,8 @@ class TestFaultDiagnosisWithKalmanFilter(CLIModeTest):
         residual = construct_residual([run_exp])
 
         result = least_squares(residual, params,
-                             bounds=([176, 0, 238, 2, 12.15, 10.40], [178., 100., 240., 3., 12.17, 10.50]),
-                             max_nfev=NEvals)
+                               bounds=([176, 0, 238, 2, 12.15, 10.40], [178., 100., 240., 3., 12.17, 10.50]),
+                               max_nfev=NEvals)
         if self.ide_mode():
             print(result)
 
