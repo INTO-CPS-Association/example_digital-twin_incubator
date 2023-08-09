@@ -2,12 +2,23 @@
 
 ## Scope
 
+This document describes the requirements of the Incubator system, which is a system intended to be able to cook soybeans in an insulated box. Data will be collected from both inside and outside the box, which will then be relayed to a digital twin, which will ultimatly be used to predict the events happening inside the insulated box, based on the real time data collected and feed to the model. 
+
+The purpose of this system is to prove the capabilties and showcase certain usecases in which a digital twin will prove useful to assist as a tool for predictive maintenance of a physical twin. 
+
 ### Terminology 
 
 FR - functional requirement
+
 RI - Risk
+
 DT - Digital Twin 
+
 PT - Physical Twin
+
+MOM - Message oriented middleware
+
+LLD - Low level driver
 
 ## Risks
 
@@ -68,24 +79,24 @@ The stakeholders
 
 ## Requirement Traceability Matrix 
 
-| Project Name | | Business Area | |
+| Project Name | Incubator | Business Area | Digital Twins |
 |--------------|-|---------------|-|
-| Project manager || Business Analysts lead ||
-| QA lead || Target implementation date ||
+| Project manager |Claudio Gomes| Business Analysts lead | N/A |
+| QA lead | N/A | Target implementation date |N/A |
 
 | Req. id | FURBS category | Req. Description | Use-Case reference | Design document reference | Test case reference | User acceptance validation | comments |  
 |---------|----------------|------------------|--------------------|---------------------------|---------------------|----------------------------|-------------|
-| FR1 | F | Heat at temperature about 37 degrees |
-| FR2 | F | Detect if the lid on the incubator is open |
-| FR3 | F | 
-| FR4 | F |
-| FR5 | F |
-| FR6 | F |
-| FR7 | F |
-| FR8 | F |
-| FR9 | F |
-| FR10| F |
-| FR11| F |
-| NFR1| R |
+| FR1 | F | Heat at temperature about 37 degrees | N/A | N/A | N/A | N/A |
+| FR2 | F | Detect if the lid on the incubator is open | N/A | N/A | N/A | N/A |
+| FR3 | F | Relay internal temperature readings | N/A | N/A | N/A | N/A |
+| FR4 | F | Relay external temperature readings | N/A | N/A | N/A | N/A |
+| FR5 | F | Low level driver control of heater  | N/A | N/A | N/A | N/A |
+| FR6 | F | Low level driver control of fan     | N/A | N/A | N/A | N/A |
+| FR7 | F | MOM for internal communication between the controller and the DT | N/A | N/A | N/A | N/A |
+| FR8 | F | MOM for internal communication between the LLD and the controller | N/A | N/A | N/A | N/A |
+| FR9 | F | Accurate DT temperature estimation | N/A | N/A | N/A | N/A |
+| FR10| F | High enough data rate from internal and external temperature sensors to meet FR9 | N/A | N/A | N/A | N/A |
+| FR11| F | Must allow for different heating strategies | N/A | N/A | N/A | N/A |
+| NFR1| R | Only the controller should be the handler for all data transfer | N/A | N/A | N/A | N/A |
 
   
