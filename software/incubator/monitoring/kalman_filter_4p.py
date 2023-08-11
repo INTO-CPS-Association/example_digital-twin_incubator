@@ -18,10 +18,10 @@ def construct_filter(step_size,
                      initial_heat_temperature,
                      initial_box_temperature):
     # Parameters
-    C_air = sp.symbols("C_air")  # Specific heat capacity
-    G_box = sp.symbols("G_box")  # Specific heat capacity
-    C_heater = sp.symbols("C_heater")  # Specific heat capacity
-    G_heater = sp.symbols("G_heater")  # Specific heat capacity
+    C_air = sp.symbols("C_air")
+    G_box = sp.symbols("G_box")
+    C_heater = sp.symbols("C_heater")
+    G_heater = sp.symbols("G_heater")
 
     # Constants
     V_heater = sp.symbols("V_heater")
@@ -92,10 +92,7 @@ def construct_filter(step_size,
                     [initial_box_temperature]])  # T at t=0
     f.F = dt_system.A
     f.B = dt_system.B
-    f.H = dt_system.C
-    # TODO: Externalize this config: these have been configured based on empirical tests.
-    # f.P = np.array([[0.0002, 0.],
-    #                 [0., 0.0002]])
+    f.H = C_num  #  dt_system.C
     f.P = np.array([[Theater_covariance_init, 0.],
                     [0., T_covariance_init]])
     f.R = np.array([[std_dev]])

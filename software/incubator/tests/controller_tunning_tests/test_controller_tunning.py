@@ -151,8 +151,8 @@ class TestControllerTunning(CLIModeTest):
 
         fig = plt.figure()
 
-        plt.scatter(ctrl_errors, actuator_efforts, c='b', label='Points')
-        plt.scatter(pareto_front_ctrl_errors, pareto_front_actuator_efforts, c='g')
+        plt.scatter(ctrl_errors, actuator_efforts, c='b', label='Controller Policy')
+        plt.scatter(pareto_front_ctrl_errors, pareto_front_actuator_efforts, c='g', label='Pareto Front')
 
         plt.xlabel('ctrl_error')
         plt.ylabel('actuator_effort')

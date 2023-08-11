@@ -62,7 +62,7 @@ def plotly_incubator_data(data, compare_to=None, heater_T_data=None, events=None
             # Get the closest timestamp_ns to the event time
             closest_ts = min(data[time_field], key=lambda x:abs(x-r[time_field]))
             # Get the average temperature for that timestamp_ns
-            avg_temp = data.iloc[data.index[data[time_field] == closest_ts]]["average_temperature"].iloc[0]
+            avg_temp = data.loc[data.index[data[time_field] == closest_ts]]["average_temperature"].iloc[0]
 
             fig.add_annotation(x=r[time_field], y=avg_temp,
                                text=r["event"],
