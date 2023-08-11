@@ -68,7 +68,7 @@ FR11: The Incubator shall be designed as such that a user may change between dif
 
 ### Non-functional Requirements 
 
-NFR1 : The controller should be the only component to supply data to the message oriented middleware and also recieve all data from the message oriented middleware 
+NFR1 : The controller should be the only component to supply data to the message oriented middleware and also receive all data from the message oriented middleware 
 
 ## Stakeholders 
 
