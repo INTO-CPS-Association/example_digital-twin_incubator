@@ -112,7 +112,17 @@ Hardware Elements
 ### Temperature Sensor Mapping
 In order to read a temperature from the temperature sensors multiple IDs can be found in `/sys/bus/w1/devices/`.
 
+If they are not visible there, check that the wires are well connected. Also check whether that the kernel submodules are active:
+```bash
+pi@incubatorpi:~/source/software $ lsmod | grep w1
+w1_therm               28672  0
+w1_gpio                16384  0
+wire                   36864  2 w1_gpio,w1_therm
+```
+
 So to read a value from a sensor, one can do: `cat /sys/bus/w1/devices/10-0008039ad4ee/w1_slave`.
+
+The sensors were connected according to [this online guide](https://www.circuitbasics.com/raspberry-pi-ds18b20-temperature-sensor-tutorial/).
 
 Each ID in the `/sys/bus/w1/devices` folder correspond to a particular sensor. Follow the wires of the temperature sensors, and you will find a paper label with a number on it.
 The ID to number mapping is:
@@ -134,6 +144,8 @@ Alternatively, it is possible to connect to the raspberry pi via a local network
 The password is located physically on the Pi.
 
 Once connected, one can SSH to the PI. The username and password is also physically located on the Pi.
+
+
 
 ## CAD Model
 
