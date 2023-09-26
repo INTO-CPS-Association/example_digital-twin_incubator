@@ -1,6 +1,7 @@
 import inspect
 
 import pika
+import ssl as ssl_package
 import logging
 
 from incubator.communication.shared.protocol import decode_json, encode_json
@@ -25,16 +26,28 @@ class RPCServer:
                  password,
                  vhost,
                  exchange,
-                 type
+                 type,
+                 ssl=None
                  ):
         self.vhost = vhost
         self.exchange_name = exchange
         self.exchange_type = type
         self.ip = ip
-        self.parameters = pika.ConnectionParameters(ip,
-                                                    port,
-                                                    vhost,
-                                                    pika.PlainCredentials(username, password))
+        credentials = pika.PlainCredentials(username, password)
+        if ssl is None:
+            self.parameters = pika.ConnectionParameters(ip,
+                                                        port,
+                                                        vhost,
+                                                        credentials)
+        else:
+            ssl_context = ssl_package.SSLContext(getattr(ssl_package, ssl["protocol"]))
+            ssl_context.set_ciphers(ssl["ciphers"])
+
+            self.parameters = pika.ConnectionParameters(ip,
+                                                        port,
+                                                        vhost,
+                                                        credentials,
+                                                        ssl_options=pika.SSLOptions(context=ssl_context))
         self._l = logging.getLogger("RCPServer")
         self.channel = None
 
