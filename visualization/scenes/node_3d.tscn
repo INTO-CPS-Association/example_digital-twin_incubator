@@ -1,15 +1,15 @@
 [gd_scene load_steps=27 format=3 uid="uid://bl5uljv4fhmeg"]
 
 [ext_resource type="Script" path="res://scripts/RBConnection.cs" id="1_i30mn"]
-[ext_resource type="ArrayMesh" uid="uid://dygk5esrsuajc" path="res://imports/box2.obj" id="3_d0man"]
+[ext_resource type="ArrayMesh" uid="uid://dygk5esrsuajc" path="res://imports/box.obj" id="3_5mj3n"]
 [ext_resource type="Script" path="res://scripts/control.gd" id="3_wu806"]
-[ext_resource type="ArrayMesh" uid="uid://bhvwog8h2mkof" path="res://imports/tinker.obj" id="4_0byun"]
 [ext_resource type="Script" path="res://scripts/roomTemperature.gd" id="4_w4lx1"]
 [ext_resource type="Script" path="res://scripts/heater.gd" id="5_wjytv"]
-[ext_resource type="ArrayMesh" uid="uid://bvfwqft786hd" path="res://red.tres" id="6_3wthw"]
+[ext_resource type="ArrayMesh" uid="uid://bvfwqft786hd" path="res://meshes/red.tres" id="6_w6yin"]
 [ext_resource type="Script" path="res://scripts/diode.gd" id="7_xm0sm"]
 [ext_resource type="Script" path="res://scripts/sensor1.gd" id="8_bco55"]
 [ext_resource type="Script" path="res://scripts/sensor2.gd" id="9_gyff7"]
+[ext_resource type="ArrayMesh" uid="uid://bhvwog8h2mkof" path="res://imports/lid.obj" id="10_aqqxa"]
 [ext_resource type="Script" path="res://scripts/camera.gd" id="10_trbj6"]
 
 [sub_resource type="Skin" id="Skin_3rynp"]
@@ -92,7 +92,7 @@ script = ExtResource("3_wu806")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Box"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 232, 0, 8)
-mesh = ExtResource("3_d0man")
+mesh = ExtResource("3_5mj3n")
 skin = SubResource("Skin_3rynp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Box"]
@@ -114,7 +114,7 @@ script = ExtResource("5_wjytv")
 
 [node name="Color" type="MeshInstance3D" parent="Heater"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 245.978, -34.7464, 136.555)
-mesh = ExtResource("6_3wthw")
+mesh = ExtResource("6_w6yin")
 surface_material_override/0 = SubResource("StandardMaterial3D_fqpqa")
 
 [node name="tempLabel" type="Label3D" parent="Heater"]
@@ -225,7 +225,7 @@ skeleton = NodePath("")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Lid"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 284, 0, 0)
-mesh = ExtResource("4_0byun")
+mesh = ExtResource("10_aqqxa")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 130, 312, 40)
