@@ -32,6 +32,7 @@ To understand what a digital twin is, we recommend you read/watch one or more of
     - [After First-time Setup: Starting the DT Framework](#after-first-time-setup-starting-the-dt-framework)
     - [Running Unit Tests](#running-unit-tests)
     - [Running Integration Tests](#running-integration-tests)
+- [Start visualization](#start-visualization)
 - [Diagnosing Startup Errors](#diagnosing-startup-errors)
   - [RabbitMQ Setup](#rabbitmq-setup)
   - [InfluxDB Setup](#influxdb-setup)
@@ -259,6 +260,7 @@ It is possible to run the digital twin on our computer, with or without a connec
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
 6. Install [docker](https://www.docker.com/products/docker-desktop) installed (see [Docker Homepage](https://docs.docker.com/desktop/))
+7. (Optional) Install [Godot](https://godotengine.org/download/windows/) in case you want to load 3D visualization, only works on Windows. 
 
 
 ### After First-time Setup: Starting the DT Framework
@@ -284,9 +286,10 @@ It is possible to run the digital twin on our computer, with or without a connec
 6. Login http://localhost:15672/ to see the RabbitMQ management page. The login details are:
    - user=`incubator`
    - password=`incubator`
-7. See [Diagnosing Startup Errors](#diagnosing-startup-errors) in case you encounter problems
-8. Recommended: [Run the unit tests](#running-unit-tests)
-9. Recommended: [Run the integration tests](#running-integration-tests)
+7. Optional: [Start visualization](#start-visualization)
+8. See [Diagnosing Startup Errors](#diagnosing-startup-errors) in case you encounter problems
+9. Recommended: [Run the unit tests](#running-unit-tests)
+10. Recommended: [Run the integration tests](#running-integration-tests)
 
 ### Running Unit Tests
 
@@ -304,6 +307,20 @@ To run the unit tests, open a terminal in [software](software), and
 Make sure you can successfully [start the DT framework](#after-first-time-setup-starting-the-dt-framework) and [run the unit tests](#running-unit-tests) before attempting to run the integration tests.
 
 The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) contains the instructions.
+
+# Start visualization
+1. Open Godot
+
+2. Click Import (or press Ctrl+I)
+
+3. Insert the project path to the visualization folder (C:[YOUR PATH]\visualization), and click "Import and Edit"
+
+4. Build and run the project by clicking on the "play" button in the top-right corner (or press F5).
+
+   If the application crashes when opening the project, it is due to the GPU not supporting the Vulkan rendering API. Instead open a terminal and run the following command: 
+   ```
+   C:\path\to\your\godot4.exe --rendering-driver opengl3.
+   ```
 
 # Diagnosing Startup Errors
 
