@@ -187,7 +187,7 @@ The DT follows a service based architecture, with different services communicati
 Each service is started with a python script, and most services refer to [software/startup.conf](software/startup.conf) for their configuration.
 
 The code that starts the services is in [software/startup](software/startup).
-It is possible to start all services from the same script [software/startup/start_all_services.py](software/startup/start_all_services.py) or each service individually.
+It is possible to start all services (except the 3D visualization service) from the same script [software/startup/start_all_services.py](software/startup/start_all_services.py) or each service individually.
 
 The services (and their starting scripts) currently implemented are:
 - [incubator_realtime_mockup](software/startup/start_incubator_realtime_mockup.py) -- implements a real time plant simulation mockup so that the whole digital twin system can be run locally on any computer without the need to connect to an external physical twin. When using a real physical twin this service is not started.
@@ -200,6 +200,7 @@ The services (and their starting scripts) currently implemented are:
 - [controller_physical](software/startup/start_controller_physical.py) -- this service implements the controller.
 - [supervisor](software/startup/start_supervisor.py) -- This service can periodically retune the controller.
 - [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) -- the service implements the self-adaptation which checks whether the physical characteristics of the plant have changed and can trigger a recalibration as well as controller tuning when that happens.
+- [3d_visualization](software/digital_twin/visualization/project.godot) -- This service is a [Godot](https://godotengine.org/) project that shows a 3D rendering of the incubator. 
 
 ## System Architecture
 
@@ -309,18 +310,22 @@ Make sure you can successfully [start the DT framework](#after-first-time-setup-
 The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) contains the instructions.
 
 # Start visualization
-1. Open Godot
 
-2. Click Import (or press Ctrl+I)
+We assume the reader is broadly familiar with [Godot](https://godotengine.org/) engine.
 
-3. Insert the project path to the visualization folder (C:[YOUR PATH]\visualization), and click "Import and Edit"
-
-4. Build and run the project by clicking on the "play" button in the top-right corner (or press F5).
-
-   If the application crashes when opening the project, it is due to the GPU not supporting the Vulkan rendering API. Instead open a terminal and run the following command: 
+1. Download and install Godot v4.1.1.stable.mono.official [bd6af8e0e]
+2. Open [project.godot](software/digital_twin/visualization/project.godot) with Godot engine.
+3. The UI should look like:
+   ![](figures/godot_gui.png)
+4. Make sure the RabbitMQ server is runnning.
+5. Build and run the project by clicking on the "play" button in the top-right corner (or press F5). If the application crashes when opening the project, it could be due to:
+   1. Connection from Godot to Rabbitmq server failed (check the Errors tab in Godot UI).
+   2. You GPU does not support the Vulkan rendering API. Open a terminal and run the following command: 
    ```
    C:\path\to\your\godot4.exe --rendering-driver opengl3.
    ```
+6. The result should look like this:
+   ![](figures/example_incubator_visualization.png)
 
 # Diagnosing Startup Errors
 
@@ -482,7 +487,7 @@ General guidelines:
 
 The [software](software) directory contains all things code related.
 - [cli](./software/cli) -- Contains code to communicate with the running DT components.
-- [digital_twin](./software/digital_twin) -- Code that forms the digital twin.
+- [digital_twin](./software/digital_twin) -- Code that forms the digital twin services.
 - [incubator](./software/incubator) -- Code that implements the physical twin, models, and datasets
 - [integration_tests](./software/integration_tests) -- Code to run integration tests.
 - [mock_plant](./software/mock_plant) -- Code setting up the local virtual incubator plant.
