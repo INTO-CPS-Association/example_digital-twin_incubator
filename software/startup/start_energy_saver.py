@@ -7,7 +7,7 @@ def start_energy_saver(ok_queue=None):
     config_logger("logging.conf")
     config = load_config("startup.conf")
 
-    monitor = EnergySaverServer(4.0, config["physical_twin"]["controller"], config["rabbitmq"])
+    monitor = EnergySaverServer(2.0, config["physical_twin"]["controller"], config["rabbitmq"])
 
     monitor.setup()
 
