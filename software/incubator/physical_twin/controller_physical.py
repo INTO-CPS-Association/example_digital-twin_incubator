@@ -5,7 +5,7 @@ import logging
 
 from incubator.communication.server.rabbitmq import Rabbitmq, ROUTING_KEY_STATE, ROUTING_KEY_HEATER, ROUTING_KEY_FAN, \
     from_ns_to_s, ROUTING_KEY_CONTROLLER
-from incubator.communication.shared.protocol import ROUTING_KEY_COSIM_PARAM
+from incubator.communication.shared.protocol import ROUTING_KEY_UPDATE_CLOSED_CTRL_PARAMS
 from incubator.models.controller_models.controller_model_sm import ControllerModel4SM
 
 
@@ -48,7 +48,7 @@ class ControllerPhysical:
     def setup(self):
         self.rabbitmq.connect_to_server()
         self.safe_protocol()
-        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_COSIM_PARAM,
+        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_UPDATE_CLOSED_CTRL_PARAMS,
                                 on_message_callback=self.update_parameters)
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
                                 on_message_callback=self.control_loop_callback)
@@ -115,11 +115,7 @@ class ControllerPhysical:
     def update_parameters(self, ch, method, properties, body_json):
         self._l.debug("New parameter msg:")
         self._l.debug(body_json)
-        # TODO Ensure message is safe, then change parameters of the controller.
-        self._safe_update_parameter(body_json, 'C_in', 'heating_gap', float, lambda v: 0 < v)
-        # 100 is the hardcoded max heating time. for safety reasons
-        self._safe_update_parameter(body_json, 'H_in', 'heating_time', float, lambda v: v < 100)
-        self._safe_update_parameter(body_json, 'LL_in', 'lower_bound', float, lambda v: 0 < v)
+        self._safe_update_parameter(body_json, 'temperature_desired', 'temperature_desired', float, lambda v: v < 45)
 
     def control_loop_callback(self, ch, method, properties, body_json):
         self._record_message(body_json)
