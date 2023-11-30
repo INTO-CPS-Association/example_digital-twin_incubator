@@ -97,6 +97,7 @@ class KalmanFilterPlantServer:
             },
             "fields": {
                 "T_heater": self.T_heater,
+                "prediction_error": self.in_T - T,
                 "average_temperature": T,
                 "prediction_time": time.time_ns(),
             }
