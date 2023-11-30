@@ -31,7 +31,7 @@ class EnergySaverServer:
 
         new_temp_desired = self.ctrl_temperature_desired*0.6 if abs(self.in_prediction_error) > self.error_threshold else self.ctrl_temperature_desired
 
-        self._l.debug(f"Updating closed loop controller temperature desired to: {new_temp_desired}")
+        self._l.debug(f"Updating closed loop controller temperature desired to: {new_temp_desired} due to error {abs(self.in_prediction_error)}.")
         self.rabbitmq.send_message(ROUTING_KEY_UPDATE_CLOSED_CTRL_PARAMS, {
             "temperature_desired": new_temp_desired,
         })
