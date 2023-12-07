@@ -1,5 +1,6 @@
 from startup.start_calibrator import start_calibrator
 from startup.start_controller_physical_open_loop import start_controller_physical_open_loop
+from startup.start_energy_saver import start_energy_saver
 from startup.start_plant_kalmanfilter import start_plant_kalmanfilter
 from startup.start_plant_simulator import start_plant_simulator
 from startup.start_self_adaptation_manager import start_self_adaptation_manager
@@ -33,4 +34,4 @@ if __name__ == '__main__':
     # Enable self adaptation
     start_as_daemon(start_self_adaptation_manager)
     start_as_daemon(start_supervisor)
-
+    # start_as_daemon(start_energy_saver)

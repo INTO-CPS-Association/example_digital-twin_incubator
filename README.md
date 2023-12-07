@@ -201,6 +201,7 @@ The services (and their starting scripts) currently implemented are:
 - [supervisor](software/startup/start_supervisor.py) -- This service can periodically retune the controller.
 - [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) -- the service implements the self-adaptation which checks whether the physical characteristics of the plant have changed and can trigger a recalibration as well as controller tuning when that happens.
 - [3d_visualization](software/digital_twin/visualization/project.godot) -- This service is a [Godot](https://godotengine.org/) project that shows a 3D rendering of the incubator. 
+- [energy_saver](software/startup/start_energy_saver.py) -- This service is a simplified version of [self_adaptation_manager](software/startup/start_self_adaptation_manager.py) that reconfigures the controller to a lower energy consumption configuration when the lid is open.
 
 ## System Architecture
 
