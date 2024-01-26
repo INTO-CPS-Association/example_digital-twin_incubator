@@ -1,5 +1,3 @@
-from itertools import product
-
 import matplotlib.pyplot as plt
 from oomodelling import ModelSolver
 
@@ -154,16 +152,19 @@ class TestControllerTunning(CLIModeTest):
         plt.scatter(ctrl_errors, actuator_efforts, c='b', label='Controller Policy')
         plt.scatter(pareto_front_ctrl_errors, pareto_front_actuator_efforts, c='g', label='Pareto Front')
 
-        plt.xlabel('ctrl_error')
-        plt.ylabel('actuator_effort')
+        plt.xlabel('Controller Error')
+        plt.ylabel('Actuator Effort')
 
         for r in pareto_front_parameters:
-            # plt.annotate(f'b={r["bound"]},hg={r["heating_gap"]}', xy=(r["ctrl_error"], r["actuator_effort"]), arrowprops=dict(arrowstyle='->'))
-            plt.annotate(f'b={r["bound"]}', xy=(r["ctrl_error"], r["actuator_effort"]), arrowprops=dict(arrowstyle='->'))
+            plt.annotate(f'b={r["bound"]}',
+                         xy=(r["ctrl_error"], r["actuator_effort"]),
+                         arrowprops=dict(arrowstyle='->'),
+                         fontsize=14)
 
         plt.legend()
 
         if self.ide_mode():
+            plt.savefig("dse_incubator.svg")
             print(pareto_front_parameters)
             plt.show()
 

@@ -221,7 +221,7 @@ class FourParameterModelTests(CLIModeTest):
         ax1.plot(results_2p.signals["time"], results_2p.signals["T"], label="~T(2)")
         ax1.plot(results_4p.signals["time"], results_4p.signals["T"], label="~T(4)")
         ax1.plot(results_4p.signals["time"], results_4p.signals["in_room_temperature"], label="~roomT")
-        ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
+        # ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
         ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
         ax1.legend()
 
@@ -230,6 +230,7 @@ class FourParameterModelTests(CLIModeTest):
         data["4P_Model"] = sol_4p.y[1, :]
 
         if self.ide_mode():
+            plt.savefig("experiment_compare_models.pdf")
             plt.show()
             data.to_csv("exported_exp2_ht20_hg30.csv", sep=',')
         plt.close(fig)
