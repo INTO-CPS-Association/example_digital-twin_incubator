@@ -1,0 +1,131 @@
+[gd_scene load_steps=2 format=3 uid="uid://djhme8t2tqd4l"]
+
+[ext_resource type="Script" path="res://scripts/ConnectionMenu.cs" id="1_esgby"]
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_esgby")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 1156.0
+offset_bottom = 648.0
+
+[node name="ConnectButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 331.0
+offset_top = 478.0
+offset_right = 508.0
+offset_bottom = 526.0
+theme_override_font_sizes/font_size = 25
+text = "Connect"
+
+[node name="StartButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 662.0
+offset_top = 479.0
+offset_right = 839.0
+offset_bottom = 527.0
+theme_override_font_sizes/font_size = 25
+text = "Start"
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 48.0
+offset_right = 1153.0
+offset_bottom = 107.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "Connection Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UserNameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 337.0
+offset_top = 186.0
+offset_right = 505.0
+offset_bottom = 224.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "User name"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="UserNameLabel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 29.0
+offset_right = 170.0
+offset_bottom = 68.0
+
+[node name="UriLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 665.0
+offset_top = 186.0
+offset_right = 833.0
+offset_bottom = 224.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "Uri"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="UriLabel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 29.0
+offset_right = 170.0
+offset_bottom = 68.0
+
+[node name="PasswordLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 337.0
+offset_top = 270.0
+offset_right = 505.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "Password"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="PasswordLabel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 29.0
+offset_right = 170.0
+offset_bottom = 68.0
+
+[node name="PortLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 665.0
+offset_top = 270.0
+offset_right = 833.0
+offset_bottom = 308.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "Port"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="PortLabel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 29.0
+offset_right = 170.0
+offset_bottom = 68.0
+
+[node name="ConnectionStatusLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 335.0
+offset_top = 546.0
+offset_right = 506.0
+offset_bottom = 586.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+
+[connection signal="pressed" from="ConnectButton" to="." method="OnConnectButtonPressed"]
+[connection signal="pressed" from="StartButton" to="." method="OnStartButtonPressed"]
