@@ -318,7 +318,7 @@ We assume the reader is broadly familiar with [Godot](https://godotengine.org/) 
 2. Open [project.godot](software/digital_twin/visualization/project.godot) with Godot engine.
 3. The UI should look like:
    ![](figures/godot_gui.png)
-4. Make sure the RabbitMQ server is runnning.
+4. Make sure the RabbitMQ server is running.
 5. Build and run the project by clicking on the "play" button in the top-right corner (or press F5). If the application crashes when opening the project, it could be due to:
    1. Connection from Godot to Rabbitmq server failed (check the Errors tab in Godot UI).
    2. You GPU does not support the Vulkan rendering API. Open a terminal and run the following command: 
