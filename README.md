@@ -319,13 +319,16 @@ We assume the reader is broadly familiar with [Godot](https://godotengine.org/) 
 3. The UI should look like:
    ![](figures/godot_gui.png)
 4. Make sure the RabbitMQ server is running.
-5. Build and run the project by clicking on the "play" button in the top-right corner (or press F5). If the application crashes when opening the project, it could be due to:
-   1. Connection from Godot to Rabbitmq server failed (check the Errors tab in Godot UI).
-   2. You GPU does not support the Vulkan rendering API. Open a terminal and run the following command: 
-   ```
-   C:\path\to\your\godot4.exe --rendering-driver opengl3.
-   ```
-6. The result should look like this:
+5. Build and run the project by clicking on the "play" button in the top-right corner (or press F5). 
+   1. If the application crashes when opening the project, it could be due to:
+      1. Connection from Godot to Rabbitmq server failed (check the Errors tab in Godot UI).
+      2. You GPU does not support the Vulkan rendering API. Open a terminal and run the following command: 
+      ```
+      C:\path\to\your\godot4.exe --rendering-driver opengl3.
+      ```
+6. In the connection menu, add the connection configuration parameters that are in the [startup.conf](software/startup.conf). The result should look like this:
+   ![](figures/example_incubator_visualization_menu.png)
+7. Press connect and then start. It look like this:
    ![](figures/example_incubator_visualization.png)
 
 # Diagnosing Startup Errors
