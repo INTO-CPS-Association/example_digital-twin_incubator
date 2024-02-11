@@ -11,9 +11,13 @@ config_version=5
 [application]
 
 config/name="Incubator"
-run/main_scene="res://scenes/node_3d.tscn"
+run/main_scene="res://scenes/connection_menu.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Global="*res://scripts/Global.cs"
 
 [dotnet]
 
