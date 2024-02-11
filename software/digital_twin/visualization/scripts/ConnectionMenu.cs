@@ -4,7 +4,7 @@ public partial class ConnectionMenu : Control {
     private Global global;
     private Label connectionStatusLabel;
     private Label startLabel;
-    bool connectionStatus = false;
+    private bool connectionStatus = false;
 
     public override void _Ready() {
         global = GetNode<Global>("/root/Global");
