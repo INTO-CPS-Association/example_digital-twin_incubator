@@ -28,9 +28,9 @@ text = "Connect"
 [node name="StartButton" type="Button" parent="."]
 layout_mode = 0
 offset_left = 662.0
-offset_top = 479.0
+offset_top = 478.0
 offset_right = 839.0
-offset_bottom = 527.0
+offset_bottom = 526.0
 theme_override_font_sizes/font_size = 25
 text = "Start"
 
@@ -124,6 +124,14 @@ layout_mode = 0
 offset_left = 335.0
 offset_top = 546.0
 offset_right = 506.0
+offset_bottom = 586.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+
+[node name="StartLabel" type="Label" parent="."]
+offset_left = 664.0
+offset_top = 546.0
+offset_right = 835.0
 offset_bottom = 586.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
