@@ -81,6 +81,7 @@ offset_left = -1.0
 offset_top = 29.0
 offset_right = 170.0
 offset_bottom = 68.0
+secret = true
 
 [node name="HostNameLabel" type="Label" parent="."]
 layout_mode = 0
