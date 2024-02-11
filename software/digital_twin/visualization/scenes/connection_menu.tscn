@@ -64,24 +64,6 @@ offset_top = 29.0
 offset_right = 170.0
 offset_bottom = 68.0
 
-[node name="UriLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 665.0
-offset_top = 186.0
-offset_right = 833.0
-offset_bottom = 224.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 25
-text = "Uri"
-horizontal_alignment = 1
-
-[node name="LineEdit" type="LineEdit" parent="UriLabel"]
-layout_mode = 0
-offset_left = -1.0
-offset_top = 29.0
-offset_right = 170.0
-offset_bottom = 68.0
-
 [node name="PasswordLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 337.0
@@ -94,6 +76,24 @@ text = "Password"
 horizontal_alignment = 1
 
 [node name="LineEdit" type="LineEdit" parent="PasswordLabel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 29.0
+offset_right = 170.0
+offset_bottom = 68.0
+
+[node name="HostNameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 665.0
+offset_top = 186.0
+offset_right = 833.0
+offset_bottom = 224.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "Host name"
+horizontal_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="HostNameLabel"]
 layout_mode = 0
 offset_left = -1.0
 offset_top = 29.0

@@ -7,7 +7,7 @@ public partial class ConnectionMenu : Control {
     public override void _Ready() {
         global = GetNode<Global>("/root/Global");
         global.userName = GetNode<LineEdit>("UserNameLabel/LineEdit");
-        global.uri = GetNode<LineEdit>("UriLabel/LineEdit");
+        global.hostName = GetNode<LineEdit>("HostNameLabel/LineEdit");
         global.password = GetNode<LineEdit>("PasswordLabel/LineEdit");
         global.port = GetNode<LineEdit>("PortLabel/LineEdit");
         connectionStatusLabel = GetNode<Label>("ConnectionStatusLabel");
