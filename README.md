@@ -330,15 +330,17 @@ We assume the reader is broadly familiar with [Godot](https://godotengine.org/) 
 
 # Command Line Utilities to Interact with DT
 The Incubator contains several scripts for interacting with the DT as it is running live. The scripts can be found in [software/cli](software/cli).
-The scripts can be executed by following the pattern: `python -m cli.<script_name>`. For instance, to generate dummy data the following script can be executed: `python -m cli.generate_dummy_data`. Notice that some scripts require extra parameters.
+The scripts can be executed by following the pattern: `python -m cli.<script_name>`.<br>
+For instance, to generate dummy data the following script can be executed: `python -m cli.generate_dummy_data`. Notice that some scripts require extra parameters.
 
 ## Mess With Lid Script
-Certain configurations of the Incubator support anomaly detection to determine if the styrofoam lid has been removed from the box.
-When running a mocked version of the PT, the behavior of removing the lid can be simulated through the [software/cli/mess_with_lid_mock.py](software/cli/mess_with_lid_mock.py) script.
+Certain configurations of the Incubator support anomaly detection to determine if the styrofoam lid has been removed from the box.<br>
+When running a mocked version of the PT, the behavior of removing the lid can be simulated through the [software/cli/mess_with_lid_mock.py](software/cli/mess_with_lid_mock.py) script.<br>
 In practice, the simulation is accomplished by changing the $G_{box}$ parameter of the mocked PT. The $G_{box}$ represents the rate of energy transfer between the air inside the box and the air outside the box.
 
-**Executing the script:**
-The script can be executed by running `python -m cli.mess_with_lid_moc <N>`, where $N$ represents a positive integer to multiply the original $G_{box}$ with. For instance, the `python -m cli.mess_with_lid_moc 100` emulates a greater loss of energy to the outside (lid off) and `python -m cli.mess_with_lid_moc 1` emulates the original behavior (lid on).
+**Executing the script:**<br>
+The script can be executed by running `python -m cli.mess_with_lid_moc <N>`, where $N$ represents a positive integer to multiply the original $G_{box}$ with.<br>
+For instance, the `python -m cli.mess_with_lid_moc 100` emulates a greater loss of energy to the outside (lid off) and `python -m cli.mess_with_lid_moc 1` emulates the original behavior (lid on).
 
 # Diagnosing Startup Errors
 
