@@ -45,11 +45,11 @@ class Rabbitmq:
         if self.channel is not None:
             if not self.channel.is_closed and not self.connection.is_closed:
                 self.close()
-        self._l.info("Connection closed.")
+        self._l.debug("Connection closed.")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
-        self._l.info("Connection closed.")
+        self._l.debug("Connection closed.")
 
     def __enter__(self):
         self.connect_to_server()
@@ -57,7 +57,7 @@ class Rabbitmq:
 
     def connect_to_server(self):
         self.connection = pika.BlockingConnection(self.parameters)
-        self._l.info("Connected.")
+        self._l.debug("Connected.")
         self.channel = self.connection.channel()
         self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
 
