@@ -340,7 +340,7 @@ In practice, the simulation is accomplished by changing the $G_{box}$ parameter 
 
 **Executing the script:**<br>
 The script can be executed by running `python -m cli.mess_with_lid_moc <N>`, where $N$ represents a positive integer to multiply the original $G_{box}$ with.<br>
-For instance, the `python -m cli.mess_with_lid_moc 100` emulates a greater loss of energy to the outside (lid off) and `python -m cli.mess_with_lid_moc 1` emulates the original behavior (lid on).
+For instance, the `python -m cli.mess_with_lid_moc 100` simulates a greater loss of energy to the outside (lid off) and `python -m cli.mess_with_lid_moc 1` simulates the original behavior (lid on).
 
 # Diagnosing Startup Errors
 
