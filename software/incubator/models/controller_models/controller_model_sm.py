@@ -48,5 +48,5 @@ class ControllerModel4SM:
                 else:
                     self.current_state = "CoolingDown"
                     self.cached_heater_on = False
-                    self.next_time = -1
+                    self.next_time = -1.0
             return
