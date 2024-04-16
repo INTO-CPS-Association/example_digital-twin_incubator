@@ -23,15 +23,15 @@ if __name__ == '__main__':
     start_as_daemon(start_influx_data_recorder)
     start_as_daemon(start_plant_kalmanfilter)
 
-    start_as_daemon(start_plant_simulator)
-    start_as_daemon(start_simulator)
-    start_as_daemon(start_calibrator)
+    # start_as_daemon(start_plant_simulator)
+    # start_as_daemon(start_simulator)
+    # start_as_daemon(start_calibrator)
 
     # Choose one of the controllers below:
-    # start_as_daemon(start_controller_physical)
-    start_as_daemon(start_controller_physical_open_loop)
+    start_as_daemon(start_controller_physical)
+    # start_as_daemon(start_controller_physical_open_loop)
 
     # Enable self adaptation
-    start_as_daemon(start_self_adaptation_manager)
-    start_as_daemon(start_supervisor)
-    # start_as_daemon(start_energy_saver)
+    # start_as_daemon(start_self_adaptation_manager)
+    # start_as_daemon(start_supervisor)
+    start_as_daemon(start_energy_saver)
