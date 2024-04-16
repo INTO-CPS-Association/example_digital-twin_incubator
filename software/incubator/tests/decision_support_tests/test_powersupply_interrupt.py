@@ -9,9 +9,13 @@ from incubator.physical_twin.low_level_driver_server import CTRL_EXEC_INTERVAL
 from incubator.tests.cli_mode_test import CLIModeTest
 
 
-class CosimulationTests(CLIModeTest):
+class TestPowerSupplyInterrupt(CLIModeTest):
 
-    def test_run_cosim_4param_model(self):
+    def test_show_different_alternatives(self):
+        """
+        This test plots multiple alternatives for heating time.
+        It is used in the Digital Twin Engineering book.
+        """
         powerfull_sys_parameters = [
             177.62927865,  # C_air
             0.77307655,  # G_box
@@ -28,7 +32,7 @@ class CosimulationTests(CLIModeTest):
         V_heater = powerfull_sys_parameters[4]
         I_heater = powerfull_sys_parameters[5]
 
-        fig = plt.figure()
+        fig, axes = plt.subplots(2, 1, figsize=(15, 15))
 
         def show_trace(heating_time):
             m = SystemModel4Parameters(C_air,
@@ -40,23 +44,31 @@ class CosimulationTests(CLIModeTest):
                                        max_temperature_desired=50, initial_box_temperature=35,
                                        initial_heat_temperature=35,
                                        initial_room_temperature=22)
-            ModelSolver().simulate(m, 0.0, 2000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
+            ModelSolver().simulate(m, 0.0, 4000, CTRL_EXEC_INTERVAL, CTRL_EXEC_INTERVAL / 10.0)
 
-            plt.plot(m.signals['time'], m.plant.signals['T'], label=f"Trial_{heating_time}")
-            plt.plot(m.signals['time'], [50 if h else 20 for h in m.ctrl.signals['heater_on']], label=f"Trial_{heating_time}")
+            axes[0].plot(m.signals['time'], m.plant.signals['T'], label=f"Temperature for H={heating_time}")
 
-        # show_trace(0.1)
-        # show_trace(1.0)
-        # show_trace(3.0)
-        # show_trace(100.0)
-        # show_trace(200.0)
-        show_trace(300.0)
-        show_trace(400.0)
-        show_trace(500.0)
+            axes[1].plot(m.signals['time'], ["On" if h else "Off" for h in m.ctrl.signals['heater_on']], label=f"Heater for H={heating_time}")
 
-        plt.legend()
+            return m
+
+        m = show_trace(1000.0)
+        show_trace(1500.0)
+        show_trace(2000.0)
+
+        axes[0].plot(m.signals['time'], [45.0 for t in m.signals['time']], linestyle='dashed', label=f"Maximal overheat temperature")
+        axes[0].plot(m.signals['time'], [25.0 for t in m.signals['time']], linestyle='dashed',
+                     label=f"Minimal temperature")
+
+        axes[0].legend()
+        axes[1].legend()
+
+        axes[0].set_ylabel("Temperature (deg C)")
+        axes[1].set_ylabel("Heater State")
+        axes[1].set_xlabel("Time (s)")
 
         if self.ide_mode():
+            plt.savefig("power_supply_interrupt_alternatives.svg")
             plt.show()
         plt.close(fig)
 
