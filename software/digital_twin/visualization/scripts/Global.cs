@@ -18,7 +18,7 @@ public partial class Global : Node
 	private List<string> messages = new();
 
     public LineEdit userName;
-    public LineEdit uri;
+    public LineEdit hostName;
     public LineEdit password;
     public LineEdit port;
 
@@ -32,9 +32,8 @@ public partial class Global : Node
             GD.Print("Host name set to: " + userName.Text);
         }
 
-        if (uri.Text != "") {
-            factory.Uri = new Uri(uri.Text);
-            GD.Print("Uri set to: " + uri.Text);
+        if (hostName.Text != "") {
+            GD.Print("Host name set to: " + hostName.Text);
         } 
 
         if (password.Text != "") {
