@@ -261,7 +261,7 @@ It is possible to run the digital twin on our computer, with or without a connec
 4. (Optional) Install pip wheel: `pip install wheel`
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
-6. Install [docker](https://www.docker.com/products/docker-desktop) installed (see [Docker Homepage](https://docs.docker.com/desktop/))
+6. Install [docker](https://www.docker.com/products/docker-desktop) (see [Docker Homepage](https://docs.docker.com/desktop/))
 7. (Optional) Install [Godot](https://godotengine.org/download/windows/) in case you want to load 3D visualization, only works on Windows. 
 
 
