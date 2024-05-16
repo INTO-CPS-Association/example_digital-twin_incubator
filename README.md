@@ -314,7 +314,8 @@ The script [run_integration_tests.ps1](./software/run_integration_tests.ps1) con
 
 We assume the reader is broadly familiar with [Godot](https://godotengine.org/) engine.
 
-1. Download and install Godot v4.1.1.stable.mono.official [bd6af8e0e]
+1. Download and install [Godot Engine - .NET v4.1.1](https://godotengine.org/download/archive/4.1.1-stable/). 
+   * Note that it must be the .NET version.
 2. Open [project.godot](software/digital_twin/visualization/project.godot) with Godot engine.
 3. The UI should look like:
    ![](figures/godot_gui.png)
