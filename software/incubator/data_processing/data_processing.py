@@ -88,7 +88,7 @@ def derive_data(data, V_heater, I_Heater, avg_function=None, events=None):
     data["power_in"] = data.apply(lambda row: V_heater * I_Heater if row.heater_on else 0.0, axis=1)
 
     data["energy_in"] = data.apply(
-        lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
+        lambda row: integrate.trapezoid(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
     zero_kelvin = 273.15
     data["avg_temp_kelvin"] = data["average_temperature"] + zero_kelvin
     air_mass = 0.04  # Kg
