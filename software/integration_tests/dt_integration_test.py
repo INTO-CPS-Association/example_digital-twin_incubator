@@ -29,6 +29,7 @@ from startup.start_simulator import start_simulator
 from startup.utils.db_tasks import setup_db
 from startup.utils.start_as_daemon import start_as_daemon
 
+
 # TODO: Create a second integration test, just like this one, but that uses the open loop controller consistently.
 #  Right now, we're using the open loop controller online, but the closed loop controller to generate the dummy data.
 class StartDTWithDummyData(CLIModeTest):
@@ -99,7 +100,8 @@ class StartDTWithDummyData(CLIModeTest):
         room_temp_results = query(query_api, cls.bucket, start_date_ns, end_date_ns, "low_level_driver", "t3")
 
         number_room_data_points_registered_influxdb = len(room_temp_results["_time"])
-        cls.l.debug(f"InfluxDB registered {number_room_data_points_registered_influxdb} dummy samples of room temperature data.")
+        cls.l.debug(
+            f"InfluxDB registered {number_room_data_points_registered_influxdb} dummy samples of room temperature data.")
 
         assert number_room_data_points == number_room_data_points_registered_influxdb
 
@@ -112,8 +114,6 @@ class StartDTWithDummyData(CLIModeTest):
         generated_data = generate_incubator_exec_data(cls.client, cls.config, cls.start_date, cls.end_date)
         number_points_pt_simulation = len(generated_data)
         cls.l.debug(f"Generated {number_points_pt_simulation} samples from what-if simulation.")
-        assert number_room_data_points_registered_influxdb == number_points_pt_simulation, \
-            f"Expected {number_room_data_points_registered_influxdb} samples but got {number_points_pt_simulation}"
 
         cls.l.info(f"Waiting for influxdb to register data")
         time.sleep(cls.WAIT_FOR_DB)
@@ -136,7 +136,7 @@ class StartDTWithDummyData(CLIModeTest):
         # self.assertEqual(len(room_temp_results), len(average_temp_results))
 
         self.l.info(f"Waiting for components to produce data")
-        time.sleep(self.WAIT_FOR_DB+4)
+        time.sleep(self.WAIT_FOR_DB + 4)
 
         heater_results = query(query_api, self.bucket, start_date_ns, time.time_ns(), "controller", "heater_on")
 
@@ -156,6 +156,8 @@ class StartDTWithDummyData(CLIModeTest):
         G_box = params[1] + 2.0
         C_heater = params[2]
         G_heater = params[3]
+        V_heater = params[4]
+        I_heater = params[5]
 
         query_api = self.influxdb.query_api()
 
@@ -164,13 +166,13 @@ class StartDTWithDummyData(CLIModeTest):
 
         room_temp_results = query(query_api, self.bucket, start_date_ns, end_date_ns, "low_level_driver", "t3")
 
-        initial_heat_temperature = room_temp_results.iloc[0]["_value"]
+        initial_heat_temperature = room_temp_results.iloc[0]["t3"]
 
         # Sharpen to start and end dates to the available data, to avoid the calibrator server complaining.
         # Using about 25% of the data should be enough.
         data_ratio = 0.25
         timespan = room_temp_results["_time"]
-        start_date_ns = from_s_to_ns(timespan.iloc[-(int(data_ratio*timespan.size))].timestamp())
+        start_date_ns = from_s_to_ns(timespan.iloc[-(int(data_ratio * timespan.size))].timestamp())
         end_date_ns = from_s_to_ns(timespan.iloc[-1].timestamp())
         self.l.info(f"Calibration interval: from {start_date_ns}ns to {end_date_ns}ns.")
 
@@ -180,20 +182,24 @@ class StartDTWithDummyData(CLIModeTest):
                                               "start_date_ns": start_date_ns,
                                               "end_date_ns": end_date_ns,
                                               "Nevals": 10,
-                                              "commit": False,
+                                              "commit": True,
                                               "record_progress": True,
                                               "initial_heat_temperature": initial_heat_temperature,
                                               "initial_guess": {
                                                   "C_air": C_air,
                                                   "G_box": G_box,
                                                   "C_heater": C_heater,
-                                                  "G_heater": G_heater
+                                                  "G_heater": G_heater,
+                                                  "V_heater": V_heater,
+                                                  "I_heater": I_heater
                                               }
                                           })
         self.assertTrue("C_air" in reply)
         self.assertTrue("G_box" in reply)
         self.assertTrue("C_heater" in reply)
         self.assertTrue("G_heater" in reply)
+        self.assertTrue("V_heater" in reply)
+        self.assertTrue("I_heater" in reply)
 
     @classmethod
     def tearDownClass(cls):

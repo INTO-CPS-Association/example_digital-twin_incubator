@@ -61,6 +61,8 @@ class PlantCalibrator4Params(RPCServer):
                 G_box = params[1]
                 C_heater = params[2]
                 G_heater = params[3]
+                V_heater = params[4]
+                I_heater = params[5]
                 results = rpc_client.invoke_method(ROUTING_KEY_PLANTSIMULATOR4, "run",
                                                    {
                                                        "tags": {
@@ -72,6 +74,8 @@ class PlantCalibrator4Params(RPCServer):
                                                        "G_box": G_box,
                                                        "C_heater": C_heater,
                                                        "G_heater": G_heater,
+                                                       "V_heater": V_heater,
+                                                       "I_heater": I_heater,
                                                        "initial_box_temperature": average_temperature[0],
                                                        "initial_heat_temperature": initial_heat_temperature,
                                                        "room_temperature": room_temperature,
@@ -89,7 +93,9 @@ class PlantCalibrator4Params(RPCServer):
                 initial_guess["C_air"],
                 initial_guess["G_box"],
                 initial_guess["C_heater"],
-                initial_guess["G_heater"]
+                initial_guess["G_heater"],
+                initial_guess["V_heater"],
+                initial_guess["I_heater"]
             ]
 
             opt_res = least_squares(residual, initial_guess_array, bounds=(0.0, np.inf), max_nfev=Nevals)
@@ -100,12 +106,16 @@ class PlantCalibrator4Params(RPCServer):
         G_box = opt_res.x[1]
         C_heater = opt_res.x[2]
         G_heater = opt_res.x[3]
+        V_heater = opt_res.x[4]
+        I_heater = opt_res.x[5]
 
         msg = {
             "C_air": C_air,
             "G_box": G_box,
             "C_heater": C_heater,
             "G_heater": G_heater,
+            "V_heater": V_heater,
+            "I_heater": I_heater,
             "cost": opt_res.cost,
             "nfev": opt_res.nfev
         }

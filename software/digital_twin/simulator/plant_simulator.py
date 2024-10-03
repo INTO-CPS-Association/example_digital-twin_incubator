@@ -32,6 +32,8 @@ class PlantSimulator4ParamsServer(RPCServer):
             G_box,
             C_heater,
             G_heater,
+            V_heater,
+            I_heater,
             initial_box_temperature,
             initial_heat_temperature,
             room_temperature,
@@ -58,7 +60,7 @@ class PlantSimulator4ParamsServer(RPCServer):
         try:
             sol, model = self.simulator.run_simulation(timespan_seconds, initial_box_temperature, initial_heat_temperature,
                                                        room_temperature, heater_on,
-                                                       C_air, G_box, C_heater, G_heater)
+                                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater)
 
             self._l.debug(f"Converting solution to influxdb data format.")
             state_names = model.state_names()
@@ -89,7 +91,9 @@ class PlantSimulator4ParamsServer(RPCServer):
                 "C_air": C_air,
                 "G_box": G_box,
                 "C_heater": C_heater,
-                "G_heater": G_heater
+                "G_heater": G_heater,
+                "V_heater": V_heater,
+                "I_heater": I_heater
             }
 
             if record:
