@@ -1,16 +1,16 @@
 import inspect
 
 import pika
-import ssl as ssl_package
 import logging
 
+from incubator.communication.server.rabbitmq import Rabbitmq
 from incubator.communication.shared.protocol import decode_json, encode_json
 
 METHOD_ATTRIBUTE = "method"
 ARGS_ATTRIBUTE = "args"
 
 
-class RPCServer:
+class RPCServer(Rabbitmq):
     """
     Implements some basic operations to make it easier to implement remote procedure call as in
     https://www.rabbitmq.com/tutorials/tutorial-six-python.html
@@ -27,36 +27,21 @@ class RPCServer:
                  vhost,
                  exchange,
                  type,
-                 ssl=None
+                 ssl = None,
                  ):
-        self.vhost = vhost
-        self.exchange_name = exchange
-        self.exchange_type = type
-        self.ip = ip
-        credentials = pika.PlainCredentials(username, password)
-        if ssl is None:
-            self.parameters = pika.ConnectionParameters(ip,
-                                                        port,
-                                                        vhost,
-                                                        credentials)
-        else:
-            ssl_context = ssl_package.SSLContext(getattr(ssl_package, ssl["protocol"]))
-            ssl_context.set_ciphers(ssl["ciphers"])
-
-            self.parameters = pika.ConnectionParameters(ip,
-                                                        port,
-                                                        vhost,
-                                                        credentials,
-                                                        ssl_options=pika.SSLOptions(context=ssl_context))
-        self._l = logging.getLogger("RCPServer")
-        self.channel = None
+        super().__init__(ip=ip,
+                         port=port,
+                         username=username,
+                         password=password,
+                         vhost=vhost,
+                         exchange=exchange,
+                         type=type)
+        self._l = logging.getLogger("RPCServer")
 
     def setup(self, routing_key, queue_name):
-        connection = pika.BlockingConnection(self.parameters)
-        self.channel = connection.channel()
-        self.channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
-        self.channel.queue_declare(queue=queue_name)
+        self.connect_to_server()
         self.channel.basic_qos(prefetch_count=1)
+        self.channel.queue_declare(queue=queue_name)
         self.channel.queue_bind(
             exchange=self.exchange_name,
             queue=queue_name,
@@ -66,7 +51,7 @@ class RPCServer:
         self._l.debug(f"Ready to listen for msgs in queue {queue_name} bound to topic {routing_key}")
 
     def start_serving(self):
-        self.channel.start_consuming()
+        self.start_consuming()
 
     def serve(self, ch, method, props, body):
         body_json = decode_json(body)

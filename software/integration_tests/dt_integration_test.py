@@ -73,11 +73,11 @@ class StartDTWithDummyData(CLIModeTest):
 
         cls.l = logging.getLogger("DTIntegrationTest")
 
-        # Time range for the fake data some past.
-        # The reason we pick the past and not some interval until the present is because the data for the present is already being generated.
-        # Doing so would add confusion to the test scenarios.
+        # Time range for the fake data some past. The reason we pick the past and not some interval until the present
+        # is because the data for the present is already being generated. Doing so would add confusion to the test
+        # scenarios.
         cls.end_date = datetime.now() - timedelta(hours=1)
-        cls.start_date = cls.end_date - timedelta(hours=10)
+        cls.start_date = cls.end_date - timedelta(hours=4)
 
         cls.l.info("Connecting to influxdb.")
         cls.influxdb = InfluxDBClient(**cls.config["influxdb"])
@@ -150,14 +150,13 @@ class StartDTWithDummyData(CLIModeTest):
     def test_2_calibration(self):
         self.l.info(f"Running calibration")
 
-        params = four_param_model_params
+        params = {}
+        params_plant = self.config["digital_twin"]["models"]["plant"]["param4"]
+        for k in params_plant:
+            params[k] = params_plant[k]
 
-        C_air = params[0]
-        G_box = params[1] + 2.0
-        C_heater = params[2]
-        G_heater = params[3]
-        V_heater = params[4]
-        I_heater = params[5]
+        # Cause small disturbance in parameters just to make the calibration interesting.
+        params["G_box"] += 0.0
 
         query_api = self.influxdb.query_api()
 
@@ -170,7 +169,7 @@ class StartDTWithDummyData(CLIModeTest):
 
         # Sharpen to start and end dates to the available data, to avoid the calibrator server complaining.
         # Using about 25% of the data should be enough.
-        data_ratio = 0.25
+        data_ratio = 1.0
         timespan = room_temp_results["_time"]
         start_date_ns = from_s_to_ns(timespan.iloc[-(int(data_ratio * timespan.size))].timestamp())
         end_date_ns = from_s_to_ns(timespan.iloc[-1].timestamp())
@@ -181,18 +180,11 @@ class StartDTWithDummyData(CLIModeTest):
                                               "calibration_id": "integration_test_calibration",
                                               "start_date_ns": start_date_ns,
                                               "end_date_ns": end_date_ns,
-                                              "Nevals": 10,
+                                              "Nevals": 1,
                                               "commit": True,
                                               "record_progress": True,
                                               "initial_heat_temperature": initial_heat_temperature,
-                                              "initial_guess": {
-                                                  "C_air": C_air,
-                                                  "G_box": G_box,
-                                                  "C_heater": C_heater,
-                                                  "G_heater": G_heater,
-                                                  "V_heater": V_heater,
-                                                  "I_heater": I_heater
-                                              }
+                                              "initial_guess": params
                                           })
         self.assertTrue("C_air" in reply)
         self.assertTrue("G_box" in reply)
@@ -200,6 +192,13 @@ class StartDTWithDummyData(CLIModeTest):
         self.assertTrue("G_heater" in reply)
         self.assertTrue("V_heater" in reply)
         self.assertTrue("I_heater" in reply)
+
+        self.assertAlmostEqual(params_plant["C_air"], reply["C_air"], places=3)
+        self.assertAlmostEqual(params_plant["G_box"], reply["G_box"], places=3)
+        self.assertAlmostEqual(params_plant["C_heater"], reply["C_heater"], places=3)
+        self.assertAlmostEqual(params_plant["G_heater"], reply["G_heater"], places=3)
+        self.assertAlmostEqual(params_plant["V_heater"], reply["V_heater"], places=3)
+        self.assertAlmostEqual(params_plant["I_heater"], reply["I_heater"], places=3)
 
     @classmethod
     def tearDownClass(cls):
