@@ -138,15 +138,9 @@ ID to Sensor Number Mapping:
 
 ### Connecting to the Raspberry PI
 
-Easiest way to connect is to use VNC Viewer, as the pi runs a VNC server.
-Contact [claudio](mailto:claudio.gomes@ece.au.dk) for help in this step.
+The simplest is to just connect a keyboard, screen, and mouse to the pi, then use setup a hotspot with your phone, and connect the PI to it. Ensure that the rabbitmq server is accessible from the PI, and you should be able to run everything. We do not recommend running the influxdb within the PI itself. To gather data on the pi, we recommend [start_csv_data_recorder](software/startup/start_csv_data_recorder.py), which will store locally a set of csv files with the data from the [low_level_driver_server.py](software/incubator/physical_twin/low_level_driver_server.py). On another computer that has access to the rabbitmq server and influxdb server, you can run the [start_influx_data_recorder.py](software/startup/start_influx_data_recorder.py) to forward the data to the influxdb server.
 
-Alternatively, it is possible to connect to the raspberry pi via a local network: the Pi outputs a Wifi network with the name incubator. 
-The password is located physically on the Pi.
-
-Once connected, one can SSH to the PI. The username and password is also physically located on the Pi.
-
-
+You can SSH to the PI. The username and password is physically located on the Pi.
 
 ## CAD Model
 
