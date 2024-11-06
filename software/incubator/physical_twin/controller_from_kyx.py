@@ -92,9 +92,6 @@ class ControllerSafeKyx:
                                 on_message_callback=self.update_parameters)
         self.rabbitmq.subscribe(routing_key=ROUTING_KEY_STATE,
                                 on_message_callback=self.control_loop_callback)
-        # Needed to adjust for the Kalman Filter
-        self.rabbitmq.subscribe(routing_key=ROUTING_KEY_KF_UPDATE_PARAMETERS,
-                                on_message_callback=self.kalman_update_parameters)
         
     def kalman_prediction(self):
         self.filter.predict(u=np.array([
@@ -107,7 +104,7 @@ class ControllerSafeKyx:
 
     def ctrl_step(self):
         if self.old_heater == 0.0:
-            if (self.T_heater >= (self.min_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater 
+            if (self.T_heater >= ((self.min_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater)
                                     *self.C_heater/(self.C_heater-self.step_size*self.G_heater)):
                 self.heater_ctrl = False
             elif (self.T_heater <= (self.max_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater 
@@ -121,7 +118,7 @@ class ControllerSafeKyx:
             if (self.T_heater <= (self.max_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater 
                                     - self.V_heater*self.I_heater*self.step_size/self.C_heater):
                 self.heater_ctrl = True
-            elif (self.T_heater >= (self.min_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater 
+            elif (self.T_heater >= ((self.min_temp*(self.G_heater+self.G_box)-self.G_box*self.room_temperature)/self.G_heater)
                                     *self.C_heater/(self.C_heater-self.step_size*self.G_heater)):
                 self.heater_ctrl = False
             else:
@@ -164,8 +161,9 @@ class ControllerSafeKyx:
                 "next_action_timer": 0,
                 "n_samples_period": 40,
                 "n_samples_heating": 5,
-                "lower_bound": 35,
-                "upper_bound": 40,
+                "lower_bound": 35.0,
+                "upper_bound": 40.0,
+                "t_heater": self.T_heater
             }
         }
         self.rabbitmq.send_message(routing_key=ROUTING_KEY_CONTROLLER, message=ctrl_data)
@@ -193,26 +191,6 @@ class ControllerSafeKyx:
         self.n_samples_period = n_samples_period
         self.n_samples_heating = n_samples_heating
 
-    def kalman_update_parameters(self, ch, method, properties, body_json):
-        C_air = body_json["C_air"]
-        G_box = body_json["G_box"]
-        C_heater = body_json["C_heater"]
-        G_heater = body_json["G_heater"]
-        V_heater = body_json["V_heater"]
-        I_heater = body_json["I_heater"]
-        self._l.debug(f"Updating controller kalman filter parameters to: {C_air, G_box, C_heater, G_heater, V_heater, I_heater}")
-
-        assert self.in_heater is not None
-        assert self.room_temperature is not None
-        assert self.box_air_temperature is not None
-        assert self.std_dev is not None
-        assert self.step_size is not None
-        assert self.T_heater is not None
-
-        self.filter = construct_filter(self.step_size,
-                                       self.std_dev, self.Theater_covariance_init, self.T_covariance_init,
-                                       C_air, G_box, C_heater, G_heater, V_heater, I_heater,
-                                       self.T_heater, self.box_air_temperature)
 
     def start_control(self):
         try:

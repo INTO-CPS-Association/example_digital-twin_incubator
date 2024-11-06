@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 
-defaultDockerComposeCommand = "docker-compose up --detach --build"
+defaultDockerComposeCommand = "docker compose up --detach --build"
 
 
 def kill_container(containerName):
