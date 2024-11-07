@@ -83,6 +83,55 @@ class FourParameterModelTests(CLIModeTest):
                              bounds=([0, 0, 0, 0, 12.15, 1.53], [300, 2.0, 500, 4, 12.17, 1.55]),
                              max_nfev=NEvals))
 
+    def test_calibrate_20241106_calibration_empty_system(self):
+        NEvals = 500 if self.ide_mode() else 1
+
+        params = [
+            267.55929458,  # C_air
+            0.5763498,  # G_box
+            329.25376821,  # C_heater
+            1.67053237,  # G_heater
+            12.15579391,  # V_heater
+            1.53551347  # I_heater
+        ]
+
+        data, _ = load_data(
+            "./incubator/datasets/20241106_calibration_empty_system/20241106_calibration_empty_system.csv",
+            time_unit='ns',
+            normalize_time=False,
+            convert_to_seconds=True)
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+        h = 6.0
+
+        def run_exp(params):
+            m, sol = run_experiment_four_parameter_model(data, params, h=h)
+            return m, sol, data
+
+        residual = construct_residual([run_exp])
+
+        sol = least_squares(residual, params,
+                             bounds=([0, 0, 0, 0, 12.15, 1.53], [300, 2.0, 500, 4, 12.17, 1.55]),
+                             max_nfev=NEvals)
+
+        if self.ide_mode():
+            # Print optimal parameters
+            print("Optimal parameters:")
+            print("C_air: ", sol.x[0])
+            print("G_box: ", sol.x[1])
+            print("C_heater: ", sol.x[2])
+            print("G_heater: ", sol.x[3])
+            print("V_heater: ", sol.x[4])
+            print("I_heater: ", sol.x[5])
+
+            # Should output something like:
+            # C_air: 24.592199470783953
+            # G_box: 0.16368754393992618
+            # C_heater: 47.25839668762504
+            # G_heater: 0.2193892811058889
+            # V_heater: 12.16821451544053
+            # I_heater: 1.547934279684411
+
     def test_run_experiment_four_parameter_model_20201221(self):
         params = [
             177.62927865,  # C_air
@@ -149,6 +198,55 @@ class FourParameterModelTests(CLIModeTest):
         # CWD: Example_Digital-Twin_Incubator\software\
         data, _ = load_data(
             "./incubator/datasets/20230501_calibration_empty_system/20230501_calibration_empty_system.csv",
+            time_unit='ns',
+            normalize_time=False,
+            convert_to_seconds=True)
+        data = derive_data(data, V_heater=params[4], I_Heater=params[5],
+                           avg_function=lambda row: np.mean([row.t2, row.t3]))
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        results, sol = run_experiment_four_parameter_model(data, params)
+
+        fig, (ax1, ax2, ax3) = plt.subplots(3, 1)
+        # fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1)
+
+        # ax1.plot(data["time"], data["t1"], label="t1")
+        # ax1.plot(data["time"], data["t2"], label="t2")
+        # ax1.plot(data["time"], data["t3"], label="t3")
+        ax1.plot(data["time"], data["average_temperature"], label="average_temperature")
+        ax1.plot(results.signals["time"], results.signals["T"], linestyle="dashed", label="~T(4)")
+        # ax1.plot(results.signals["time"], results.signals["in_room_temperature"], label="~roomT")
+        # ax1.plot(data["time"], [50 if b else 30 for b in data["heater_on"]], label="heater_on")
+        ax1.legend()
+
+        ax2.plot(results.signals["time"], results.signals["T_heater"], label="~T_heater")
+        ax2.legend()
+
+        ax3.plot(data["time"], data["heater_on"], label="heater_on")
+        # ax3.plot(data["time"], data["fan_on"], label="fan_on")
+        # ax3.plot(results.signals["time"], results.signals["in_heater_on"], label="~heater_on")
+        ax3.legend()
+
+        # ax4.plot(data["time"], data["power_in"], label="power_in")
+        # ax4.plot(results.signals["time"], results.signals["power_in"], label="~power_in")
+        # ax4.legend()
+
+        if self.ide_mode():
+            plt.show()
+        plt.close(fig)
+
+    def test_run_experiment_20241106_calibration_empty_system(self):
+        params = [24.592199470783953,  # C_air
+                  0.16368754393992618,  # G_box
+                  47.25839668762504,  # C_heater
+                  0.2193892811058889,  # G_heater
+                  12.16821451544053,  # V_heater
+                  1.547934279684411]  # I_heater
+
+        # CWD: Example_Digital-Twin_Incubator\software\
+        data, _ = load_data(
+            "./incubator/datasets/20241106_calibration_empty_system/20241106_calibration_empty_system.csv",
             time_unit='ns',
             normalize_time=False,
             convert_to_seconds=True)

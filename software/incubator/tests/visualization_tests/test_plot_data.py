@@ -144,6 +144,26 @@ class TestPlotData(CLIModeTest):
         if self.ide_mode():
             show_plotly(fig)
 
+    def test_plot_20241106_calibration_empty_system(self):
+        time_unit = 'ns'
+        data, _ = load_data(
+            "incubator/datasets/20241106_calibration_empty_system/20241106_calibration_empty_system.csv",
+            desired_timeframe=(- math.inf, math.inf),
+            time_unit=time_unit,
+            normalize_time=False,
+            convert_to_seconds=False)
+
+        # Rename column to make data independent of specific tN's
+        data.rename(columns={"t3": "T_room"}, inplace=True)
+
+        if self.ide_mode():
+            print(f"Experiment time from {data.iloc[0]['timestamp_ns']} to {data.iloc[-1]['timestamp_ns']}")
+
+        fig = plotly_incubator_data(data, overlay_heater=True, show_hr_time=True)
+
+        if self.ide_mode():
+            show_plotly(fig)
+
 
 if __name__ == '__main__':
     unittest.main()
