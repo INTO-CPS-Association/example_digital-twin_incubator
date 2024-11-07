@@ -282,6 +282,7 @@ class FourParameterModelTests(CLIModeTest):
         # ax4.legend()
 
         if self.ide_mode():
+            plt.savefig("20241106_calibration_empty_system_results.pdf")
             plt.show()
         plt.close(fig)
 
