@@ -34,10 +34,10 @@ def run_plant_simulation(params, start_date, end_date, initial_heat_temperature,
     fan_data = query(query_api, INFLUXDB_BUCKET, start_date_ns, end_date_ns, "low_level_driver", "fan_on")
 
     time_seconds = room_temp_data.apply(lambda row: row["_time"].timestamp(), axis=1).to_numpy().tolist()
-    room_temperature = room_temp_data["_value"].to_numpy().tolist()
-    average_temperature = average_temperature_data["_value"].to_numpy().tolist()
-    heater_on = heater_data["_value"].to_numpy().tolist()
-    fan_on = fan_data["_value"].to_numpy().tolist()
+    room_temperature = room_temp_data["t3"].to_numpy().tolist()
+    average_temperature = average_temperature_data["average_temperature"].to_numpy().tolist()
+    heater_on = heater_data["heater_on"].to_numpy().tolist()
+    fan_on = fan_data["fan_on"].to_numpy().tolist()
 
     config = load_config("startup.conf")
     client = RPCClient(**(config["rabbitmq"]))

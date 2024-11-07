@@ -157,7 +157,7 @@ class TestsModelling(CLIModeTest):
         data.rename(columns={"t1": "T_room"}, inplace=True)
         data["power_in"] = data.apply(lambda row: V_heater * I_heater if row.heater_on else 0.0, axis=1)
         data["energy_in"] = data.apply(
-            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
+            lambda row: integrate.trapezoid(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
 
         results, _ = run_experiment_two_parameter_model(data, params, h=CTRL_EXEC_INTERVAL)
 

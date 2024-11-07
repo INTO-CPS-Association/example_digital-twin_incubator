@@ -13,6 +13,7 @@ def query(query_api, bucket, start_date_ns, end_date_ns, measurement, field):
           |> range(start: time(v: {start_date_ns}), stop: time(v: {end_date_ns}))
           |> filter(fn: (r) => r["_measurement"] == "{measurement}")
           |> filter(fn: (r) => r["_field"] == "{field}")
+          |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
         """
     _l.debug(query_to_be)
     result = query_api.query_data_frame(query_to_be)
@@ -123,6 +124,6 @@ def query_convert_aligned_data(query_api, bucket, start_date_ns, end_date_ns, me
     for measurement in measurement_fields:
         result_data[measurement] = {}
         for field in measurement_fields[measurement]:
-            result_data[measurement][field] = raw_data[measurement][field]["_value"].to_numpy()
+            result_data[measurement][field] = raw_data[measurement][field][field].to_numpy()
 
     return time_seconds, result_data

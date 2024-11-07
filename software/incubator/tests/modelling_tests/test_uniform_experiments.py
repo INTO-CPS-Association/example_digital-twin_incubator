@@ -19,7 +19,7 @@ class UniformExperimentTests(CLIModeTest):
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
         data["energy_in"] = data.apply(
-            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
+            lambda row: integrate.trapezoid(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
         data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t1, row.t2, row.t3]), axis=1)
         data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t1, row.t2, row.t3]), axis=1)
         data["max_dev_temperature"] = data.apply(
@@ -65,7 +65,7 @@ class UniformExperimentTests(CLIModeTest):
         data["power_in"] = data.apply(lambda row: 11.8 * 10.45 if row.heater_on else 0.0, axis=1)
 
         data["energy_in"] = data.apply(
-            lambda row: integrate.trapz(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
+            lambda row: integrate.trapezoid(data[0:row.name + 1]["power_in"], x=data[0:row.name + 1]["time"]), axis=1)
         data["average_temperature"] = data.apply(lambda row: numpy.mean([row.t2, row.t3]), axis=1)
         data["std_dev_temperature"] = data.apply(lambda row: numpy.std([row.t2, row.t3]), axis=1)
         data["max_dev_temperature"] = data.apply(lambda row: max([row.t2, row.t3]) - min([row.t1, row.t2, row.t3]),

@@ -11,7 +11,6 @@ from digital_twin.data_access.dbmanager.incubator_data_query import query_conver
 from incubator.communication.server.rpc_server import RPCServer
 from incubator.communication.shared.protocol import from_ns_to_s
 from incubator.models.physical_twin_models.system_model4 import SystemModel4Parameters
-from incubator.models.plant_models.four_parameters_model.best_parameters import four_param_model_params
 from incubator.models.plant_models.model_functions import create_lookup_table
 
 
@@ -34,7 +33,7 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
                        C_air,
                        G_box,
                        C_heater,
-                       G_heater,
+                       G_heater, V_heater, I_heater,
                        lower_bound, heating_time, heating_gap, temperature_desired,
                        controller_comm_step,
                        initial_box_temperature,
@@ -55,13 +54,15 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         # We need to do this because the data in the database may not exist at exactly these dates.
         # So we need to interpolate it from the data that exists.
         room_temperature = results["low_level_driver"]["t3"]
-        room_temperature = np.append(np.insert(room_temperature, 0, room_temperature[0]), room_temperature[-1])
+        original_len = len(room_temperature)
+        room_temperature_for_lookup = np.append(np.insert(room_temperature, 0, room_temperature[0]), room_temperature[-1])
 
-        time_table = np.append(np.insert(time_seconds, 0, from_ns_to_s(start_date)-controller_comm_step), from_ns_to_s(end_date)+controller_comm_step)
-        in_room_temperature_table = create_lookup_table(time_table, room_temperature)
+        assert len(room_temperature) == original_len, "room_temperature has changed len unintentionally"
+        assert len(room_temperature_for_lookup) == original_len + 2
 
-        V_heater = four_param_model_params[4]
-        I_heater = four_param_model_params[5]
+        time_table = np.append(np.insert(time_seconds, 0, from_ns_to_s(start_date) - controller_comm_step),
+                               from_ns_to_s(end_date) + controller_comm_step)
+        in_room_temperature_table = create_lookup_table(time_table, room_temperature_for_lookup)
 
         model = SystemModel4Parameters(C_air,
                                        G_box,
@@ -78,26 +79,49 @@ class PhysicalTwinSimulator4ParamsServer(RPCServer):
         self._l.debug(f"controller_comm_step={controller_comm_step}")
 
         # Start simulation
-        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1]+controller_comm_step, controller_comm_step, controller_comm_step/100.0)
+        sol = ModelSolver().simulate(model, time_seconds[0], time_seconds[-1] + controller_comm_step,
+                               controller_comm_step, controller_comm_step / 10.0,
+                               t_eval=time_seconds)
 
-        times_align = len(model.signals["time"]) == len(time_seconds)
+        times_align = len(sol.t) == len(time_seconds)
         if not times_align:
             msg = f"The resulting simulation signals and the time range of the in_room_temperature should be aligned. " \
-                  f"Instead, got {len(model.signals['time'])} samples from simulation and {len(time_seconds)} input samples. " \
+                  f"Instead, got {len(sol.t)} samples from simulation and {len(time_seconds)} input samples. " \
                   f"This could be caused by bad choice of controller communication step (currently at {controller_comm_step})." \
-                  f"End time points of simulation are ({model.signals['time'][0]}, {model.signals['time'][-1]}). " \
-                    f"End time points of db are ({time_seconds[0]}, {time_seconds[-1]})"
+                  f"End time points of simulation are ({sol.t[0]}, {sol.t[-1]}). " \
+                  f"End time points of db are ({time_seconds[0]}, {time_seconds[-1]})"
             self._l.error(msg)
             reply_fun({"error": msg})
             return
 
+        state_names = model.state_names()
+        state_over_time = sol.y
+
+        def get_signal(state):
+            index = np.where(state_names == state)
+            assert len(index) == 1
+            signal = state_over_time[index[0], :][0]
+            return signal.tolist()
+
+        T_solution = get_signal("plant.T")
+        T_heater_solution = get_signal("plant.T_heater")
+
+        # Interpolate model.plant.signals['in_heater_on'] model signals into same timeline as sol.t
+        in_heater_on_interp = np.interp(sol.t, model.signals['time'], model.plant.signals['in_heater_on'])
+
+        # All data is now aligned
+        assert len(sol.t) == len(T_solution) == len(room_temperature) == len(T_heater_solution) == len(in_heater_on_interp)
+
+        # Convert in_heater_on_interp to a python boolean array
+        in_heater_on_interp_bool = [bool(x > 0.5) for x in in_heater_on_interp]
+
         # Convert results into format that is closer to the data in the database
         data_convert = {
-            "time": time_seconds,
-            "average_temperature": model.plant.signals['T'],
-            "room_temperature": model.plant.signals['in_room_temperature'],
-            "heater_temperature": model.plant.signals['T_heater'],
-            "heater_on": model.plant.signals['in_heater_on']
+            "time": sol.t,
+            "average_temperature": T_solution,
+            "room_temperature": room_temperature,
+            "heater_temperature": T_heater_solution,
+            "heater_on": in_heater_on_interp_bool
         }
 
         params = {

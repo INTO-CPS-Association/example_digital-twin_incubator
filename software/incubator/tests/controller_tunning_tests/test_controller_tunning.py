@@ -18,7 +18,7 @@ def control_error(time: List[float], actual_temperature_signal: List[float], tem
     actual_temperature_array = np.array(actual_temperature_signal)
     time_array = np.array(time)
     temp_difference = np.abs(temperature_desired - actual_temperature_array)
-    integral = np.trapz(temp_difference, time_array)
+    integral = np.trapezoid(temp_difference, time_array)
     return integral
 
 
