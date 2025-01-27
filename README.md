@@ -256,7 +256,8 @@ It is possible to run the digital twin on our computer, with or without a connec
 5. Install dependencies:
    1. `pip install -r ./requirements.txt`
 6. Install [docker](https://www.docker.com/products/docker-desktop) (see [Docker Homepage](https://docs.docker.com/desktop/))
-7. (Optional) Install [Godot](https://godotengine.org/download/windows/) in case you want to load 3D visualization, only works on Windows. 
+   1. On Linux, also install the [Docker compose plugin](https://docs.docker.com/compose/install/linux/)
+8. (Optional) Install [Godot](https://godotengine.org/) in case you want to load a 3D visualization. 
 
 
 ### After First-time Setup: Starting the DT Framework
@@ -310,6 +311,7 @@ We assume the reader is broadly familiar with [Godot](https://godotengine.org/) 
 
 1. Download and install [Godot Engine - .NET v4.1.1](https://godotengine.org/download/archive/4.1.1-stable/). 
    * Note that it must be the .NET version.
+   * You may also need to install the [.NET SDK](https://dotnet.microsoft.com/en-us/download)
 2. Open [project.godot](software/digital_twin/visualization/project.godot) with Godot engine.
 3. The UI should look like:
    ![](figures/godot_gui.png)
@@ -323,7 +325,7 @@ We assume the reader is broadly familiar with [Godot](https://godotengine.org/) 
       ```
 6. In the connection menu, add the connection configuration parameters that are in the [startup.conf](software/startup.conf). The result should look like this:
    ![](figures/example_incubator_visualization_menu.png)
-7. Press connect and then start. It look like this:
+7. Press connect and then start. It will look like this:
    ![](figures/example_incubator_visualization.png)
 
 # Command Line Utilities to Interact with DT
