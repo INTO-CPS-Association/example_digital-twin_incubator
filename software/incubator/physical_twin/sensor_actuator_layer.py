@@ -26,7 +26,7 @@ class Pump(LED):
 
 class CO2Sensor:
     def read(self):
-        return mh_z19.read()
+        return mh_z19.read()["co2"]
 
 class HumiditySensor:
     def __init__(self, path=None):
