@@ -34,7 +34,12 @@ class HumiditySensor:
         self.device = adafruit_dht.DHT22(pin)
     
     def read(self):
-        return self.device.humidity
+        try:
+            humidity = self.device.humidity
+        except Exception as e:
+            print(e)
+            humidity = -1.0
+        return humidity
 
 
 class TemperatureSensor:
